@@ -1,0 +1,6 @@
+# Entornos locales de Python
+.venv/
+etiquetas/.venv/
+
+# PDFs generados localmente
+etiquetas/*.pdf
