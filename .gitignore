@@ -4,3 +4,6 @@ etiquetas/.venv/
 
 # PDFs generados localmente
 etiquetas/*.pdf
+
+# Sitio generado por Zensical
+site/

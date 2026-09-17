@@ -1,6 +1,6 @@
 # Diagramas detallados del reacondicionado de móviles
 
-Desarrolla el [diagrama de alto nivel](diagrama-alto-nivel.md) estado a estado,
+Desarrolla el [diagrama de alto nivel](../diagrama-alto-nivel/) estado a estado,
 encajando cada caja del Lucidchart "Diagrama reparació Vincle Digital" en el
 estado de DeviceHub donde ocurre.
 

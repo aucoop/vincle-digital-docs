@@ -1,0 +1,70 @@
+[project]
+site_name = "Vincle Digital"
+site_url = "https://aucoop.github.io/vincle-digital-docs/"
+site_description = "Flujo de reacondicionado de móviles Android con trazabilidad en DeviceHub"
+site_author = "aucoop"
+copyright = "Documentación de Vincle Digital"
+docs_dir = "docs"
+site_dir = "site"
+repo_url = "https://github.com/aucoop/vincle-digital-docs"
+repo_name = "aucoop/vincle-digital-docs"
+edit_uri = "edit/main/docs/"
+extra_css = ["stylesheets/extra.css"]
+nav = [
+  { "Inicio" = "index.md" },
+  { "Proceso" = [
+    { "Vista rápida" = "diagrama-alto-nivel.md" },
+    { "Flujo detallado" = "diagramas-detallados.md" },
+  ] },
+  { "Herramientas" = [
+    { "Etiquetas" = "etiquetas.md" },
+  ] },
+]
+
+[project.theme]
+language = "es"
+features = [
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.instant.progress",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.path",
+  "navigation.top",
+  "toc.follow",
+  "content.action.edit",
+  "content.action.view",
+  "search.suggest",
+  "search.highlight",
+]
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "Cambiar a modo oscuro"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "Cambiar a modo claro"
+
+[project.markdown_extensions]
+attr_list = {}
+md_in_html = {}
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.details = {}
+pymdownx.emoji = {}
+pymdownx.tabbed = { alternate_style = true }
+pymdownx.tasklist = { custom_checkbox = true }
+admonition = {}

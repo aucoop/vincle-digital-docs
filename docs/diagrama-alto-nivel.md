@@ -1,3 +1,8 @@
+# Flujo de alto nivel
+
+Vista resumida del recorrido de un móvil, desde su recepción hasta la entrega,
+reutilización o reciclaje.
+
 ```mermaid
 flowchart TD
     START[Móvil recibido] --> SCAN1[registro inicial con DH-scan<br/>primer POST de evidencia a DH<br/>INBOX]
