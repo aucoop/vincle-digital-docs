@@ -57,7 +57,8 @@ stateDiagram-v2
     TEST --> PACK: según resultados,<br/>se decide después
     TEST --> REPAIR: según resultados,<br/>se decide después
 
-    REPAIR --> [*]: fuera de alcance<br/>por ahora
+    REPAIR --> TEST: reparación<br/>completada
+    REPAIR --> DIS: no reparable<br/>o reparación no viable
 
     PACK --> DON: entregado a receptor
     DON --> USE: receptor lo usa
@@ -66,6 +67,10 @@ stateDiagram-v2
 
     DIS --> [*]
 ```
+
+El procedimiento interno de REPAIR queda fuera del alcance de este documento.
+Una reparación completada requiere repetir TEST antes de decidir si el
+dispositivo es apto para PACKAGING.
 
 ---
 
