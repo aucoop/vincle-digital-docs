@@ -366,9 +366,12 @@ flowchart TD
     IN(["Desde TEST<br/>sin fallos"]) --> ST_P["Estado PACKAGING"]:::dh
 
     ST_P --> RESET2["Reset II<br/>factory reset desde Ajustes:<br/>borra usuario de test y WiFi"]
-    RESET2 --> ASIST{"¿Arranca en asistente<br/>inicial sin pedir cuenta?"}
-    ASIST -->|"No"| TEST(["→ TEST"]):::ok
-    ASIST -->|"Sí"| APAGAR["Apagar con<br/>batería al 50-80 %"]
+    RESET2 --> ASIST{"¿Arranque correcto en asistente<br/>inicial sin pedir cuenta?"}
+    ASIST -->|"No"| REP(["→ REPAIR"]):::reject
+    ASIST -->|"Sí"| FRP{"¿Pide una cuenta<br/>anterior? FRP"}
+
+    FRP -->|"Sí"| PEND(["→ PENDING DONOR"]):::newstate
+    FRP -->|"No"| APAGAR["Apagar con<br/>batería al 50-80 %"]
     APAGAR --> LIMPIEZA["Limpieza exterior<br/>y protector si procede"]
     LIMPIEZA --> KIT["Kit: móvil, cargador,<br/>cable, funda,<br/>guía de primeros pasos"]
     KIT --> ETIQ["Etiqueta QR visible<br/>con custom_id"]
