@@ -73,7 +73,7 @@ stateDiagram-v2
 
 Es un cribado de pocos segundos por móvil: se etiqueta, se da de alta y se aparta lo que se ve a simple
 vista que no sirve. No se enciende el móvil ni se busca información del modelo:
-en este punto se hace un primer registro en DeviceHub para tener constancia de los moviles que recibimos. 
+en este punto se hace un primer registro en DeviceHub para tener constancia de los móviles que recibimos. 
 
 ```mermaid
 flowchart TD
@@ -334,7 +334,7 @@ pasadas, el cambio queda en el log del producto.
 | Audio | `speaker`, `earpiece`, `microphone` | Operario; auricular SKIP si no hay; el micrófono graba y reproduce |
 | Cámaras | `camera_back`, `camera_front` | Operario con la vista previa; SKIP si no hay |
 | Botones | `volume_up`, `volume_down`, `power` | Detectados: teclas de volumen y pantalla apagada |
-| Bluetooth | `bluetooth` | Pass con al menos un dispositivo encontrado |
+| Bluetooth | `bluetooth` | Pass con al menos un dispositivo encontrado, con al menos 1 visible |
 | GPS | `gps` | Pass con satélites visibles; la nota lleva satélites y fix |
 | SIM | `sim`, `cellular_network`, `call`, `mobile_data` | SIM lista, registro en red, llamada por el marcador, datos validados. SKIP sin telefonía |
 | Batería | `battery_drain` | Descarga de 15, 30 o 60 min; la caída va en la nota |
@@ -343,18 +343,6 @@ pasadas, el cambio queda en el log del producto.
 Sin probar todavía en un móvil real: leer un QR real, auricular, micrófono con
 voz, Bluetooth con dispositivos cerca y la llamada. En el emulador funcionan el
 recorrido completo, la reanudación y el envío a DeviceHub.
-
----|---|---|
-| Pantalla, táctil, multitáctil, carga, sensores, vibración, linterna | Sí, guiado (`HwTestFlow.kt`) | |
-| WiFi | No | Comprobar conectividad real, no solo que la interfaz exista |
-| Audio | No | Altavoz, auricular y micrófono |
-| Cámaras | No: solo las lista en el inventario | Abrir cada cámara y confirmar la imagen |
-| Botones, Bluetooth, GPS | No | Tests guiados |
-| SIM: red, llamada, datos | No | `getSimState` sin permiso; la llamada necesita `CALL_PHONE` |
-| Batería con tiempo | No | Guardar el estado entre sesiones: hoy los resultados solo viven en memoria |
-| Notas por test | No: `HwTestResult` es solo `{id, status}` | Campo de nota en la app y propiedad `hwtest:<id>:note` en DeviceHub |
-| Resultados en DeviceHub | Sí: cada test queda como propiedad `hwtest:<id>` del producto, con el valor actual y los cambios en el log (`evidence/parse.py`) | |
-| Tablets | Tipo fijo `Smartphone` | Detectar tablet y saltar los tests de SIM si no tiene ranura |
 
 ---
 
@@ -456,5 +444,5 @@ flowchart LR
 Decisiones que tomé para poder dibujar y que conviene validar:
 
 1. **iPhone.** Que hacemos con ellos?
-3. **Criterio de obsoleto.** ¿Cuántos años de antigüedad del parche de seguridad hacen obsoleto un móvil? 
-4. **Umbral de batería.** "Descarga excesiva en 60 minutos" necesita un número concreto por grado.
+2. **Criterio de obsoleto.** ¿Cuántos años de antigüedad del parche de seguridad hacen obsoleto un móvil? 
+3. **Umbral de batería.** "Descarga excesiva en 60 minutos" necesita un número concreto por grado.
