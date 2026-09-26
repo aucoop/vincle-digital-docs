@@ -172,7 +172,7 @@ tiempo o se borra, y lo segundo deja el FRP armado.
 
 ---
 
-## 4. PENDING DONOR · Espera del PIN (estado nuevo)
+## 4. PENDING DONOR (RELEASE)· Espera de actuación del donante o propietario: PIN o retirar cuenta Google (estado nuevo)
 
 
 ```mermaid
@@ -184,7 +184,7 @@ flowchart TD
     CONTACTO -->|"No"| N_ANON["Nota: donante anónimo"]:::dh
     N_ANON --> DIS1(["DISMANTLE"]):::reject
 
-    CONTACTO -->|"Sí"| MSG["Primer mensaje:<br/>pedir PIN o que retire<br/>la cuenta Google en remoto"]:::dh
+    CONTACTO -->|"Sí"| MSG["Pedir al donante que permita<br/>desbloquear el dispositivo<br/>o resolver la verificación FRP"]:::dh
     MSG --> R1{"¿Responde<br/>en 7 días?"}
     R1 -->|"No"| REC["Recordatorio"]:::dh
     REC --> R2{"¿Responde antes<br/>de la fecha límite?"}
@@ -193,15 +193,15 @@ flowchart TD
 
     R1 -->|"Sí"| QUE
     R2 -->|"Sí"| QUE{"¿Qué responde?"}
-    QUE -->|"Da el PIN"| PIN["Probar PIN"]
-    QUE -->|"Retiró la cuenta<br/>en myaccount.google.com"| RET["Comprobar en el móvil"]
+    QUE -->|"Da el PIN"| PIN["Probar PIN para desbloquear el móvil"]
+    QUE -->|"FRP activo"| FRP_OK["El donante completa<br/>la verificación con una cuenta<br/>previamente sincronizada"]
     QUE -->|"No quiere o no puede"| N_NEG["Nota: donante rechaza"]:::dh
     N_NEG --> DIS3(["DISMANTLE"]):::reject
 
     PIN --> FUNC{"¿Desbloquea?"}
     FUNC -->|"No"| MSG
     FUNC -->|"Sí"| N_OK["Nota: PIN recibido"]:::dh
-    RET --> N_OK
+    FRP_OK --> N_OK
     N_OK --> OK(["→ INSTALL"]):::ok
 
     classDef reject fill:#f8d7da,stroke:#b02a37,color:#58151c
