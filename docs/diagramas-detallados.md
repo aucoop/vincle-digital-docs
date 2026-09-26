@@ -216,8 +216,8 @@ flowchart TD
     IN(["Desde VISUAL INSPECTION<br/>o PENDING DONOR"]) --> ST_IN["Estado INSTALL"]:::dh
 
     ST_IN --> EMM{"¿Gestión empresarial?<br/>perfil de trabajo,<br/>zero-touch, Knox"}
-    EMM -->|"Sí"| N_EMM["Nota: bloqueo MDM<br/>pedir baja a la empresa"]:::dh
-    N_EMM --> DIS1(["DISMANTLE"]):::reject
+    EMM -->|"Sí"| N_EMM["Nota: bloqueo MDM empresarial<br/>pedir baja a la empresa"]:::dh
+    N_EMM --> PEND_MDM(["DISMANTLE"]):::reject
 
     EMM -->|"No"| BANDEJA["Sacar bandeja: retirar<br/>SIM y SD del donante"]
     BANDEJA --> DONATE["Instalar donate-android<br/>APK sin permisos ni red"]
