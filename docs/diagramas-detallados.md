@@ -89,8 +89,11 @@ flowchart TD
 
     CRIBA -->|"iPhone"| IPH(["Fuera del flujo Android<br/>ver preguntas abiertas"]):::reject
     CRIBA -->|"Móvil de teclas<br/>u otro aparato"| OTRO(["Reclasificar o<br/>DISMANTLE"]):::reject
-    CRIBA -->|"Destrozado: partido,<br/>batería hinchada, mojado"| N_DEST["Nota: daño físico evidente<br/>+ foto"]:::dh
-    N_DEST --> DIS(["DISMANTLE"]):::reject
+    CRIBA -->|"Batería hinchada"| N_BAT["Nota: [BATERIA-HINCHADA]<br/>+ foto"]:::dh
+    N_BAT --> DIS(["DISMANTLE"]):::reject
+
+    CRIBA -->|"Partido, mojado<br/>u otro daño grave"| N_DEST["Nota: [DAÑO-EVIDENTE]<br/>+ foto"]:::dh
+    N_DEST --> DIS
     CRIBA -->|"Móvil o tablet Android"| NEXT(["→ VISUAL INSPECTION"]):::ok
 
     classDef reject fill:#f8d7da,stroke:#b02a37,color:#58151c
