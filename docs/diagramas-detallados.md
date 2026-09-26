@@ -55,8 +55,8 @@ stateDiagram-v2
     INSTALL --> DIS: obsoleto,<br/>zero-touch, Knox
     INSTALL --> PD: pide una contraseña<br/>que no tenemos
 
-    TEST --> PACK: según resultados,<br/>se decide después
-    TEST --> REPAIR: según resultados,<br/>se decide después
+    TEST --> PACK: apto según<br/>criterios de entrega
+    TEST --> REPAIR: requiere<br/>reparación
 
     REPAIR --> [*]: fuera de alcance<br/>por ahora
 
@@ -354,7 +354,7 @@ recorrido completo, la reanudación y el envío a DeviceHub.
 
 ```mermaid
 flowchart TD
-    IN(["Desde TEST<br/>sin fallos"]) --> ST_P["Estado PACKAGING"]:::dh
+    IN(["Desde TEST<br/>apto para entrega"]) --> ST_P["Estado PACKAGING"]:::dh
 
     ST_P --> RESET2["Reset II<br/>factory reset desde Ajustes:<br/>borra usuario de test y WiFi"]
     RESET2 --> ASIST{"¿Arranque correcto en asistente<br/>inicial sin pedir cuenta?"}
