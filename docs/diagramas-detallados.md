@@ -53,6 +53,7 @@ stateDiagram-v2
 
     INSTALL --> TEST: reset hecho,<br/>usuario de test configurado
     INSTALL --> DIS: obsoleto,<br/>zero-touch, Knox
+    INSTALL --> PD: pide una contraseña<br/>que no tenemos
 
     TEST --> PACK: según resultados,<br/>se decide después
     TEST --> REPAIR: según resultados,<br/>se decide después
@@ -60,6 +61,8 @@ stateDiagram-v2
     REPAIR --> [*]: fuera de alcance<br/>por ahora
 
     PACK --> DON: entregado a receptor
+    PACK --> TEST: tras el reset II no arranca<br/>en asistente o pide cuenta
+
     DON --> USE: receptor lo usa
     USE --> VI: devolución o<br/>cambio de persona
     USE --> DIS: se rompe sin arreglo
