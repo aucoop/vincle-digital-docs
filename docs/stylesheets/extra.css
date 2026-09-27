@@ -65,6 +65,32 @@
   background: color-mix(in srgb, var(--md-default-bg-color) 94%, var(--md-primary-fg-color));
 }
 
+/* Mermaid's dark theme can override classDef label colors. */
+.md-typeset .mermaid .reject :is(.label, .nodeLabel, p, span, text, tspan) {
+  color: #58151c !important;
+  fill: #58151c !important;
+}
+
+.md-typeset .mermaid .ok :is(.label, .nodeLabel, p, span, text, tspan) {
+  color: #0a3622 !important;
+  fill: #0a3622 !important;
+}
+
+.md-typeset .mermaid .checkpoint :is(.label, .nodeLabel, p, span, text, tspan) {
+  color: #664d03 !important;
+  fill: #664d03 !important;
+}
+
+.md-typeset .mermaid .dh :is(.label, .nodeLabel, p, span, text, tspan) {
+  color: #052c65 !important;
+  fill: #052c65 !important;
+}
+
+.md-typeset .mermaid .newstate :is(.label, .nodeLabel, p, span, text, tspan) {
+  color: #2f1c6a !important;
+  fill: #2f1c6a !important;
+}
+
 @media screen and (max-width: 44.984375em) {
   .process-grid {
     grid-template-columns: 1fr;
