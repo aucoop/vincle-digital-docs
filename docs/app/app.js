@@ -12,6 +12,7 @@
 const CLAVE = 'vincle.guia.moviles.v1';
 const CLAVE_DEVICEHUB = 'vincle.guia.devicehub.base.v1';
 const DEVICEHUB_POR_DEFECTO = 'https://lab6.ereuse.org';
+const WORKBENCH_ANDROID_URL = 'https://apps.sergiogimenez.com/workbench';
 const DIGITOS = 6;
 const DIA = 24 * 3600 * 1000;
 
@@ -105,8 +106,9 @@ const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
 // pero DeviceHub guarda el custom_id numérico sin esos ceros iniciales.
 const customIdDeviceHub = (id) => String(id).replace(/^0+(?=\d)/, '');
 const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/`;
+const urlComponentesDeviceHub = (m) => `${urlDispositivoDeviceHub(m)}#components`;
 
-function htmlAccesoDeviceHub({ id, url, texto, qr, primario = false }) {
+function htmlAccesoAdaptado({ id, url, texto, qr, primario = false }) {
   return `<div class="acceso-devicehub">
     <a id="${esc(id)}" class="boton${primario ? ' primario' : ''}" href="${esc(url)}">${esc(texto)}</a>
     <div class="qr-devicehub" data-qr-url="${esc(url)}" data-qr-label="${esc(qr)}">
@@ -321,7 +323,7 @@ function htmlCambio(m) {
   return `<div class="cambio-dh">
     <span>Cambia el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
     ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">Copiar nota</button>` : ''}
-    ${htmlAccesoDeviceHub({ id: 'abrir-estado-devicehub', url, texto: 'Abrir este móvil en DeviceHub', qr: 'Escanea para abrir este móvil en DeviceHub' })}
+    ${htmlAccesoAdaptado({ id: 'abrir-estado-devicehub', url, texto: 'Abrir este móvil en DeviceHub', qr: 'Escanea para abrir este móvil en DeviceHub' })}
     <span class="sub">En un móvil, usa el enlace; en un ordenador, escanea el QR. Después abre «Change state» y elige ${esc(nombre)}.</span>
     <label class="check"><input type="checkbox" id="dh-hecho"> Hecho en DeviceHub</label>
   </div>`;
@@ -358,13 +360,24 @@ function htmlPaso(m, actual, n) {
     const webform = actual === 'inbox.scan' ? `<div class="devicehub-webform">
       <strong>Alta y fotos en DeviceHub</strong>
       <p>Usa DH-Scan o abre el formulario web. Si no hay una sesión iniciada, DeviceHub pedirá usuario y contraseña.</p>
-      ${htmlAccesoDeviceHub({ id: 'abrir-webform-devicehub', url: urlAltaDeviceHub(), texto: 'Abrir formulario de DeviceHub', qr: 'Escanea para abrir el formulario en el móvil', primario: true })}
+      ${htmlAccesoAdaptado({ id: 'abrir-webform-devicehub', url: urlAltaDeviceHub(), texto: 'Abrir formulario de DeviceHub', qr: 'Escanea para abrir el formulario en el móvil', primario: true })}
       <span class="sub">En un móvil, usa el enlace directo; en un ordenador, escanea el QR.</span>
       <button id="configurar-devicehub-paso" class="enlace-boton" type="button">Cambiar servidor (${esc(baseDeviceHub)})</button>
     </div>` : '';
+    const instalarWorkbench = actual === 'install.wb' ? `<div class="recurso-externo">
+      <strong>Descargar Workbench Android</strong>
+      <p>Instala en el dispositivo la última APK publicada por eReuse.</p>
+      ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: 'Descargar Workbench Android', qr: 'Escanea con el dispositivo para descargar Workbench Android', primario: true })}
+      <span class="sub">En un móvil, usa el enlace directo; en un ordenador, escanea el QR con el dispositivo.</span>
+    </div>` : '';
+    const verInventario = actual === 'install.inventario' ? `<div class="recurso-externo">
+      <strong>Inventario en DeviceHub</strong>
+      <p>Después de enviar el snapshot, abre Componentes para comprobar la información nueva.</p>
+      <a id="ver-componentes-devicehub" class="boton" href="${esc(urlComponentesDeviceHub(m))}">Ver componentes en DeviceHub</a>
+    </div>` : '';
     return `${htmlCambio(m)}${htmlMarcas(n)}
       <p class="pregunta">${esc(n.texto)}</p>${ayuda}
-      ${webform}
+      ${webform}${instalarWorkbench}${verInventario}
       ${lista ? `<ul class="checklist">${lista}</ul>` : ''}
       <div class="opciones"><button class="primario" id="hecho" ${bloqueado || !completo ? 'disabled' : ''}>
         <span>Hecho</span>${htmlDestino(actual, { destino: n.siguiente })}</button></div>`;

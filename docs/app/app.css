@@ -207,13 +207,13 @@ textarea { width: 100%; resize: vertical; }
 .paso .pregunta { font-size: 1.2rem; font-weight: 650; margin: 0; }
 .paso .ayuda { margin: 0; color: var(--suave); font-size: .92rem; }
 .paso .marcas { display: flex; gap: 6px; flex-wrap: wrap; }
-.devicehub-webform {
+.devicehub-webform, .recurso-externo {
   padding: 12px; display: grid; gap: 8px; border: 1px solid var(--dh-borde);
   border-radius: 10px; background: var(--dh-fondo); color: var(--dh-texto);
 }
-.devicehub-webform p { margin: 0; font-size: .9rem; }
-.devicehub-webform .sub { font-size: .8rem; }
-.devicehub-webform .boton { text-decoration: none; }
+.devicehub-webform p, .recurso-externo p { margin: 0; font-size: .9rem; }
+.devicehub-webform .sub, .recurso-externo .sub { font-size: .8rem; }
+.devicehub-webform .boton, .recurso-externo .boton { text-decoration: none; }
 .acceso-devicehub { display: grid; gap: 8px; }
 .qr-devicehub {
   display: none; justify-items: center; gap: 8px; padding: 12px;

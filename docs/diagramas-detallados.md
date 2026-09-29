@@ -263,7 +263,8 @@ flowchart TD
 propio Android: la app no puede hacer el reset ni saltarse nada. No pide
 permisos ni tiene acceso a red, así que se puede instalar en un móvil que aún
 tiene datos del donante. workbench-android, en cambio, se instala después del
-reset.
+reset. La última APK publicada se descarga desde
+[`apps.sergiogimenez.com/workbench`](https://apps.sergiogimenez.com/workbench).
 
 El orden importa: cuentas fuera **antes** del reset. Si se resetea con la cuenta
 puesta, el FRP aparece y solo el propietario puede quitarlo. No se intenta

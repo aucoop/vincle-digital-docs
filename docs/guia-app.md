@@ -43,6 +43,9 @@ en el teléfono, sin compartirla con ningún servicio externo.
   en DeviceHub, ofrece un enlace directo a la ficha del móvil y no deja seguir
   hasta marcarlo como hecho. Las salidas a DISMANTLE piden la nota con el
   motivo del catálogo, lista para copiar.
+- **Instalación y comprobación.** En el paso de Workbench Android ofrece la
+  descarga directa en móvil o un QR en ordenador. Después del snapshot permite
+  abrir directamente **Componentes** en DeviceHub para comprobar el inventario.
 - **Plazos.** Las esperas del donante muestran los días que quedan, y la lista
   permite ver los móviles ordenados por vencimiento.
 - **Historial.** Cada paso queda registrado con la hora; se puede deshacer el
