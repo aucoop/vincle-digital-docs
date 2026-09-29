@@ -21,15 +21,18 @@ claro u oscuro a la configuración del teléfono.
    **INBOX** y la pantalla indicará qué hacer a continuación, comenzando por
    pegar la etiqueta al móvil.
 
-La guía es una lista de trabajo y un historial local. **No ejecuta acciones en
-el teléfono ni modifica DeviceHub:** cuando sea necesario, mostrará el cambio
-de estado o la nota que el operador debe registrar manualmente.
+La guía es una lista de trabajo y un historial local. No ejecuta acciones en
+el teléfono. Con un token API configurado puede comprobar y avanzar los estados
+de DeviceHub cuando el operador pulsa el botón correspondiente; nunca los
+cambia silenciosamente.
 
 En el paso de alta y fotos puede abrir el WebForm de DeviceHub. La URL base se
 configura desde el botón ⚙ de la cabecera, desde el propio paso o en
 **Conexión con DeviceHub**. Por defecto es
-`https://lab6.ereuse.org`. La guía no guarda credenciales: el inicio de sesión
-y su cookie pertenecen siempre a DeviceHub. El enlace directo está disponible
+`https://lab6.ereuse.org`. Para cambiar estados guarda el token API únicamente
+en el almacenamiento local del navegador y no lo incluye en las copias de
+seguridad. El inicio de sesión y su cookie siguen perteneciendo a DeviceHub.
+El enlace directo está disponible
 en móvil y ordenador; en ordenador también genera localmente un QR para abrir
 la misma dirección en el teléfono, sin compartirla con ningún servicio externo.
 
@@ -39,10 +42,10 @@ la misma dirección en el teléfono, sin compartirla con ningún servicio extern
   resaltado y los ya recorridos marcados.
 - **Paso actual.** La acción o la pregunta del diagrama detallado, con su
   criterio y un botón por salida. Las salidas que cambian de estado lo indican.
-- **Cambios de estado.** Al entrar en un estado, recuerda que hay que cambiarlo
-  en DeviceHub, ofrece un enlace directo a la ficha del móvil y no deja seguir
-  hasta marcarlo como hecho. Las salidas a DISMANTLE piden la nota con el
-  motivo del catálogo, lista para copiar.
+- **Cambios de estado.** Al entrar en un estado, consulta primero DeviceHub y
+  solo lo actualiza si coincide con el estado anterior esperado. También
+  conserva el enlace directo y la confirmación manual. Las salidas a DISMANTLE
+  envían la nota con el motivo del catálogo junto con el cambio.
 - **Instalación y comprobación.** En el paso de Workbench Android ofrece la
   descarga directa en móvil o un QR en ordenador. Después del snapshot permite
   abrir directamente **Componentes** en DeviceHub para comprobar el inventario.
@@ -58,8 +61,9 @@ la misma dirección en el teléfono, sin compartirla con ningún servicio extern
 
 - Los datos se guardan solo en el navegador del móvil que se usa. Conviene
   exportar una copia de vez en cuando, desde la lista.
-- No escribe directamente en DeviceHub: abre su WebForm para el alta y las
-  fotos; los cambios de estado y las notas se hacen a mano.
+- La conexión API necesita un token y que DeviceHub permita el origen web de
+  esta guía mediante CORS. Sin conexión o sin token se conservan los enlaces y
+  la confirmación manual.
 - El escáner de QR usa la API `BarcodeDetector`, que tiene Chrome en Android.
   Donde no existe, el número se teclea.
 

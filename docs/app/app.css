@@ -247,6 +247,11 @@ textarea { width: 100%; resize: vertical; }
 .cambio-dh .sub { font-size: .8rem; }
 .cambio-dh .acceso-devicehub { justify-items: start; }
 .cambio-dh .qr-devicehub { justify-self: stretch; }
+.acciones-devicehub { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.acciones-devicehub button { width: 100%; }
+@media (max-width: 420px) {
+  .acciones-devicehub { grid-template-columns: 1fr; }
+}
 .plazo { font-size: .92rem; }
 
 .fin { text-align: center; padding: 12px 0; }

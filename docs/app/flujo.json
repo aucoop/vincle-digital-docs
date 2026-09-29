@@ -62,6 +62,7 @@
   {
    "id": "IN_USE",
    "nombre": "IN USE",
+   "devicehub": "IN USE",
    "resumen": "Periodo de uso",
    "nuevo": true,
    "inicio": "use.chk",

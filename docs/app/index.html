@@ -25,8 +25,8 @@
   <main id="vista-lista">
     <section id="introduccion" class="introduccion">
       <h2>¿Para qué sirve?</h2>
-      <p>Esta guía te dice qué hacer y decidir con cada móvil durante el reacondicionado. Guarda el recorrido y te avisa cuándo debes cambiar el estado manualmente en DeviceHub.</p>
-      <p><strong>No modifica DeviceHub ni el teléfono automáticamente.</strong></p>
+      <p>Esta guía te dice qué hacer y decidir con cada móvil durante el reacondicionado. Guarda el recorrido y puede avanzar sus estados en DeviceHub.</p>
+      <p><strong>Solo modifica DeviceHub cuando confirmas un cambio de estado.</strong> No ejecuta acciones en el teléfono.</p>
       <h2>Empieza con un móvil</h2>
       <ol>
         <li>Toma la siguiente etiqueta preimpresa de la plancha.</li>
@@ -63,9 +63,10 @@
 
     <details class="datos integracion-config">
       <summary>Conexión con DeviceHub</summary>
-      <p class="pista">La guía abre el formulario de DeviceHub en el mismo navegador. DeviceHub gestiona el usuario, la contraseña y su cookie de sesión.</p>
+      <p class="pista">La guía usa un token API para comprobar y avanzar estados. Los formularios y fichas siguen abriéndose con la sesión normal de DeviceHub.</p>
       <p class="pista">Servidor actual: <code id="devicehub-base-actual">https://lab6.ereuse.org</code></p>
-      <button id="configurar-devicehub" type="button">Cambiar servidor</button>
+      <p class="pista">API: <strong id="devicehub-token-estado">Sin token: cambios manuales</strong></p>
+      <button id="configurar-devicehub" type="button">Configurar conexión</button>
     </details>
 
     <details class="datos">
@@ -138,7 +139,10 @@
       <label for="devicehub-base">URL base</label>
       <input id="devicehub-base" type="url" inputmode="url" autocomplete="url" required
              placeholder="https://lab6.ereuse.org">
-      <p class="pista">Solo se guarda esta URL. El usuario y la contraseña se introducen directamente en DeviceHub.</p>
+      <label for="devicehub-token">Token API</label>
+      <input id="devicehub-token" type="password" autocomplete="off"
+             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+      <p class="pista">Crea o copia el token desde <a id="devicehub-tokens-enlace" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a>. Se guarda únicamente en este navegador y nunca se incluye en las copias de seguridad. Déjalo vacío para usar solo los enlaces manuales.</p>
       <p id="devicehub-error" class="error-form" role="alert" hidden></p>
       <div class="fila">
         <button id="devicehub-cancelar" type="button">Cancelar</button>

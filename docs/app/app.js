@@ -11,6 +11,7 @@
 
 const CLAVE = 'vincle.guia.moviles.v1';
 const CLAVE_DEVICEHUB = 'vincle.guia.devicehub.base.v1';
+const CLAVE_DEVICEHUB_TOKEN = 'vincle.guia.devicehub.token.v1';
 const DEVICEHUB_POR_DEFECTO = 'https://lab6.ereuse.org';
 const WORKBENCH_ANDROID_URL = 'https://apps.sergiogimenez.com/workbench';
 const DIGITOS = 6;
@@ -21,6 +22,7 @@ let estados = {};
 let moviles = {};
 let avisoCarga;
 let baseDeviceHub = DEVICEHUB_POR_DEFECTO;
+let tokenDeviceHub = '';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -99,6 +101,7 @@ function cargarBaseDeviceHub() {
   } catch {
     baseDeviceHub = DEVICEHUB_POR_DEFECTO;
   }
+  tokenDeviceHub = localStorage.getItem(CLAVE_DEVICEHUB_TOKEN) || '';
 }
 
 const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
@@ -108,6 +111,83 @@ const customIdDeviceHub = (id) => String(id).replace(/^0+(?=\d)/, '');
 const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/`;
 const urlComponentesDeviceHub = (m) => `${urlDispositivoDeviceHub(m)}#components`;
 const urlPropiedadesDeviceHub = (m) => `${urlDispositivoDeviceHub(m)}#user_properties`;
+const urlTokensDeviceHub = () => `${baseDeviceHub}/user/v1/tokens/`;
+const estadoDeviceHub = (id) => estados[id]?.devicehub ?? id;
+const urlEstadoApiDeviceHub = (m) => `${baseDeviceHub}/api/v1/devices/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/state/`;
+
+async function peticionDeviceHub(m, opciones = {}) {
+  if (!tokenDeviceHub) throw new Error('Configura primero un token API de DeviceHub.');
+  let respuesta;
+  try {
+    respuesta = await fetch(urlEstadoApiDeviceHub(m), {
+      cache: 'no-store',
+      ...opciones,
+      headers: {
+        Authorization: `Bearer ${tokenDeviceHub}`,
+        ...(opciones.body ? { 'Content-Type': 'application/json' } : {}),
+        ...opciones.headers,
+      },
+    });
+  } catch {
+    throw new Error('No se puede conectar con DeviceHub. Comprueba la conexión y el servidor configurado.');
+  }
+  const datos = await respuesta.json().catch(() => ({}));
+  if (!respuesta.ok) {
+    if (respuesta.status === 401) throw new Error('El token de DeviceHub no es válido o está desactivado.');
+    throw new Error(datos.detail || datos.error || `DeviceHub ha respondido ${respuesta.status}.`);
+  }
+  return datos;
+}
+
+function confirmarCambioDeviceHub(m, e, estado) {
+  e.dhHecho = true;
+  e.dhEstado = estado;
+  e.dhT = Date.now();
+  guardar();
+  pintarMovil(m);
+  avisar(`Estado ${estado} confirmado en DeviceHub.`);
+}
+
+async function sincronizarCambioDeviceHub(m, soloComprobar = false) {
+  const e = cambioPendiente(m);
+  if (!e) return;
+  const objetivo = estadoDeviceHub(estadoDe(e.hacia));
+  const anteriorEsperado = estadoDeviceHub(estadoDe(e.desde));
+  const botones = [$('cambiar-estado-devicehub'), $('comprobar-estado-devicehub')].filter(Boolean);
+  botones.forEach((b) => { b.disabled = true; });
+  if ($('dh-api-mensaje')) $('dh-api-mensaje').textContent = 'Comprobando DeviceHub…';
+
+  try {
+    const consulta = await peticionDeviceHub(m);
+    const actual = consulta.current_state;
+    if (actual === objetivo) {
+      confirmarCambioDeviceHub(m, e, objetivo);
+      return;
+    }
+    if (soloComprobar) {
+      throw new Error(actual
+        ? `DeviceHub está en ${actual}; todavía falta cambiarlo a ${objetivo}.`
+        : `El dispositivo todavía no tiene estado en DeviceHub.`);
+    }
+    if (actual !== null && actual !== anteriorEsperado) {
+      throw new Error(`DeviceHub está en ${actual}, pero la guía esperaba ${anteriorEsperado}. Revísalo antes de cambiarlo.`);
+    }
+
+    const actualizado = await peticionDeviceHub(m, {
+      method: 'POST',
+      body: JSON.stringify({
+        state: objetivo,
+        expected_previous_state: actual,
+        comment: e.nota || null,
+      }),
+    });
+    confirmarCambioDeviceHub(m, e, actualizado.current_state);
+  } catch (err) {
+    if ($('dh-api-mensaje')) $('dh-api-mensaje').textContent = err.message;
+    botones.forEach((b) => { b.disabled = false; });
+    avisar(err.message);
+  }
+}
 
 function htmlAccesoAdaptado({ id, url, texto, qr, primario = false }) {
   return `<div class="acceso-devicehub">
@@ -122,6 +202,8 @@ function htmlAccesoAdaptado({ id, url, texto, qr, primario = false }) {
 
 function abrirConfiguracionDeviceHub() {
   $('devicehub-base').value = baseDeviceHub;
+  $('devicehub-token').value = tokenDeviceHub;
+  $('devicehub-tokens-enlace').href = urlTokensDeviceHub();
   $('devicehub-error').hidden = true;
   $('dlg-devicehub').showModal();
   $('devicehub-base').focus();
@@ -250,6 +332,7 @@ function pintarLista() {
     : 'No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.';
   $('lista-vacia').hidden = lista.length > 0;
   $('devicehub-base-actual').textContent = baseDeviceHub;
+  $('devicehub-token-estado').textContent = tokenDeviceHub ? 'Token configurado' : 'Sin token: cambios manuales';
 }
 
 // --- Móvil ------------------------------------------------------------------
@@ -322,11 +405,18 @@ function htmlCambio(m) {
   const nombre = estados[estadoDe(e.hacia)].nombre;
   const url = urlDispositivoDeviceHub(m);
   return `<div class="cambio-dh">
-    <span>Cambia el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
+    <span>Cambiar el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
     ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">Copiar nota</button>` : ''}
+    ${tokenDeviceHub ? `<div class="acciones-devicehub">
+      <button type="button" id="cambiar-estado-devicehub" class="primario">Cambiar a ${esc(nombre)}</button>
+      <button type="button" id="comprobar-estado-devicehub">Solo comprobar</button>
+    </div>
+    <span id="dh-api-mensaje" class="sub" role="status">La guía comprobará primero el estado actual para evitar sobrescribir otro cambio.</span>`
+    : `<p class="sub">Configura un token API para hacerlo desde la guía, o utiliza el enlace manual.</p>
+      <button type="button" id="configurar-devicehub-paso">Configurar conexión API</button>`}
     ${htmlAccesoAdaptado({ id: 'abrir-estado-devicehub', url, texto: 'Abrir este móvil en DeviceHub', qr: 'Escanea para abrir este móvil en DeviceHub' })}
-    <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR para continuar en el móvil. Después abre «Change state» y elige ${esc(nombre)}.</span>
-    <label class="check"><input type="checkbox" id="dh-hecho"> Hecho en DeviceHub</label>
+    <span class="sub">Alternativa manual: abre «Change state», elige ${esc(nombre)} y vuelve aquí.</span>
+    <label class="check"><input type="checkbox" id="dh-hecho"> Ya lo he cambiado manualmente</label>
   </div>`;
 }
 
@@ -409,11 +499,17 @@ function htmlPerdido() {
 function enlazarPaso(m, actual, n) {
   const paso = $('paso');
 
-  $('dh-hecho')?.addEventListener('change', () => {
-    cambioPendiente(m).dhHecho = true;
-    guardar();
-    pintarMovil(m);
+  $('dh-hecho')?.addEventListener('change', (ev) => {
+    if (!ev.target.checked) return;
+    if (!confirm('¿Has comprobado el nuevo estado en DeviceHub?')) {
+      ev.target.checked = false;
+      return;
+    }
+    const e = cambioPendiente(m);
+    confirmarCambioDeviceHub(m, e, estadoDeviceHub(estadoDe(e.hacia)));
   });
+  $('cambiar-estado-devicehub')?.addEventListener('click', () => sincronizarCambioDeviceHub(m));
+  $('comprobar-estado-devicehub')?.addEventListener('click', () => sincronizarCambioDeviceHub(m, true));
   $('copiar-nota')?.addEventListener('click', () => copiar(cambioPendiente(m).nota));
   $('configurar-devicehub-paso')?.addEventListener('click', abrirConfiguracionDeviceHub);
 
@@ -638,12 +734,20 @@ async function iniciar() {
     ev.preventDefault();
     try {
       baseDeviceHub = normalizarBaseDeviceHub($('devicehub-base').value);
+      tokenDeviceHub = $('devicehub-token').value.trim();
+      if (tokenDeviceHub && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(tokenDeviceHub)) {
+        throw new Error('el token debe ser un UUID válido');
+      }
       localStorage.setItem(CLAVE_DEVICEHUB, baseDeviceHub);
+      if (tokenDeviceHub) localStorage.setItem(CLAVE_DEVICEHUB_TOKEN, tokenDeviceHub);
+      else localStorage.removeItem(CLAVE_DEVICEHUB_TOKEN);
       $('dlg-devicehub').close();
       $('devicehub-base-actual').textContent = baseDeviceHub;
+      $('devicehub-token-estado').textContent = tokenDeviceHub ? 'Token configurado' : 'Sin token: cambios manuales';
+      $('devicehub-tokens-enlace').href = urlTokensDeviceHub();
       const m = moviles[location.hash.split('/')[2]];
       if (m) pintarMovil(m);
-      avisar('Servidor de DeviceHub guardado.');
+      avisar('Conexión con DeviceHub guardada.');
     } catch (err) {
       $('devicehub-error').textContent = `URL no válida: ${err.message}`;
       $('devicehub-error').hidden = false;

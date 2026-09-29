@@ -69,6 +69,7 @@ estados:
     doc: diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso
   - id: IN_USE
     nombre: IN USE
+    devicehub: IN USE
     resumen: Periodo de uso
     nuevo: true
     inicio: use.chk
