@@ -305,22 +305,8 @@ tiempo y de que cada resultado quede en el snapshot.
 ```mermaid
 flowchart TD
     IN(["Desde INSTALL"]) --> ST_T["Estado TEST"]:::dh
-    ST_T --> WB["workbench-android<br/>ya instalado, mismo custom_id"]
-
-    WB --> T1["Pantalla, táctil, multitáctil"]
-    T1 --> T2["Sensores, vibración, linterna"]
-    T2 --> T3["Carga"]
-    T3 --> T4["WiFi: conectividad real"]
-    T4 --> T5["Audio: altavoz, auricular,<br/>micrófono"]
-    T5 --> T6["Cámaras"]
-    T6 --> T7["Botones, Bluetooth, GPS"]
-    T7 --> HASSIM{"¿Tiene ranura SIM?"}
-    HASSIM -->|"Sí"| T8["SIM de pruebas:<br/>red, llamada, datos.<br/>La app pide retirarla al acabar"]
-    HASSIM -->|"No, tablet WiFi"| T9
-    T8 --> T9["Batería: descarga<br/>durante un tiempo fijo"]
-
-    T9 --> SNAP["Snapshot workbench-android<br/>resultado y nota de cada test"]:::checkpoint
-    SNAP --> PROPS["Resultados guardados<br/>en DeviceHub"]:::dh
+    ST_T --> WB["Completar todos los tests<br/>en Workbench Android<br/>y enviar el snapshot"]:::checkpoint
+    WB --> PROPS["Resultados hwtest:*<br/>guardados en Propiedades<br/>de DeviceHub"]:::dh
     PROPS --> NEXT(["Se decide más adelante:<br/>PACKAGING o REPAIR"]):::ok
 
     classDef ok fill:#d1e7dd,stroke:#146c43,color:#0a3622
@@ -328,9 +314,11 @@ flowchart TD
     classDef dh fill:#cfe2ff,stroke:#0a58ca,color:#052c65
 ```
 
-Se pasan siempre todos los tests, aunque alguno falle. Los resultados quedan en
-DeviceHub y la decisión de qué hacer con el móvil (PACKAGING o REPAIR) se toma
-más adelante, fuera de este flujo.
+Workbench guía todas las pruebas —incluidas SIM y batería cuando corresponda—,
+registra `PASS`, `FAIL` o `SKIP` y envía el snapshot. La guía del taller solo
+confirma que se ha completado ese recorrido, sin duplicarlo como checklist.
+Los resultados quedan en DeviceHub y la decisión de qué hacer con el móvil
+(PACKAGING o REPAIR) se toma después.
 
 ### Qué hace workbench-android
 

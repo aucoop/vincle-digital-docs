@@ -461,47 +461,9 @@ nodos:
   test.wb:
     estado: TEST
     tipo: accion
-    texto: Pasar los tests de workbench-android (mismo custom_id)
-    ayuda: Se pasan siempre todos, aunque alguno falle.
-    checklist:
-      - Pantalla, táctil, multitáctil
-      - Sensores, vibración, linterna
-      - Carga
-      - "WiFi: conectividad real"
-      - Audio (altavoz, auricular, micrófono)
-      - Cámaras
-      - Botones, Bluetooth, GPS
-    siguiente: test.sim
-
-  test.sim:
-    estado: TEST
-    tipo: pregunta
-    texto: ¿Tiene ranura SIM?
-    opciones:
-      - texto: "Sí"
-        destino: test.simtest
-      - texto: No, tablet WiFi
-        destino: test.bateria
-
-  test.simtest:
-    estado: TEST
-    tipo: accion
-    texto: "SIM de pruebas: red, llamada y datos"
-    ayuda: La app pide retirar la SIM al acabar.
-    siguiente: test.bateria
-
-  test.bateria:
-    estado: TEST
-    tipo: accion
-    texto: "Batería: descarga durante un tiempo fijo (15, 30 o 60 min)"
-    siguiente: test.snapshot
-
-  test.snapshot:
-    estado: TEST
-    tipo: accion
     marca: checkpoint
-    texto: Snapshot de workbench-android con el resultado y la nota de cada test
-    ayuda: Los resultados quedan en DeviceHub como propiedades hwtest:<id>.
+    texto: Completar todos los tests en Workbench Android y enviar el snapshot
+    ayuda: La app guía las pruebas, registra PASS, FAIL o SKIP y guarda las notas. Se pasan siempre todas, aunque alguna falle.
     siguiente: test.decision
 
   test.decision:

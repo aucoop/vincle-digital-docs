@@ -107,6 +107,7 @@ const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
 const customIdDeviceHub = (id) => String(id).replace(/^0+(?=\d)/, '');
 const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/`;
 const urlComponentesDeviceHub = (m) => `${urlDispositivoDeviceHub(m)}#components`;
+const urlPropiedadesDeviceHub = (m) => `${urlDispositivoDeviceHub(m)}#user_properties`;
 
 function htmlAccesoAdaptado({ id, url, texto, qr, primario = false }) {
   return `<div class="acceso-devicehub">
@@ -375,9 +376,14 @@ function htmlPaso(m, actual, n) {
       <p>Después de enviar el snapshot, abre Componentes para comprobar la información nueva.</p>
       <a id="ver-componentes-devicehub" class="boton" href="${esc(urlComponentesDeviceHub(m))}">Ver componentes en DeviceHub</a>
     </div>` : '';
+    const verResultados = actual === 'test.wb' ? `<div class="recurso-externo">
+      <strong>Resultados en DeviceHub</strong>
+      <p>Después de enviar el snapshot, abre Propiedades para revisar los resultados <code>hwtest:*</code>.</p>
+      <a id="ver-resultados-devicehub" class="boton" href="${esc(urlPropiedadesDeviceHub(m))}">Ver resultados en DeviceHub</a>
+    </div>` : '';
     return `${htmlCambio(m)}${htmlMarcas(n)}
       <p class="pregunta">${esc(n.texto)}</p>${ayuda}
-      ${webform}${instalarWorkbench}${verInventario}
+      ${webform}${instalarWorkbench}${verInventario}${verResultados}
       ${lista ? `<ul class="checklist">${lista}</ul>` : ''}
       <div class="opciones"><button class="primario" id="hecho" ${bloqueado || !completo ? 'disabled' : ''}>
         <span>Hecho</span>${htmlDestino(actual, { destino: n.siguiente })}</button></div>`;

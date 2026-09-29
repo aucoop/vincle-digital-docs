@@ -46,6 +46,9 @@ en el teléfono, sin compartirla con ningún servicio externo.
 - **Instalación y comprobación.** En el paso de Workbench Android ofrece la
   descarga directa en móvil o un QR en ordenador. Después del snapshot permite
   abrir directamente **Componentes** en DeviceHub para comprobar el inventario.
+- **Tests sin duplicar.** Workbench Android guía las pruebas y envía sus
+  resultados. La guía solo pide completar ese recorrido y enlaza directamente
+  a **Propiedades** en DeviceHub para revisar los valores `hwtest:*`.
 - **Plazos.** Las esperas del donante muestran los días que quedan, y la lista
   permite ver los móviles ordenados por vencimiento.
 - **Historial.** Cada paso queda registrado con la hora; se puede deshacer el
