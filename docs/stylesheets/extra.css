@@ -19,6 +19,48 @@
   box-shadow: none;
 }
 
+/* Acceso a la guía (PWA) desde la cabecera; lo añade javascripts/acceso-guia.js. */
+.acceso-guia {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0.4rem;
+  padding: 0.25rem 0.8rem 0.25rem 0.3rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #323232;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-header .acceso-guia:hover,
+.md-header .acceso-guia:focus-visible {
+  color: #323232;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.25);
+}
+
+.acceso-guia img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+@media screen and (max-width: 44.984375em) {
+  .acceso-guia {
+    padding: 0.25rem;
+  }
+
+  .acceso-guia span {
+    display: none;
+  }
+}
+
 .md-main__inner {
   margin-top: 1.4rem;
 }
