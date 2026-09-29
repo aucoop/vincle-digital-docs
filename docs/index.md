@@ -20,7 +20,7 @@ móviles Android con trazabilidad en DeviceHub.
 <div class="process-card" markdown>
 ### 01 · Registrar
 
-Etiqueta, fotos y primer alta mediante DH-scan. Cada móvil recibe un
+Etiqueta, fotos y primer alta mediante DH-scan o el WebForm de DeviceHub. Cada móvil recibe un
 `custom_id` que lo acompaña durante todo el proceso.
 </div>
 
@@ -50,16 +50,21 @@ inspección visual.
 ## Recorrido resumido
 
 ```mermaid
-flowchart LR
-    A[Recepción] --> B[Inspección]
-    B --> C[Instalación]
-    C --> D[Tests]
-    D --> E[Preparación]
-    E --> F[Donación]
-    F --> G[En uso]
+flowchart TD
+    A["Recepción<br/>INBOX"] --> B["Inspección<br/>VISUAL INSPECTION"]
+    B --> C["Instalación<br/>INSTALL"]
+    C --> D["Tests<br/>TEST"]
+    D --> E["Preparación<br/>PACKAGING"]
+    E --> F["Donación"]
+    F --> G["En uso"]
     G --> B
-    B -. no apto .-> H[Reciclaje]
-    D -. no apto .-> H
+    B -. "bloqueado" .-> P["Espera del donante<br/>PENDING DONOR"]
+    C -. "contraseña o MDM" .-> P
+    P -. "acceso recuperado" .-> C
+    D -. "no apto" .-> R["Reparación<br/>REPAIR"]
+    R -. "reparado" .-> D
+    B -. "no arranca" .-> H["Reciclaje<br/>DISMANTLE"]
+    R -. "no reparable" .-> H
 ```
 
 !!! info "Documento vivo"
