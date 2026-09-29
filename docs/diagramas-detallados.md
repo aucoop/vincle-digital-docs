@@ -48,12 +48,12 @@ stateDiagram-v2
     VI --> PD: bloqueado con PIN<br/>o FRP
     VI --> DIS: no carga<br/>o no arranca
 
-    PD --> INSTALL: donante da el PIN<br/>o retira la cuenta
+    PD --> INSTALL: se recupera el acceso<br/>o se libera la gestión
     PD --> DIS: sin respuesta en 30 días
 
     INSTALL --> TEST: reset hecho,<br/>usuario de test configurado
-    INSTALL --> DIS: obsoleto,<br/>zero-touch, Knox
-    INSTALL --> PD: pide una contraseña<br/>que no tenemos
+    INSTALL --> DIS: obsoleto
+    INSTALL --> PD: pide una contraseña<br/>o liberar la gestión
 
     TEST --> PACK: apto según<br/>criterios de entrega
     TEST --> REPAIR: requiere<br/>reparación
@@ -62,7 +62,8 @@ stateDiagram-v2
     REPAIR --> DIS: no reparable<br/>o reparación no viable
 
     PACK --> DON: entregado a receptor
-    PACK --> TEST: tras el reset II no arranca<br/>en asistente o pide cuenta
+    PACK --> REPAIR: no arranca<br/>tras el reset II
+    PACK --> PD: pide la cuenta<br/>anterior (FRP)
 
     DON --> USE: receptor lo usa
     USE --> VI: devolución o<br/>cambio de persona
@@ -81,12 +82,12 @@ dispositivo es apto para PACKAGING.
 
 Es un cribado de pocos segundos por móvil: se etiqueta, se da de alta y se aparta lo que se ve a simple
 vista que no sirve. No se enciende el móvil ni se busca información del modelo:
-en este punto se hace un primer registro en DeviceHub para tener constancia de los móviles que recibimos. 
+en este punto se hace un primer registro en DeviceHub para tener constancia de los móviles que recibimos.
 
 ```mermaid
 flowchart TD
     START(["Móvil recibido"]) --> PEGAR["Pegar la siguiente etiqueta<br/>preimpresa de la plancha"]
-    PEGAR --> SCAN["DH-scan: leer la etiqueta como custom_id,<br/>fotos del móvil y tipo"]:::checkpoint
+    PEGAR --> SCAN["DH-scan o WebForm de DeviceHub:<br/>custom_id, fotos y tipo"]:::checkpoint
     SCAN --> LBL{"¿Tiene etiqueta<br/>del fabricante a la vista?"}
     LBL -->|"Sí"| OCR["DH-scan: barcode u OCR<br/>fabricante, modelo, serial,<br/>product code, GTIN"]:::checkpoint
     LBL -->|"No"| POST
@@ -128,7 +129,7 @@ Queda en DeviceHub al salir de INBOX:
 |---|---|
 | `custom_id` | QR de la etiqueta, leído por DH-scan y enviado en el primer POST |
 | tipo | `DeviceType` de móvil o de tablet de la institución |
-| fotos | DH-scan |
+| fotos | DH-scan o WebForm de DeviceHub |
 | fabricante, modelo, serial, product code, GTIN | Barcode u OCR de la etiqueta, si la hay, como propiedades |
 | estado `INBOX` | Automático al crear el dispositivo con el primer POST, en el lote Inbox |
 
@@ -173,26 +174,31 @@ flowchart TD
 
 La carga va antes que el arranque porque un móvil sin batería no arranca y no
 se puede distinguir de uno roto. No hace falta cargarlo más: basta con que
-encienda.
+encienda. Si hay un tester USB a mano, se puede usar para comprobar si el móvil
+está consumiendo corriente aunque no muestre ningún icono o LED. El consumo
+concreto depende del modelo, de la batería y de la fase de carga.
 
 Nunca se prueban PINs a ciegas: tras varios intentos el móvil se bloquea por
 tiempo o se borra, y lo segundo deja el FRP armado.
 
 ---
 
-## 4. PENDING DONOR (RELEASE)· Espera de actuación del donante o propietario: PIN o retirar cuenta Google (estado nuevo)
+## 4. PENDING DONOR (RELEASE) · Espera de liberación (estado nuevo)
+
+Espera la actuación del donante, propietario o empresa para obtener un PIN,
+completar la verificación FRP o retirar la gestión empresarial.
 
 
 ```mermaid
 flowchart TD
-    IN(["Desde VISUAL INSPECTION<br/>bloqueado"]) --> ST_PD["Estado PENDING DONOR<br/>nota: fecha límite = hoy + 30 días"]:::dh
+    IN(["Desde VISUAL INSPECTION,<br/>INSTALL o PACKAGING"]) --> ST_PD["Estado PENDING DONOR<br/>nota: fecha límite = hoy + 30 días"]:::dh
     ST_PD --> GUARDAR["Guardar en estantería<br/>de espera, etiquetado"]
-    GUARDAR --> CONTACTO{"¿Hay contacto<br/>del donante?"}
+    GUARDAR --> CONTACTO{"¿Hay contacto del donante,<br/>propietario o empresa?"}
 
     CONTACTO -->|"No"| N_ANON["Nota: donante anónimo"]:::dh
     N_ANON --> DIS1(["DISMANTLE"]):::reject
 
-    CONTACTO -->|"Sí"| MSG["Pedir al donante que permita<br/>desbloquear el dispositivo<br/>o resolver la verificación FRP"]:::dh
+    CONTACTO -->|"Sí"| MSG["Pedir que desbloquee el dispositivo,<br/>complete la verificación FRP<br/>o retire la gestión empresarial"]:::dh
     MSG --> R1{"¿Responde<br/>en 7 días?"}
     R1 -->|"No"| REC["Recordatorio"]:::dh
     REC --> R2{"¿Responde antes<br/>de la fecha límite?"}
@@ -203,13 +209,15 @@ flowchart TD
     R2 -->|"Sí"| QUE{"¿Qué responde?"}
     QUE -->|"Da el PIN"| PIN["Probar PIN para desbloquear el móvil"]
     QUE -->|"FRP activo"| FRP_OK["El donante completa<br/>la verificación con una cuenta<br/>previamente sincronizada"]
+    QUE -->|"Gestión empresarial"| MDM_OK["La empresa retira<br/>MDM, zero-touch o Knox"]
     QUE -->|"No quiere o no puede"| N_NEG["Nota: donante rechaza"]:::dh
     N_NEG --> DIS3(["DISMANTLE"]):::reject
 
     PIN --> FUNC{"¿Desbloquea?"}
     FUNC -->|"No"| MSG
-    FUNC -->|"Sí"| N_OK["Nota: PIN recibido"]:::dh
+    FUNC -->|"Sí"| N_OK["Nota: acceso recuperado"]:::dh
     FRP_OK --> N_OK
+    MDM_OK --> N_OK
     N_OK --> OK(["→ INSTALL"]):::ok
 
     classDef reject fill:#f8d7da,stroke:#b02a37,color:#58151c
@@ -228,7 +236,7 @@ flowchart TD
 
     ST_IN --> EMM{"¿Gestión empresarial?<br/>perfil de trabajo,<br/>zero-touch, Knox"}
     EMM -->|"Sí"| N_EMM["Nota: bloqueo MDM empresarial<br/>pedir baja a la empresa"]:::dh
-    N_EMM --> PEND_MDM(["DISMANTLE"]):::reject
+    N_EMM --> PEND_MDM(["→ PENDING DONOR"]):::newstate
 
     EMM -->|"No"| BANDEJA["Sacar bandeja: retirar<br/>SIM y SD del donante"]
     BANDEJA --> DONATE["Instalar donate-android<br/>APK sin permisos ni red"]
@@ -261,7 +269,8 @@ flowchart TD
 propio Android: la app no puede hacer el reset ni saltarse nada. No pide
 permisos ni tiene acceso a red, así que se puede instalar en un móvil que aún
 tiene datos del donante. workbench-android, en cambio, se instala después del
-reset.
+reset. La última APK publicada se descarga desde
+[`apps.sergiogimenez.com/workbench`](https://apps.sergiogimenez.com/workbench).
 
 El orden importa: cuentas fuera **antes** del reset. Si se resetea con la cuenta
 puesta, el FRP aparece y solo el propietario puede quitarlo. No se intenta
@@ -302,32 +311,22 @@ tiempo y de que cada resultado quede en el snapshot.
 ```mermaid
 flowchart TD
     IN(["Desde INSTALL"]) --> ST_T["Estado TEST"]:::dh
-    ST_T --> WB["workbench-android<br/>ya instalado, mismo custom_id"]
-
-    WB --> T1["Pantalla, táctil, multitáctil"]
-    T1 --> T2["Sensores, vibración, linterna"]
-    T2 --> T3["Carga"]
-    T3 --> T4["WiFi: conectividad real"]
-    T4 --> T5["Audio: altavoz, auricular,<br/>micrófono"]
-    T5 --> T6["Cámaras"]
-    T6 --> T7["Botones, Bluetooth, GPS"]
-    T7 --> HASSIM{"¿Tiene ranura SIM?"}
-    HASSIM -->|"Sí"| T8["SIM de pruebas:<br/>red, llamada, datos.<br/>La app pide retirarla al acabar"]
-    HASSIM -->|"No, tablet WiFi"| T9
-    T8 --> T9["Batería: descarga<br/>durante un tiempo fijo"]
-
-    T9 --> SNAP["Snapshot workbench-android<br/>resultado y nota de cada test"]:::checkpoint
-    SNAP --> PROPS["Resultados guardados<br/>en DeviceHub"]:::dh
-    PROPS --> NEXT(["Se decide más adelante:<br/>PACKAGING o REPAIR"]):::ok
+    ST_T --> WB["Completar todos los tests<br/>en Workbench Android<br/>y enviar el snapshot"]:::checkpoint
+    WB --> PROPS["Resultados hwtest:*<br/>guardados en Propiedades<br/>de DeviceHub"]:::dh
+    PROPS --> DEC{"¿Cumple los criterios<br/>de entrega?"}
+    DEC -->|"Sí"| PACK(["→ PACKAGING"]):::ok
+    DEC -->|"No"| REP(["→ REPAIR"]):::ok
 
     classDef ok fill:#d1e7dd,stroke:#146c43,color:#0a3622
     classDef checkpoint fill:#fff3cd,stroke:#997404,color:#664d03
     classDef dh fill:#cfe2ff,stroke:#0a58ca,color:#052c65
 ```
 
-Se pasan siempre todos los tests, aunque alguno falle. Los resultados quedan en
-DeviceHub y la decisión de qué hacer con el móvil (PACKAGING o REPAIR) se toma
-más adelante, fuera de este flujo.
+Workbench guía todas las pruebas —incluidas SIM y batería cuando corresponda—,
+registra `PASS`, `FAIL` o `SKIP` y envía el snapshot. La guía del taller solo
+confirma que se ha completado ese recorrido, sin duplicarlo como checklist.
+Los resultados quedan en DeviceHub y, según los criterios de entrega, el móvil
+pasa a PACKAGING o REPAIR.
 
 ### Qué hace workbench-android
 
@@ -345,7 +344,7 @@ pasadas, el cambio queda en el log del producto.
 | Audio | `speaker`, `earpiece`, `microphone` | Operario; auricular SKIP si no hay; el micrófono graba y reproduce |
 | Cámaras | `camera_back`, `camera_front` | Operario con la vista previa; SKIP si no hay |
 | Botones | `volume_up`, `volume_down`, `power` | Detectados: teclas de volumen y pantalla apagada |
-| Bluetooth | `bluetooth` | Pass con al menos un dispositivo encontrado, con al menos 1 visible |
+| Bluetooth | `bluetooth` | Pass con al menos un dispositivo visible encontrado |
 | GPS | `gps` | Pass con satélites visibles; la nota lleva satélites y fix |
 | SIM | `sim`, `cellular_network`, `call`, `mobile_data` | SIM lista, registro en red, llamada por el marcador, datos validados. SKIP sin telefonía |
 | Batería | `battery_drain` | Descarga de 15, 30 o 60 min; la caída va en la nota |
@@ -366,7 +365,7 @@ flowchart TD
 
     ST_P --> RESET2["Reset II<br/>factory reset desde Ajustes:<br/>borra usuario de test y WiFi"]
     RESET2 --> ASIST{"¿Arranque correcto en asistente<br/>inicial sin pedir cuenta?"}
-    ASIST -->|"No"| REP(["→ REPAIR"]):::reject
+    ASIST -->|"No"| REP(["→ REPAIR"]):::ok
     ASIST -->|"Sí"| FRP{"¿Pide una cuenta<br/>anterior? FRP"}
 
     FRP -->|"Sí"| PEND(["→ PENDING DONOR"]):::newstate
@@ -458,5 +457,5 @@ flowchart LR
 Decisiones que tomé para poder dibujar y que conviene validar:
 
 1. **iPhone.** Que hacemos con ellos?
-2. **Criterio de obsoleto.** ¿Cuántos años de antigüedad del parche de seguridad hacen obsoleto un móvil? 
+2. **Criterio de obsoleto.** ¿Cuántos años de antigüedad del parche de seguridad hacen obsoleto un móvil?
 3. **Umbral de batería.** "Descarga excesiva en 60 minutos" necesita un número concreto por grado.

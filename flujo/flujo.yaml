@@ -1,0 +1,633 @@
+# Máquina de estados del reacondicionado de móviles.
+#
+# Fuente de verdad del flujo de docs/diagramas-detallados.md. A partir de este
+# fichero, flujo/generar.py produce docs/app/flujo.json (la app guía) y los
+# diagramas Mermaid de cada estado.
+#
+# Nodos:
+#   accion    un paso que se hace y se confirma. Lleva `siguiente`.
+#   pregunta  una decisión. Cada opción lleva `destino`.
+#   fin       el móvil sale del flujo.
+#
+# Campos opcionales:
+#   marca      dh (algo queda en DeviceHub) o checkpoint (DH-scan o workbench)
+#   ayuda      criterio o aviso que se muestra bajo el paso
+#   checklist  subpasos de una acción
+#   plazo      en una pregunta: {dias, desde} con desde = "estado" (entrada en
+#              el estado) o el id del último paso desde el que se cuenta
+#   opciones[].nota    nota que se escribe en DeviceHub al elegir la opción.
+#                      Con `motivo`, la nota empieza por [MOTIVO] (catálogo de
+#                      DISMANTLE)
+#   opciones[].foto    pedir foto como evidencia
+#   opciones[].pausa   el móvil se queda donde está hasta volver a mirarlo
+#   opciones[].vence   la opción solo corresponde una vez vencido el plazo
+
+version: 1
+
+estados:
+  - id: INBOX
+    nombre: INBOX
+    resumen: Etiquetado y cribado rápido
+    inicio: inbox.pegar
+    cambio: automatico
+    doc: diagramas-detallados/#2-inbox-etiquetado-y-cribado-rapido
+  - id: VISUAL_INSPECTION
+    nombre: VISUAL INSPECTION
+    resumen: Carga, arranque y bloqueo
+    inicio: vi.carga
+    doc: diagramas-detallados/#3-visual-inspection-carga-arranque-y-bloqueo
+  - id: PENDING_DONOR
+    nombre: PENDING DONOR
+    resumen: Espera de liberación (PIN, verificación FRP o gestión empresarial)
+    nuevo: true
+    inicio: pd.inicio
+    doc: diagramas-detallados/#4-pending-donor-release-espera-de-liberacion-estado-nuevo
+  - id: INSTALL
+    nombre: INSTALL
+    resumen: Borrado de cuentas, reset y registro
+    inicio: install.emm
+    doc: diagramas-detallados/#5-install-borrado-de-cuentas-reset-y-registro-con-workbench-android
+  - id: TEST
+    nombre: TEST
+    resumen: Diagnóstico con workbench-android
+    inicio: test.wb
+    doc: diagramas-detallados/#6-test-diagnostico-con-workbench-android
+  - id: REPAIR
+    nombre: REPAIR
+    resumen: Reparación y vuelta a TEST
+    inicio: repair.resultado
+    doc: diagramas-detallados/#1-maquina-de-estados
+  - id: PACKAGING
+    nombre: PACKAGING
+    resumen: Preparación para la entrega
+    inicio: pack.reset2
+    doc: diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso
+  - id: DONATION
+    nombre: DONATION
+    resumen: Entrega al receptor
+    inicio: don.nota
+    doc: diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso
+  - id: IN_USE
+    nombre: IN USE
+    devicehub: IN USE
+    resumen: Periodo de uso
+    nuevo: true
+    inicio: use.chk
+    doc: diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso
+  - id: DISMANTLE
+    nombre: DISMANTLE
+    resumen: Piezas o reciclaje
+    inicio: dis.destino
+    salida: true
+    doc: diagramas-detallados/#8-dismantle-catalogo-de-motivos
+
+# Catálogo de motivos de DISMANTLE (sección 8). Toda opción que lleva a
+# DISMANTLE tiene que usar uno de estos.
+motivos:
+  NO-ANDROID: No es un móvil o tablet Android
+  DAÑO-EVIDENTE: Daño físico evidente
+  BATERIA-HINCHADA: Batería hinchada
+  NO-CARGA: No carga
+  NO-ARRANCA: No arranca
+  DONANTE-ANONIMO: Donante anónimo
+  SIN-RESPUESTA: Sin respuesta en 30 días
+  DONANTE-RECHAZA: El donante rechaza
+  OBSOLETO: Obsoleto
+  MDM-EMPRESA: Bloqueo MDM de empresa
+  ROTO-EN-USO: Roto en uso sin arreglo
+  # Falta en el catálogo de la sección 8: REPAIR → DISMANTLE no tiene motivo.
+  NO-REPARABLE: No reparable o reparación no viable
+
+nodos:
+
+  # --- INBOX ---------------------------------------------------------------
+
+  inbox.pegar:
+    estado: INBOX
+    tipo: accion
+    texto: Pegar la siguiente etiqueta preimpresa de la plancha
+    siguiente: inbox.scan
+
+  inbox.scan:
+    estado: INBOX
+    tipo: accion
+    marca: checkpoint
+    texto: Registrar custom_id, fotos y tipo en DeviceHub
+    ayuda: Usa DH-Scan o el formulario web de DeviceHub.
+    siguiente: inbox.etiqueta_fab
+
+  inbox.etiqueta_fab:
+    estado: INBOX
+    tipo: pregunta
+    texto: ¿Tiene etiqueta del fabricante a la vista?
+    opciones:
+      - texto: "Sí"
+        destino: inbox.ocr
+      - texto: "No"
+        destino: inbox.post
+
+  inbox.ocr:
+    estado: INBOX
+    tipo: accion
+    marca: checkpoint
+    texto: "DH-scan: barcode u OCR de la etiqueta del fabricante"
+    checklist: [Fabricante, Modelo, Serial, Product code, GTIN]
+    siguiente: inbox.post
+
+  inbox.post:
+    estado: INBOX
+    tipo: accion
+    marca: dh
+    texto: Primer POST de evidencia a DeviceHub
+    ayuda: El móvil consta como recibido y queda en estado INBOX, en el lote Inbox.
+    siguiente: inbox.criba
+
+  inbox.criba:
+    estado: INBOX
+    tipo: pregunta
+    texto: Cribado a simple vista
+    ayuda: >-
+      Solo lo evidente: no se enciende el móvil ni se busca información del
+      modelo. El resto del hardware se prueba en TEST.
+    opciones:
+      - texto: Móvil o tablet Android
+        destino: vi.carga
+      - texto: Partido, mojado u otro daño grave
+        destino: dis.destino
+        nota: {motivo: DAÑO-EVIDENTE, texto: ""}
+        foto: true
+      - texto: Batería hinchada
+        destino: dis.destino
+        nota: {motivo: BATERIA-HINCHADA, texto: ""}
+        ayuda: Apartar el aparato por riesgo de incendio.
+        foto: true
+      - texto: iPhone
+        destino: inbox.iphone
+      - texto: Móvil de teclas u otro aparato
+        destino: dis.destino
+        nota: {motivo: NO-ANDROID, texto: ""}
+        ayuda: O reclasificarlo si tiene otro uso.
+
+  inbox.iphone:
+    estado: INBOX
+    tipo: fin
+    texto: Fuera del flujo Android
+    ayuda: Pregunta abierta en la documentación, todavía sin decidir qué hacer con los iPhone.
+
+  # --- VISUAL INSPECTION ---------------------------------------------------
+
+  vi.carga:
+    estado: VISUAL_INSPECTION
+    tipo: pregunta
+    texto: Enchufar 15 min. ¿Carga? (icono o LED)
+    ayuda: >-
+      La carga va antes que el arranque: un móvil sin batería no arranca y no
+      se distingue de uno roto. Basta con que encienda. Si tienes un tester
+      USB a mano, úsalo para comprobar si el móvil está consumiendo corriente,
+      aunque no muestre ningún icono o LED.
+    opciones:
+      - texto: "Sí"
+        destino: vi.arranca
+      - texto: "No"
+        destino: vi.otro_cable
+
+  vi.otro_cable:
+    estado: VISUAL_INSPECTION
+    tipo: accion
+    texto: Probar otro cable y limpiar el conector
+    siguiente: vi.carga2
+
+  vi.carga2:
+    estado: VISUAL_INSPECTION
+    tipo: pregunta
+    texto: ¿Carga ahora?
+    opciones:
+      - texto: "Sí"
+        destino: vi.arranca
+      - texto: "No"
+        destino: dis.destino
+        nota: {motivo: NO-CARGA, texto: probado con dos cables}
+
+  vi.arranca:
+    estado: VISUAL_INSPECTION
+    tipo: pregunta
+    texto: ¿Arranca?
+    opciones:
+      - texto: "Sí"
+        destino: vi.pantalla
+      - texto: "No"
+        destino: dis.destino
+        nota: {motivo: NO-ARRANCA, texto: bootloop o pantalla negra}
+
+  vi.pantalla:
+    estado: VISUAL_INSPECTION
+    tipo: pregunta
+    texto: ¿Qué pantalla sale?
+    opciones:
+      - texto: Escritorio sin bloqueo
+        destino: install.emm
+      - texto: Asistente inicial
+        destino: vi.frp
+      - texto: Pantalla de bloqueo
+        destino: vi.pin
+
+  vi.frp:
+    estado: VISUAL_INSPECTION
+    tipo: pregunta
+    texto: ¿Pide la cuenta anterior? (FRP)
+    opciones:
+      - texto: "No"
+        destino: install.emm
+      - texto: "Sí"
+        destino: pd.inicio
+
+  vi.pin:
+    estado: VISUAL_INSPECTION
+    tipo: pregunta
+    texto: ¿El PIN venía con la donación y funciona?
+    ayuda: >-
+      Nunca se prueban PINs a ciegas: tras varios intentos el móvil se bloquea
+      por tiempo o se borra, y lo segundo deja el FRP armado.
+    opciones:
+      - texto: "Sí"
+        destino: install.emm
+      - texto: "No"
+        destino: pd.inicio
+
+  # --- PENDING DONOR -------------------------------------------------------
+
+  pd.inicio:
+    estado: PENDING_DONOR
+    tipo: accion
+    marca: dh
+    texto: "Nota en DeviceHub: fecha límite = hoy + 30 días"
+    siguiente: pd.guardar
+
+  pd.guardar:
+    estado: PENDING_DONOR
+    tipo: accion
+    texto: Guardar en la estantería de espera, etiquetado
+    siguiente: pd.contacto
+
+  pd.contacto:
+    estado: PENDING_DONOR
+    tipo: pregunta
+    texto: ¿Hay contacto del donante, propietario o empresa?
+    opciones:
+      - texto: "Sí"
+        destino: pd.msg
+      - texto: "No"
+        destino: dis.destino
+        nota: {motivo: DONANTE-ANONIMO, texto: ""}
+
+  pd.msg:
+    estado: PENDING_DONOR
+    tipo: accion
+    marca: dh
+    texto: Pedir que desbloquee el dispositivo, complete la verificación FRP o retire la gestión empresarial
+    siguiente: pd.r1
+
+  pd.r1:
+    estado: PENDING_DONOR
+    tipo: pregunta
+    texto: ¿Responde en 7 días?
+    plazo: {dias: 7, desde: pd.msg}
+    opciones:
+      - texto: Sí, ha respondido
+        destino: pd.que
+      - texto: Aún no, seguir esperando
+        destino: pd.r1
+        pausa: true
+      - texto: No, han pasado 7 días
+        destino: pd.rec
+        vence: true
+
+  pd.rec:
+    estado: PENDING_DONOR
+    tipo: accion
+    marca: dh
+    texto: Enviar recordatorio
+    siguiente: pd.r2
+
+  pd.r2:
+    estado: PENDING_DONOR
+    tipo: pregunta
+    texto: ¿Responde antes de la fecha límite?
+    plazo: {dias: 30, desde: estado}
+    opciones:
+      - texto: Sí, ha respondido
+        destino: pd.que
+      - texto: Aún no, seguir esperando
+        destino: pd.r2
+        pausa: true
+      - texto: No, ha vencido el plazo
+        destino: dis.destino
+        vence: true
+        nota: {motivo: SIN-RESPUESTA, texto: ""}
+
+  pd.que:
+    estado: PENDING_DONOR
+    tipo: pregunta
+    texto: ¿Qué responde?
+    opciones:
+      - texto: Da el PIN
+        destino: pd.probar
+      - texto: FRP activo
+        destino: pd.frp
+      - texto: Gestión empresarial
+        destino: pd.mdm
+      - texto: No quiere o no puede
+        destino: dis.destino
+        nota: {motivo: DONANTE-RECHAZA, texto: ""}
+
+  pd.probar:
+    estado: PENDING_DONOR
+    tipo: pregunta
+    texto: Probar el PIN para desbloquear el móvil. ¿Desbloquea?
+    opciones:
+      - texto: "Sí"
+        destino: pd.ok
+      - texto: "No"
+        destino: pd.msg
+
+  pd.frp:
+    estado: PENDING_DONOR
+    tipo: accion
+    texto: El donante completa la verificación con una cuenta previamente sincronizada
+    siguiente: pd.ok
+
+  pd.mdm:
+    estado: PENDING_DONOR
+    tipo: accion
+    texto: La empresa retira MDM, zero-touch o Knox
+    siguiente: pd.ok
+
+  pd.ok:
+    estado: PENDING_DONOR
+    tipo: accion
+    marca: dh
+    texto: "Nota en DeviceHub: acceso recuperado"
+    siguiente: install.emm
+
+  # --- INSTALL -------------------------------------------------------------
+
+  install.emm:
+    estado: INSTALL
+    tipo: pregunta
+    texto: ¿Gestión empresarial? (perfil de trabajo, zero-touch, Knox)
+    opciones:
+      - texto: "No"
+        destino: install.bandeja
+      - texto: "Sí"
+        destino: pd.inicio
+        nota: {motivo: MDM-EMPRESA, texto: bloqueo MDM empresarial, pedir baja a la empresa}
+
+  install.bandeja:
+    estado: INSTALL
+    tipo: accion
+    texto: Sacar la bandeja y retirar la SIM y la SD del donante
+    siguiente: install.donate
+
+  install.donate:
+    estado: INSTALL
+    tipo: accion
+    texto: Instalar donate-android
+    ayuda: APK sin permisos ni red; se puede instalar con datos del donante.
+    siguiente: install.cuentas
+
+  install.cuentas:
+    estado: INSTALL
+    tipo: accion
+    texto: "Con donate-android: eliminar todas las cuentas, Google y fabricante"
+    ayuda: >-
+      Cuentas fuera antes del reset. Si se resetea con la cuenta puesta, aparece
+      el FRP y solo el propietario puede quitarlo. No se intenta ningún bypass.
+    siguiente: install.pass
+
+  install.pass:
+    estado: INSTALL
+    tipo: pregunta
+    texto: ¿Pide una contraseña que no tenemos?
+    opciones:
+      - texto: "No"
+        destino: install.lock
+      - texto: "Sí"
+        destino: pd.inicio
+
+  install.lock:
+    estado: INSTALL
+    tipo: accion
+    texto: Quitar el bloqueo de pantalla
+    siguiente: install.reset
+
+  install.reset:
+    estado: INSTALL
+    tipo: accion
+    texto: Factory reset desde donate-android
+    ayuda: donate-android abre el factory reset del sistema; la app no puede hacerlo por su cuenta.
+    siguiente: install.usuario
+
+  install.usuario:
+    estado: INSTALL
+    tipo: accion
+    texto: Arranca en el asistente inicial. Configurar el usuario de test
+    checklist:
+      - Sin cuenta Google
+      - Idioma y fecha
+      - Sin PIN
+      - Conectar a la WiFi del taller
+    siguiente: install.wb
+
+  install.wb:
+    estado: INSTALL
+    tipo: accion
+    texto: Instalar workbench-android y teclear el número de la etiqueta
+    ayuda: La app comprueba en DeviceHub que el número existe.
+    siguiente: install.inventario
+
+  install.inventario:
+    estado: INSTALL
+    tipo: accion
+    marca: checkpoint
+    texto: Snapshot de inventario con workbench-android
+    ayuda: Modelo, Android, parche de seguridad, RAM, almacenamiento y batería.
+    siguiente: install.obsoleto
+
+  install.obsoleto:
+    estado: INSTALL
+    tipo: pregunta
+    texto: ¿Obsoleto? (parche de seguridad de hace más de X años)
+    ayuda: Falta fijar la X del criterio (pregunta abierta).
+    opciones:
+      - texto: "No"
+        destino: test.wb
+      - texto: "Sí"
+        destino: dis.destino
+        nota: {motivo: OBSOLETO, texto: "modelo, Android y parche: "}
+
+  # --- TEST ----------------------------------------------------------------
+
+  test.wb:
+    estado: TEST
+    tipo: accion
+    marca: checkpoint
+    texto: Completar todos los tests en Workbench Android y enviar el snapshot
+    ayuda: La app guía las pruebas, registra PASS, FAIL o SKIP y guarda las notas. Se pasan siempre todas, aunque alguna falle.
+    siguiente: test.decision
+
+  test.decision:
+    estado: TEST
+    tipo: pregunta
+    texto: ¿Apto para la entrega?
+    ayuda: Se decide con los resultados de workbench-android y los criterios de entrega.
+    opciones:
+      - texto: Pendiente de decidir
+        destino: test.decision
+        pausa: true
+      - texto: Apto según los criterios de entrega
+        destino: pack.reset2
+      - texto: Requiere reparación
+        destino: repair.resultado
+
+  # --- REPAIR --------------------------------------------------------------
+
+  repair.resultado:
+    estado: REPAIR
+    tipo: pregunta
+    texto: ¿Resultado de la reparación?
+    ayuda: >-
+      El procedimiento interno de REPAIR está fuera del alcance de la
+      documentación. Una reparación completada vuelve a TEST.
+    opciones:
+      - texto: En reparación
+        destino: repair.resultado
+        pausa: true
+      - texto: Reparación completada
+        destino: test.wb
+      - texto: No reparable o reparación no viable
+        destino: dis.destino
+        nota: {motivo: NO-REPARABLE, texto: ""}
+
+  # --- PACKAGING -----------------------------------------------------------
+
+  pack.reset2:
+    estado: PACKAGING
+    tipo: accion
+    texto: "Reset II: factory reset desde Ajustes"
+    ayuda: Borra el usuario de test y la WiFi.
+    siguiente: pack.asistente
+
+  pack.asistente:
+    estado: PACKAGING
+    tipo: pregunta
+    texto: ¿Arranca correctamente en el asistente inicial?
+    opciones:
+      - texto: "Sí"
+        destino: pack.frp
+      - texto: "No"
+        destino: repair.resultado
+
+  pack.frp:
+    estado: PACKAGING
+    tipo: pregunta
+    texto: ¿Pide una cuenta anterior? (FRP)
+    opciones:
+      - texto: "No"
+        destino: pack.preparar
+      - texto: "Sí"
+        destino: pd.inicio
+
+  pack.preparar:
+    estado: PACKAGING
+    tipo: accion
+    texto: Preparar el kit
+    checklist:
+      - Apagar con la batería al 50-80 %
+      - Limpieza exterior y protector si procede
+      - "Kit: móvil, cargador, cable, funda, guía de primeros pasos"
+      - Etiqueta QR visible con custom_id
+      - Dejar en la estantería de listos
+    siguiente: pack.receptor
+
+  pack.receptor:
+    estado: PACKAGING
+    tipo: pregunta
+    texto: ¿Hay receptor asignado?
+    opciones:
+      - texto: No, sigue en la estantería
+        destino: pack.receptor
+        pausa: true
+      - texto: "Sí"
+        destino: pack.entrega
+
+  pack.entrega:
+    estado: PACKAGING
+    tipo: accion
+    texto: Entrega al receptor con firma de recepción
+    siguiente: don.nota
+
+  # --- DONATION ------------------------------------------------------------
+
+  don.nota:
+    estado: DONATION
+    tipo: accion
+    marca: dh
+    texto: "Nota en DeviceHub: entidad o receptor"
+    siguiente: don.config
+
+  don.config:
+    estado: DONATION
+    tipo: accion
+    texto: Primera configuración con el receptor, si lo necesita
+    siguiente: use.chk
+
+  # --- IN USE --------------------------------------------------------------
+
+  use.chk:
+    estado: IN_USE
+    tipo: accion
+    marca: checkpoint
+    texto: Pasada de workbench-android, periódica o al volver
+    siguiente: use.evento
+
+  use.evento:
+    estado: IN_USE
+    tipo: pregunta
+    texto: ¿Qué pasa?
+    opciones:
+      - texto: Sigue en uso
+        destino: use.chk
+        pausa: true
+      - texto: Cambio de persona o devolución
+        destino: vi.carga
+      - texto: Se rompe
+        destino: use.reparable
+
+  use.reparable:
+    estado: IN_USE
+    tipo: pregunta
+    texto: ¿Es reparable?
+    opciones:
+      - texto: "Sí"
+        destino: vi.carga
+      - texto: "No"
+        destino: dis.destino
+        nota: {motivo: ROTO-EN-USO, texto: ""}
+
+  # --- DISMANTLE -----------------------------------------------------------
+
+  dis.destino:
+    estado: DISMANTLE
+    tipo: pregunta
+    texto: Destino
+    opciones:
+      - texto: Donante de piezas (pantalla, batería, cámara)
+        destino: dis.fin
+      - texto: Gestor autorizado WEEE
+        destino: dis.fin
+        ayuda: Con borrado certificado si no se pudo resetear.
+
+  dis.fin:
+    estado: DISMANTLE
+    tipo: fin
+    texto: Fuera del circuito

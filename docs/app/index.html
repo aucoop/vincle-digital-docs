@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Guía de reacondicionado</title>
+  <meta name="description" content="Guía paso a paso del flujo de reacondicionado de Vincle Digital">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#323232" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icono-192.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="barra">
+    <button id="volver" class="icono" aria-label="Volver a la lista" hidden>←</button>
+    <img class="logo-ereuse" src="icono.svg" alt="eReuse">
+    <h1 id="titulo">Guía eReuse</h1>
+    <span id="offline" class="offline" hidden>sin conexión</span>
+    <button id="configurar-devicehub-cabecera" class="icono config-devicehub" type="button" aria-label="Configurar servidor de DeviceHub" title="Configurar DeviceHub">⚙</button>
+    <a class="enlace-cabecera" href="../guia-app/" title="Abrir documentación">Ayuda</a>
+  </header>
+
+  <main id="vista-lista">
+    <section id="introduccion" class="introduccion">
+      <h2>¿Para qué sirve?</h2>
+      <p>Esta guía te dice qué hacer y decidir con cada móvil durante el reacondicionado. Guarda el recorrido y puede avanzar sus estados en DeviceHub.</p>
+      <p><strong>Solo modifica DeviceHub cuando confirmas un cambio de estado.</strong> No ejecuta acciones en el teléfono.</p>
+      <h2>Empieza con un móvil</h2>
+      <ol>
+        <li>Toma la siguiente etiqueta preimpresa de la plancha.</li>
+        <li>Escanea su QR o escribe el número impreso bajo el QR.</li>
+        <li>Confirma el alta. La guía empezará en INBOX y te indicará el primer paso.</li>
+      </ol>
+    </section>
+
+    <section class="abrir">
+      <h2>Abrir un móvil</h2>
+      <button id="escanear" class="primario">Escanear QR de la etiqueta</button>
+      <form id="form-id" class="fila">
+        <input id="input-id" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+               placeholder="N.º de etiqueta (ej. 000042)"
+               aria-label="Número de la etiqueta" aria-describedby="ayuda-id">
+        <button type="submit">Abrir móvil</button>
+      </form>
+      <p id="sin-escaner" class="pista aviso-inline" hidden>Este navegador no permite escanear el QR. Escribe el número impreso en la etiqueta.</p>
+      <p id="ayuda-id" class="pista">Si ya existe, continuarás por el último paso. Si es nuevo, empezará en INBOX.</p>
+    </section>
+
+    <section>
+      <div class="cabecera-lista">
+        <h2>Móviles en el taller</h2>
+        <select id="filtro" aria-label="Filtrar">
+          <option value="activos">En curso</option>
+          <option value="plazo">Con plazo</option>
+          <option value="todos">Todos</option>
+        </select>
+      </div>
+      <ul id="lista" class="lista"></ul>
+      <p id="lista-vacia" class="pista" hidden>No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.</p>
+    </section>
+
+    <details class="datos integracion-config">
+      <summary>Conexión con DeviceHub</summary>
+      <p class="pista">La guía usa un token API para comprobar y avanzar estados. Los formularios y fichas siguen abriéndose con la sesión normal de DeviceHub.</p>
+      <p class="pista">Servidor actual: <code id="devicehub-base-actual">https://lab6.ereuse.org</code></p>
+      <p class="pista">API: <strong id="devicehub-token-estado">Sin token: cambios manuales</strong></p>
+      <button id="configurar-devicehub" type="button">Configurar conexión</button>
+    </details>
+
+    <details class="datos">
+      <summary>Copia de seguridad</summary>
+      <p class="pista">Los datos se guardan solo en este navegador. Exporta una copia de vez en cuando.</p>
+      <div class="fila">
+        <button id="exportar">Exportar JSON</button>
+        <label class="boton">Importar JSON<input id="importar" type="file" accept="application/json" hidden></label>
+      </div>
+    </details>
+  </main>
+
+  <main id="vista-movil" hidden>
+    <nav id="mapa" class="mapa" aria-label="Estados de DeviceHub"></nav>
+    <div id="estado-info" class="estado-info"></div>
+    <details id="diagrama-estado" class="diagrama-estado" hidden>
+      <summary><span id="diagrama-titulo">Diagrama de este estado</span></summary>
+      <p class="pista">Desliza para recorrerlo. Toca el diagrama para ampliarlo sin salir de la guía.</p>
+      <div class="diagrama-scroll">
+        <button id="diagrama-ampliar" class="diagrama-ampliar" type="button" aria-label="Ampliar diagrama">
+          <img id="diagrama-imagen" loading="lazy" alt="">
+        </button>
+      </div>
+      <a id="diagrama-doc" class="diagrama-doc" target="_blank" rel="noopener">Abrir explicación completa</a>
+    </details>
+    <ol id="recorrido" class="recorrido"></ol>
+    <section id="paso" class="paso" aria-live="polite"></section>
+    <div class="fila pie">
+      <button id="deshacer">Deshacer último paso</button>
+      <button id="copiar-historial">Copiar historial</button>
+    </div>
+    <details class="historial">
+      <summary>Historial completo</summary>
+      <ol id="historial"></ol>
+    </details>
+  </main>
+
+  <dialog id="dlg-escaner">
+    <p>Apunta al QR de la etiqueta</p>
+    <video id="video" playsinline muted></video>
+    <form method="dialog"><button>Cancelar</button></form>
+  </dialog>
+
+  <dialog id="dlg-nota">
+    <form method="dialog" id="form-nota">
+      <h3 id="nota-titulo"></h3>
+      <label for="nota-texto">Nota para DeviceHub</label>
+      <textarea id="nota-texto" rows="3"></textarea>
+      <label id="nota-foto" class="check"><input type="checkbox" id="nota-foto-ok"> Foto hecha con DH-scan</label>
+      <div class="fila">
+        <button value="cancelar">Cancelar</button>
+        <button value="ok" class="primario" id="nota-ok">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-diagrama" class="dlg-diagrama" aria-labelledby="visor-diagrama-titulo">
+    <div class="visor-cabecera">
+      <strong id="visor-diagrama-titulo">Diagrama</strong>
+      <button id="diagrama-cerrar" type="button">Cerrar y volver</button>
+    </div>
+    <div class="visor-diagrama">
+      <img id="visor-diagrama-imagen" alt="">
+    </div>
+  </dialog>
+
+  <dialog id="dlg-devicehub" aria-labelledby="devicehub-config-titulo">
+    <form id="form-devicehub">
+      <h3 id="devicehub-config-titulo">Servidor de DeviceHub</h3>
+      <p id="bienvenida-intro" class="pista" hidden>Conecta la guía con tu DeviceHub. Así podrá comprobar y cambiar el estado de cada móvil sin salir de aquí.</p>
+      <label for="devicehub-base">URL base</label>
+      <input id="devicehub-base" type="url" inputmode="url" autocomplete="url" required
+             placeholder="https://lab6.ereuse.org">
+      <label for="devicehub-token">Token API</label>
+      <input id="devicehub-token" type="password" autocomplete="off"
+             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+      <ol id="bienvenida-pasos-token" class="pasos-token" hidden>
+        <li>Abre <a id="devicehub-tokens-enlace-bienvenida" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a> e inicia sesión si te lo pide.</li>
+        <li>Pulsa <strong>Generate a new token</strong>, ponle un nombre (por ejemplo, tu nombre y «guía») y guárdalo.</li>
+        <li>Copia el token de la lista (formato <code>xxxxxxxx-xxxx-…</code>) y pégalo en el campo de arriba.</li>
+      </ol>
+      <p id="devicehub-token-ayuda" class="pista">Crea o copia el token desde <a id="devicehub-tokens-enlace" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a>. Se guarda únicamente en este navegador y nunca se incluye en las copias de seguridad. Déjalo vacío para usar solo los enlaces manuales.</p>
+      <p id="bienvenida-privacidad" class="pista" hidden>El token se guarda solo en este navegador. Sin token, la guía funciona igual con enlaces manuales; puedes configurarlo después desde ⚙.</p>
+      <p id="devicehub-error" class="error-form" role="alert" hidden></p>
+      <div class="fila">
+        <button id="devicehub-cancelar" type="button">Cancelar</button>
+        <button id="devicehub-guardar" type="submit" class="primario">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="aviso" class="aviso" role="status" hidden></div>
+
+  <script src="app.js"></script>
+  <script type="module" src="qrcode-ui.js"></script>
+</body>
+</html>
