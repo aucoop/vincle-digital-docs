@@ -8,7 +8,8 @@ PENDING DONOR.
 [Abrir la guía](app/index.html){ .md-button .md-button--primary }
 
 En Android, desde Chrome, *Añadir a pantalla de inicio* la instala como una app
-más. Funciona sin conexión una vez abierta.
+más. Funciona sin conexión una vez abierta y adapta automáticamente su tema
+claro u oscuro a la configuración del teléfono.
 
 ## Cómo empezar
 
