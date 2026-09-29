@@ -173,7 +173,9 @@ flowchart TD
 
 La carga va antes que el arranque porque un móvil sin batería no arranca y no
 se puede distinguir de uno roto. No hace falta cargarlo más: basta con que
-encienda.
+encienda. Si hay un tester USB a mano, se puede usar para comprobar si el móvil
+está consumiendo corriente aunque no muestre ningún icono o LED. El consumo
+concreto depende del modelo, de la batería y de la fase de carga.
 
 Nunca se prueban PINs a ciegas: tras varios intentos el móvil se bloquea por
 tiempo o se borra, y lo segundo deja el FRP armado.

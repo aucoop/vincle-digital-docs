@@ -181,7 +181,9 @@ nodos:
     texto: Enchufar 15 min. ¿Carga? (icono o LED)
     ayuda: >-
       La carga va antes que el arranque: un móvil sin batería no arranca y no
-      se distingue de uno roto. Basta con que encienda.
+      se distingue de uno roto. Basta con que encienda. Si tienes un tester
+      USB a mano, úsalo para comprobar si el móvil está consumiendo corriente,
+      aunque no muestre ningún icono o LED.
     opciones:
       - texto: "Sí"
         destino: vi.arranca
