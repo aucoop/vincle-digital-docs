@@ -148,6 +148,11 @@ def main():
         sys.exit(1)
 
     if args.mermaid:
+        estados = {e["id"] for e in flujo["estados"]}
+        if args.mermaid not in estados:
+            disponibles = ", ".join(sorted(estados))
+            print(f"estado {args.mermaid} desconocido; disponibles: {disponibles}", file=sys.stderr)
+            sys.exit(2)
         print(mermaid(flujo, args.mermaid))
         return
 

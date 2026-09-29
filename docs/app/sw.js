@@ -1,7 +1,8 @@
 // Deja la app lista para usar sin conexión. El flujo se pide primero a la red
 // para que los cambios de flujo.yaml lleguen en cuanto hay conexión.
 
-const CACHE = 'vincle-guia-v2';
+const CACHE_PREFIX = 'vincle-guia-';
+const CACHE = `${CACHE_PREFIX}v3`;
 const ARCHIVOS = ['./', 'index.html', 'app.css', 'app.js', 'flujo.json', 'manifest.webmanifest', 'icono.svg', 'icono-192.png', 'icono-512.png'];
 
 self.addEventListener('install', (ev) => {
@@ -10,7 +11,9 @@ self.addEventListener('install', (ev) => {
 
 self.addEventListener('activate', (ev) => {
   ev.waitUntil(caches.keys()
-    .then((claves) => Promise.all(claves.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+    .then((claves) => Promise.all(claves
+      .filter((k) => k.startsWith(CACHE_PREFIX) && k !== CACHE)
+      .map((k) => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
@@ -22,10 +25,11 @@ self.addEventListener('fetch', (ev) => {
   // sin conexión lo guardado.
   ev.respondWith(
     fetch(ev.request)
-      .then((resp) => {
+      .then(async (resp) => {
         if (resp.ok) {
           const copia = resp.clone();
-          caches.open(CACHE).then((c) => c.put(ev.request, copia));
+          const cache = await caches.open(CACHE);
+          await cache.put(ev.request, copia);
         }
         return resp;
       })

@@ -54,7 +54,10 @@ h3 { margin: 0 0 8px; font-size: 1.05rem; }
   padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
   background: var(--primario); color: var(--primario-texto);
 }
-.barra .icono { background: transparent; color: inherit; border: 0; font-size: 1.4rem; padding: 0 6px; min-height: 0; }
+.barra .icono {
+  background: transparent; color: inherit; border: 0; font-size: 1.4rem;
+  padding: 0; min-width: 44px; min-height: 44px;
+}
 .offline { font-size: .75rem; border: 1px solid currentColor; border-radius: 99px; padding: 1px 8px; }
 
 button, .boton {

@@ -16,6 +16,7 @@ const DIA = 24 * 3600 * 1000;
 let flujo;
 let estados = {};
 let moviles = {};
+let avisoCarga;
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -24,11 +25,49 @@ const fechaHora = (t) => new Date(t).toLocaleString('es', { day: '2-digit', mont
 
 // --- Almacenamiento ---------------------------------------------------------
 
+function validarMovil(id, m) {
+  if (!/^\d+$/.test(id)) return `identificador «${id}» no numérico`;
+  if (!m || typeof m !== 'object' || Array.isArray(m)) return `móvil ${id} no es un objeto`;
+  if (m.id !== id) return `móvil ${id}: el identificador interior no coincide`;
+  if (!Number.isFinite(m.creado)) return `móvil ${id}: fecha de alta inválida`;
+  if (!Array.isArray(m.historial)) return `móvil ${id}: historial inválido`;
+  for (const [i, e] of m.historial.entries()) {
+    if (!e || typeof e !== 'object' || !Number.isFinite(e.t) ||
+        typeof e.desde !== 'string' || typeof e.hacia !== 'string') {
+      return `móvil ${id}: paso ${i + 1} del historial inválido`;
+    }
+  }
+  if (m.marcados !== undefined &&
+      (!m.marcados || typeof m.marcados !== 'object' || Array.isArray(m.marcados))) {
+    return `móvil ${id}: checklist inválido`;
+  }
+  return null;
+}
+
+function leerMoviles(datos, estricto = false) {
+  if (!datos || typeof datos !== 'object' || Array.isArray(datos)) {
+    throw new Error('la copia no contiene una colección de móviles válida');
+  }
+  const validos = {};
+  const errores = [];
+  for (const [id, m] of Object.entries(datos)) {
+    const error = validarMovil(id, m);
+    if (error) errores.push(error);
+    else validos[id] = m;
+  }
+  if (estricto && errores.length) throw new Error(errores.join('; '));
+  return { validos, errores };
+}
+
 function cargar() {
   try {
-    moviles = JSON.parse(localStorage.getItem(CLAVE)) || {};
-  } catch {
+    const guardados = JSON.parse(localStorage.getItem(CLAVE)) || {};
+    const { validos, errores } = leerMoviles(guardados);
+    moviles = validos;
+    if (errores.length) avisoCarga = `Se han ignorado ${errores.length} móviles con datos dañados.`;
+  } catch (err) {
     moviles = {};
+    avisoCarga = `No se han podido cargar los datos guardados: ${err.message}`;
   }
 }
 
@@ -430,15 +469,18 @@ function exportar() {
 async function importar(archivo) {
   try {
     const datos = JSON.parse(await archivo.text());
-    const entrantes = datos.moviles ?? {};
+    if (!datos || !Object.hasOwn(datos, 'moviles')) throw new Error('la copia no contiene «moviles»');
+    const { validos: entrantes } = leerMoviles(datos.moviles, true);
+    const mezclados = { ...moviles };
     let nuevos = 0;
     for (const [id, m] of Object.entries(entrantes)) {
       // Se queda la versión con más pasos.
-      if (!moviles[id] || m.historial.length > moviles[id].historial.length) {
-        moviles[id] = m;
+      if (!mezclados[id] || m.historial.length > mezclados[id].historial.length) {
+        mezclados[id] = m;
         nuevos++;
       }
     }
+    moviles = mezclados;
     guardar();
     pintarLista();
     avisar(`${nuevos} móviles importados o actualizados.`);
@@ -478,7 +520,11 @@ async function iniciar() {
     const m = moviles[location.hash.split('/')[2]];
     if (!m?.historial.length) return;
     const e = ultimo(m);
-    if (!confirm(`¿Deshacer «${nodo(e.desde)?.texto ?? e.desde}${e.opcion ? ` → ${e.opcion}` : ''}»?`)) return;
+    const descripcion = `«${nodo(e.desde)?.texto ?? e.desde}${e.opcion ? ` → ${e.opcion}` : ''}»`;
+    if (cruza(e) && e.dhHecho) {
+      const anterior = estados[estadoDe(e.desde)]?.nombre ?? estadoDe(e.desde);
+      if (!confirm(`Este cambio ya se marcó como hecho en DeviceHub. Antes de deshacer ${descripcion}, devuelve allí el estado a ${anterior}.\n\n¿Ya lo has hecho?`)) return;
+    } else if (!confirm(`¿Deshacer ${descripcion}?`)) return;
     m.historial.pop();
     guardar();
     pintarMovil(m);
@@ -494,6 +540,7 @@ async function iniciar() {
 
   addEventListener('hashchange', ruta);
   ruta();
+  if (avisoCarga) avisar(avisoCarga);
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
