@@ -2,7 +2,7 @@
 // para que los cambios de flujo.yaml lleguen en cuanto hay conexión.
 
 const CACHE_PREFIX = 'vincle-guia-';
-const CACHE = `${CACHE_PREFIX}v27`;
+const CACHE = `${CACHE_PREFIX}v29`;
 const ARCHIVOS = [
   './', 'index.html', 'app.css', 'app.js', 'qrcode-ui.js', 'flujo.json', 'manifest.webmanifest',
   'icono.svg', 'icono-192.png', 'icono-512.png',

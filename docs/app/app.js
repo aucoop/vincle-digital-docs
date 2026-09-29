@@ -16,6 +16,7 @@ const CLAVE_BIENVENIDA = 'vincle.guia.bienvenida.v1';
 const DEVICEHUB_POR_DEFECTO = 'https://lab6.ereuse.org';
 const WORKBENCH_ANDROID_URL = 'https://apps.sergiogimenez.com/workbench';
 const DONATE_ANDROID_URL = 'https://aucoop.upc.edu/vincle-digital-donacio/';
+const DONATE_ANDROID_APK_URL = 'https://people.ac.upc.edu/leandro/e/donate-android.apk';
 const DIGITOS = 6;
 const DIA = 24 * 3600 * 1000;
 
@@ -191,8 +192,10 @@ async function sincronizarCambioDeviceHub(m, soloComprobar = false) {
   }
 }
 
-function htmlAccesoAdaptado({ id, url, texto, qr, primario = false }) {
-  return `<div class="acceso-devicehub">
+// qrSiempre: descargas que se instalan en el móvil reacondicionado. El QR hace
+// falta aunque la guía se use en el móvil personal del operador.
+function htmlAccesoAdaptado({ id, url, texto, qr, primario = false, qrSiempre = false }) {
+  return `<div class="acceso-devicehub${qrSiempre ? ' qr-siempre' : ''}">
     <a id="${esc(id)}" class="boton${primario ? ' primario' : ''}" href="${esc(url)}">${esc(texto)}</a>
     <div class="qr-devicehub" data-qr-url="${esc(url)}" data-qr-label="${esc(qr)}">
       <strong>${esc(qr)}</strong>
@@ -489,14 +492,14 @@ function htmlPaso(m, actual, n) {
     const instalarWorkbench = actual === 'install.wb' ? `<div class="recurso-externo">
       <strong>Descargar Workbench Android</strong>
       <p>Instala en el dispositivo la última APK publicada por eReuse.</p>
-      ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: 'Descargar Workbench Android', qr: 'Escanea con el dispositivo para descargar Workbench Android', primario: true })}
-      <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR con el dispositivo.</span>
+      ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: 'Descargar Workbench Android', qr: 'Escanea con el dispositivo para descargar Workbench Android', primario: true, qrSiempre: true })}
+      <span class="sub">Escanea el QR con el móvil que estás reacondicionando, o pulsa el botón si la guía está abierta en ese mismo móvil.</span>
     </div>` : '';
     const instalarDonate = actual === 'install.donate' ? `<div class="recurso-externo">
       <strong>Descargar donate-android</strong>
-      <p>Página de Vincle Digital con la app para preparar la donación.</p>
-      ${htmlAccesoAdaptado({ id: 'descargar-donate', url: DONATE_ANDROID_URL, texto: 'Abrir página de descarga', qr: 'Escanea con el dispositivo para descargar donate-android', primario: true })}
-      <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR con el dispositivo.</span>
+      <p>Descarga directa de la APK. Más información en la <a href="${esc(DONATE_ANDROID_URL)}">página de Vincle Digital</a>.</p>
+      ${htmlAccesoAdaptado({ id: 'descargar-donate', url: DONATE_ANDROID_APK_URL, texto: 'Descargar donate-android', qr: 'Escanea con el dispositivo para descargar donate-android', primario: true, qrSiempre: true })}
+      <span class="sub">Escanea el QR con el móvil que estás reacondicionando, o pulsa el botón si la guía está abierta en ese mismo móvil.</span>
     </div>` : '';
     const verInventario = actual === 'install.inventario' ? `<div class="recurso-externo">
       <strong>Inventario en DeviceHub</strong>
