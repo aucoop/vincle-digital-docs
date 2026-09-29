@@ -101,7 +101,8 @@
    "estado": "INBOX",
    "tipo": "accion",
    "marca": "checkpoint",
-   "texto": "DH-scan: leer la etiqueta como custom_id, fotos del móvil y tipo",
+   "texto": "Registrar custom_id, fotos y tipo en DeviceHub",
+   "ayuda": "Usa DH-Scan o el formulario web de DeviceHub.",
    "siguiente": "inbox.etiqueta_fab"
   },
   "inbox.etiqueta_fab": {

@@ -59,6 +59,13 @@
       <p id="lista-vacia" class="pista" hidden>No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.</p>
     </section>
 
+    <details class="datos integracion-config">
+      <summary>Conexión con DeviceHub</summary>
+      <p class="pista">La guía abre el formulario de DeviceHub en el mismo navegador. DeviceHub gestiona el usuario, la contraseña y su cookie de sesión.</p>
+      <p class="pista">Servidor actual: <code id="devicehub-base-actual">https://lab6.ereuse.org</code></p>
+      <button id="configurar-devicehub" type="button">Cambiar servidor</button>
+    </details>
+
     <details class="datos">
       <summary>Copia de seguridad</summary>
       <p class="pista">Los datos se guardan solo en este navegador. Exporta una copia de vez en cuando.</p>
@@ -121,6 +128,21 @@
     <div class="visor-diagrama">
       <img id="visor-diagrama-imagen" alt="">
     </div>
+  </dialog>
+
+  <dialog id="dlg-devicehub" aria-labelledby="devicehub-config-titulo">
+    <form id="form-devicehub">
+      <h3 id="devicehub-config-titulo">Servidor de DeviceHub</h3>
+      <label for="devicehub-base">URL base</label>
+      <input id="devicehub-base" type="url" inputmode="url" autocomplete="url" required
+             placeholder="https://lab6.ereuse.org">
+      <p class="pista">Solo se guarda esta URL. El usuario y la contraseña se introducen directamente en DeviceHub.</p>
+      <p id="devicehub-error" class="error-form" role="alert" hidden></p>
+      <div class="fila">
+        <button id="devicehub-cancelar" type="button">Cancelar</button>
+        <button type="submit" class="primario">Guardar</button>
+      </div>
+    </form>
   </dialog>
 
   <div id="aviso" class="aviso" role="status" hidden></div>

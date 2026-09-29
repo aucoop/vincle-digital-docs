@@ -10,6 +10,8 @@
 // así que deshacer es quitar la última entrada.
 
 const CLAVE = 'vincle.guia.moviles.v1';
+const CLAVE_DEVICEHUB = 'vincle.guia.devicehub.base.v1';
+const DEVICEHUB_POR_DEFECTO = 'https://lab6.ereuse.org';
 const DIGITOS = 6;
 const DIA = 24 * 3600 * 1000;
 
@@ -17,6 +19,7 @@ let flujo;
 let estados = {};
 let moviles = {};
 let avisoCarga;
+let baseDeviceHub = DEVICEHUB_POR_DEFECTO;
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -77,6 +80,33 @@ function guardar() {
   } catch {
     avisar('No se ha podido guardar. Exporta una copia de seguridad.');
   }
+}
+
+function normalizarBaseDeviceHub(valor) {
+  const url = new URL(String(valor).trim());
+  if (!['http:', 'https:'].includes(url.protocol)) throw new Error('usa una URL http o https');
+  if (url.username || url.password) throw new Error('no incluyas usuario ni contraseña en la URL');
+  url.search = '';
+  url.hash = '';
+  url.pathname = url.pathname.replace(/\/+$/, '');
+  return url.href.replace(/\/$/, '');
+}
+
+function cargarBaseDeviceHub() {
+  try {
+    baseDeviceHub = normalizarBaseDeviceHub(localStorage.getItem(CLAVE_DEVICEHUB) || DEVICEHUB_POR_DEFECTO);
+  } catch {
+    baseDeviceHub = DEVICEHUB_POR_DEFECTO;
+  }
+}
+
+const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
+
+function abrirConfiguracionDeviceHub() {
+  $('devicehub-base').value = baseDeviceHub;
+  $('devicehub-error').hidden = true;
+  $('dlg-devicehub').showModal();
+  $('devicehub-base').focus();
 }
 
 // --- Modelo -----------------------------------------------------------------
@@ -201,6 +231,7 @@ function pintarLista() {
     ? 'No hay móviles que coincidan con este filtro.'
     : 'No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.';
   $('lista-vacia').hidden = lista.length > 0;
+  $('devicehub-base-actual').textContent = baseDeviceHub;
 }
 
 // --- Móvil ------------------------------------------------------------------
@@ -305,8 +336,16 @@ function htmlPaso(m, actual, n) {
     const lista = (n.checklist ?? []).map((c, i) =>
       `<li><label class="check"><input type="checkbox" data-i="${i}" ${marcados[i] ? 'checked' : ''}> ${esc(c)}</label></li>`).join('');
     const completo = (n.checklist ?? []).every((_, i) => marcados[i]);
+    const webform = actual === 'inbox.scan' ? `<div class="devicehub-webform">
+      <strong>Alta y fotos en DeviceHub</strong>
+      <p>Usa DH-Scan o abre el formulario web. Si no hay una sesión iniciada, DeviceHub pedirá usuario y contraseña.</p>
+      <a id="abrir-webform-devicehub" class="boton primario" href="${esc(urlAltaDeviceHub())}">Abrir formulario de DeviceHub</a>
+      <span class="sub">Se abrirá en este navegador. Para volver, usa Atrás.</span>
+      <button id="configurar-devicehub-paso" class="enlace-boton" type="button">Cambiar servidor (${esc(baseDeviceHub)})</button>
+    </div>` : '';
     return `${htmlCambio(m)}${htmlMarcas(n)}
       <p class="pregunta">${esc(n.texto)}</p>${ayuda}
+      ${webform}
       ${lista ? `<ul class="checklist">${lista}</ul>` : ''}
       <div class="opciones"><button class="primario" id="hecho" ${bloqueado || !completo ? 'disabled' : ''}>
         <span>Hecho</span>${htmlDestino(actual, { destino: n.siguiente })}</button></div>`;
@@ -338,6 +377,7 @@ function enlazarPaso(m, actual, n) {
     pintarMovil(m);
   });
   $('copiar-nota')?.addEventListener('click', () => copiar(cambioPendiente(m).nota));
+  $('configurar-devicehub-paso')?.addEventListener('click', abrirConfiguracionDeviceHub);
 
   paso.querySelectorAll('[data-reubicar]').forEach((b) => b.addEventListener('click', () => {
     const e = estados[b.dataset.reubicar];
@@ -512,6 +552,7 @@ async function importar(archivo) {
 
 async function iniciar() {
   cargar();
+  cargarBaseDeviceHub();
   try {
     flujo = await (await fetch('flujo.json', { cache: 'no-cache' })).json();
   } catch {
@@ -552,6 +593,23 @@ async function iniciar() {
   $('copiar-historial').addEventListener('click', () => copiar(textoHistorial(moviles[location.hash.split('/')[2]])));
   $('exportar').addEventListener('click', exportar);
   $('importar').addEventListener('change', (ev) => ev.target.files[0] && importar(ev.target.files[0]));
+  $('configurar-devicehub').addEventListener('click', abrirConfiguracionDeviceHub);
+  $('devicehub-cancelar').addEventListener('click', () => $('dlg-devicehub').close());
+  $('form-devicehub').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    try {
+      baseDeviceHub = normalizarBaseDeviceHub($('devicehub-base').value);
+      localStorage.setItem(CLAVE_DEVICEHUB, baseDeviceHub);
+      $('dlg-devicehub').close();
+      $('devicehub-base-actual').textContent = baseDeviceHub;
+      const m = moviles[location.hash.split('/')[2]];
+      if (m) pintarMovil(m);
+      avisar('Servidor de DeviceHub guardado.');
+    } catch (err) {
+      $('devicehub-error').textContent = `URL no válida: ${err.message}`;
+      $('devicehub-error').hidden = false;
+    }
+  });
   const centrarDiagrama = () => requestAnimationFrame(() => {
     const contenedor = document.querySelector('.diagrama-scroll');
     contenedor.scrollLeft = (contenedor.scrollWidth - contenedor.clientWidth) / 2;

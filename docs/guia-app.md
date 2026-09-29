@@ -24,6 +24,11 @@ La guía es una lista de trabajo y un historial local. **No ejecuta acciones en
 el teléfono ni modifica DeviceHub:** cuando sea necesario, mostrará el cambio
 de estado o la nota que el operador debe registrar manualmente.
 
+En el paso de alta y fotos puede abrir el WebForm de DeviceHub. La URL base se
+configura en **Conexión con DeviceHub** y por defecto es
+`https://lab6.ereuse.org`. La guía no guarda credenciales: el inicio de sesión
+y su cookie pertenecen siempre a DeviceHub.
+
 ## Qué hace
 
 - **Mapa de estados.** Arriba, la línea de estados de DeviceHub con el actual
@@ -42,7 +47,8 @@ de estado o la nota que el operador debe registrar manualmente.
 
 - Los datos se guardan solo en el navegador del móvil que se usa. Conviene
   exportar una copia de vez en cuando, desde la lista.
-- No escribe en DeviceHub: el cambio de estado y las notas se hacen a mano.
+- No escribe directamente en DeviceHub: abre su WebForm para el alta y las
+  fotos; los cambios de estado y las notas se hacen a mano.
 - El escáner de QR usa la API `BarcodeDetector`, que tiene Chrome en Android.
   Donde no existe, el número se teclea.
 

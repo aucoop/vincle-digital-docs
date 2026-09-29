@@ -86,7 +86,7 @@ en este punto se hace un primer registro en DeviceHub para tener constancia de l
 ```mermaid
 flowchart TD
     START(["Móvil recibido"]) --> PEGAR["Pegar la siguiente etiqueta<br/>preimpresa de la plancha"]
-    PEGAR --> SCAN["DH-scan: leer la etiqueta como custom_id,<br/>fotos del móvil y tipo"]:::checkpoint
+    PEGAR --> SCAN["DH-scan o WebForm de DeviceHub:<br/>custom_id, fotos y tipo"]:::checkpoint
     SCAN --> LBL{"¿Tiene etiqueta<br/>del fabricante a la vista?"}
     LBL -->|"Sí"| OCR["DH-scan: barcode u OCR<br/>fabricante, modelo, serial,<br/>product code, GTIN"]:::checkpoint
     LBL -->|"No"| POST
@@ -128,7 +128,7 @@ Queda en DeviceHub al salir de INBOX:
 |---|---|
 | `custom_id` | QR de la etiqueta, leído por DH-scan y enviado en el primer POST |
 | tipo | `DeviceType` de móvil o de tablet de la institución |
-| fotos | DH-scan |
+| fotos | DH-scan o WebForm de DeviceHub |
 | fabricante, modelo, serial, product code, GTIN | Barcode u OCR de la etiqueta, si la hay, como propiedades |
 | estado `INBOX` | Automático al crear el dispositivo con el primer POST, en el lote Inbox |
 

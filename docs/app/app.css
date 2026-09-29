@@ -100,6 +100,7 @@ textarea { width: 100%; resize: vertical; }
 .introduccion p { margin: 6px 0; }
 .introduccion ol { margin: 6px 0 0; padding-left: 24px; }
 .introduccion li { margin: 5px 0; }
+.integracion-config code { overflow-wrap: anywhere; }
 
 .abrir { display: grid; gap: 10px; margin-bottom: 20px; }
 .abrir .primario { min-height: 56px; font-size: 1.05rem; }
@@ -202,6 +203,19 @@ textarea { width: 100%; resize: vertical; }
 .paso .pregunta { font-size: 1.2rem; font-weight: 650; margin: 0; }
 .paso .ayuda { margin: 0; color: var(--suave); font-size: .92rem; }
 .paso .marcas { display: flex; gap: 6px; flex-wrap: wrap; }
+.devicehub-webform {
+  padding: 12px; display: grid; gap: 8px; border: 1px solid var(--dh-borde);
+  border-radius: 10px; background: var(--dh-fondo); color: var(--dh-texto);
+}
+.devicehub-webform p { margin: 0; font-size: .9rem; }
+.devicehub-webform .sub { font-size: .8rem; }
+.devicehub-webform .boton { text-decoration: none; }
+.enlace-boton {
+  min-height: 36px; padding: 4px 0; justify-content: flex-start;
+  border: 0; background: transparent; color: inherit; text-decoration: underline;
+  font-size: .8rem;
+}
+.error-form { margin: 0; color: var(--rej-texto); }
 .opciones { display: grid; gap: 8px; }
 .opciones button { justify-content: space-between; text-align: left; min-height: 52px; font-size: 1rem; }
 .opciones button .sub { display: block; color: var(--suave); font-size: .8rem; font-weight: 400; }
