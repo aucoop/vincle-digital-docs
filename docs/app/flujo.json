@@ -19,10 +19,10 @@
   {
    "id": "PENDING_DONOR",
    "nombre": "PENDING DONOR",
-   "resumen": "Espera de que el donante desbloquee o resuelva el FRP",
+   "resumen": "Espera de liberación (PIN, verificación FRP o gestión empresarial)",
    "nuevo": true,
    "inicio": "pd.inicio",
-   "doc": "diagramas-detallados/#4-pending-donor-release-espera-de-actuacion-del-donante-o-propietario-pin-o-retirar-cuenta-google-estado-nuevo"
+   "doc": "diagramas-detallados/#4-pending-donor-release-espera-de-liberacion-estado-nuevo"
   },
   {
    "id": "INSTALL",
@@ -319,7 +319,7 @@
   "pd.contacto": {
    "estado": "PENDING_DONOR",
    "tipo": "pregunta",
-   "texto": "¿Hay contacto del donante?",
+   "texto": "¿Hay contacto del donante, propietario o empresa?",
    "opciones": [
     {
      "texto": "Sí",
@@ -339,7 +339,7 @@
    "estado": "PENDING_DONOR",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Pedir al donante que permita desbloquear el dispositivo o resolver la verificación FRP",
+   "texto": "Pedir que desbloquee el dispositivo, complete la verificación FRP o retire la gestión empresarial",
    "siguiente": "pd.r1"
   },
   "pd.r1": {
@@ -417,6 +417,10 @@
      "destino": "pd.frp"
     },
     {
+     "texto": "Gestión empresarial",
+     "destino": "pd.mdm"
+    },
+    {
      "texto": "No quiere o no puede",
      "destino": "dis.destino",
      "nota": {
@@ -447,11 +451,17 @@
    "texto": "El donante completa la verificación con una cuenta previamente sincronizada",
    "siguiente": "pd.ok"
   },
+  "pd.mdm": {
+   "estado": "PENDING_DONOR",
+   "tipo": "accion",
+   "texto": "La empresa retira MDM, zero-touch o Knox",
+   "siguiente": "pd.ok"
+  },
   "pd.ok": {
    "estado": "PENDING_DONOR",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Nota en DeviceHub: PIN recibido",
+   "texto": "Nota en DeviceHub: acceso recuperado",
    "siguiente": "install.emm"
   },
   "install.emm": {
@@ -465,7 +475,7 @@
     },
     {
      "texto": "Sí",
-     "destino": "dis.destino",
+     "destino": "pd.inicio",
      "nota": {
       "motivo": "MDM-EMPRESA",
       "texto": "bloqueo MDM empresarial",
