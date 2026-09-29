@@ -1,33 +1,41 @@
 :root {
-  --fondo: #f6f7f9;
+  --ereuse-primary: #7a9f4f;
+  --ereuse-secondary: #9cc666;
+  --ereuse-dark: #545f71;
+  --ereuse-teal: #56beac;
+  --fondo: #f3f3f3;
   --superficie: #ffffff;
-  --texto: #1c2127;
-  --suave: #5b6570;
-  --borde: #d8dde3;
-  --primario: #0a58ca;
+  --texto: #2f343b;
+  --suave: #545f71;
+  --borde: #dfe3e6;
+  --cabecera: var(--ereuse-secondary);
+  --cabecera-texto: #1c2127;
+  --primario: #627f40;
   --primario-texto: #ffffff;
-  --dh-fondo: #cfe2ff; --dh-borde: #0a58ca; --dh-texto: #052c65;
-  --cp-fondo: #fff3cd; --cp-borde: #997404; --cp-texto: #664d03;
-  --ok-fondo: #d1e7dd; --ok-borde: #146c43; --ok-texto: #0a3622;
+  --dh-fondo: #d9f2ed; --dh-borde: #2f8f7f; --dh-texto: #1d5f54;
+  --cp-fondo: #efe3b4; --cp-borde: #9a7b20; --cp-texto: #59460d;
+  --ok-fondo: #e5f0d6; --ok-borde: #7a9f4f; --ok-texto: #40552a;
   --rej-fondo: #f8d7da; --rej-borde: #b02a37; --rej-texto: #58151c;
-  --nuevo-fondo: #e2d9f3; --nuevo-borde: #59359a; --nuevo-texto: #2f1c6a;
+  --nuevo-fondo: #d9f2ed; --nuevo-borde: #56beac; --nuevo-texto: #245f55;
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #111418;
-    --superficie: #1b1f24;
-    --texto: #e6e9ed;
-    --suave: #9aa4af;
-    --borde: #333a42;
-    --primario: #6ea8fe;
-    --primario-texto: #0b1522;
-    --dh-fondo: #0f2a4f; --dh-borde: #6ea8fe; --dh-texto: #cfe2ff;
-    --cp-fondo: #3a2e05; --cp-borde: #ffda6a; --cp-texto: #fff3cd;
-    --ok-fondo: #0c2e1f; --ok-borde: #75b798; --ok-texto: #d1e7dd;
+    --fondo: #1d2126;
+    --superficie: #282d34;
+    --texto: #f3f3f3;
+    --suave: #bac2ca;
+    --borde: #46505b;
+    --cabecera: var(--ereuse-dark);
+    --cabecera-texto: #ffffff;
+    --primario: var(--ereuse-secondary);
+    --primario-texto: #1c2127;
+    --dh-fondo: #173f38; --dh-borde: #56beac; --dh-texto: #bfe9e1;
+    --cp-fondo: #443a17; --cp-borde: #d7bd55; --cp-texto: #f4eac4;
+    --ok-fondo: #2d3d20; --ok-borde: #9cc666; --ok-texto: #dcebc9;
     --rej-fondo: #3b1418; --rej-borde: #ea868f; --rej-texto: #f8d7da;
-    --nuevo-fondo: #2a1f45; --nuevo-borde: #a98eda; --nuevo-texto: #e2d9f3;
+    --nuevo-fondo: #173f38; --nuevo-borde: #56beac; --nuevo-texto: #bfe9e1;
   }
 }
 
@@ -52,7 +60,8 @@ h3 { margin: 0 0 8px; font-size: 1.05rem; }
   position: sticky; top: 0; z-index: 2;
   display: flex; align-items: center; gap: 8px;
   padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
-  background: var(--primario); color: var(--primario-texto);
+  background: var(--cabecera); color: var(--cabecera-texto);
+  border-bottom: 3px solid var(--ereuse-dark);
 }
 .barra .icono {
   background: transparent; color: inherit; border: 0; font-size: 1.4rem;
