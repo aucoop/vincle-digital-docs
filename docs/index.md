@@ -13,6 +13,7 @@ móviles Android con trazabilidad en DeviceHub.
 
 [Ver el recorrido completo](diagramas-detallados.md){ .md-button .md-button--primary }
 [Abrir vista rápida](diagrama-alto-nivel.md){ .md-button }
+[Usar la guía paso a paso](guia-app.md){ .md-button }
 
 <div class="process-grid" markdown>
 

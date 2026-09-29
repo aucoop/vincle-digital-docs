@@ -178,6 +178,7 @@ function ruta() {
 
 function pintarLista() {
   const filtro = $('filtro').value;
+  const total = Object.keys(moviles).length;
   let lista = Object.values(moviles).map((m) => {
     const n = nodo(pasoActual(m));
     return { m, n, plazo: plazoDe(m, n) };
@@ -195,6 +196,10 @@ function pintarLista() {
       <span class="donde">${esc(n?.texto ?? 'Paso que ya no existe en el flujo')}</span>
       <span class="linea"><span class="donde">${fecha(actualizado(m))}</span>${chipPlazo(plazo)}</span>
     </button></li>`).join('');
+  $('introduccion').hidden = total > 0;
+  $('lista-vacia').textContent = total
+    ? 'No hay móviles que coincidan con este filtro.'
+    : 'No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.';
   $('lista-vacia').hidden = lista.length > 0;
 }
 
@@ -503,6 +508,7 @@ async function iniciar() {
 
   if (!('BarcodeDetector' in window)) {
     $('escanear').hidden = true;
+    $('sin-escaner').hidden = false;
   }
   $('escanear').addEventListener('click', escanear);
   $('form-id').addEventListener('submit', (ev) => {

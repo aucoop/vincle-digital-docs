@@ -58,6 +58,10 @@ h3 { margin: 0 0 8px; font-size: 1.05rem; }
   background: transparent; color: inherit; border: 0; font-size: 1.4rem;
   padding: 0; min-width: 44px; min-height: 44px;
 }
+.enlace-cabecera {
+  color: inherit; font-size: .82rem; min-height: 44px; padding: 0 4px;
+  display: inline-flex; align-items: center; white-space: nowrap;
+}
 .offline { font-size: .75rem; border: 1px solid currentColor; border-radius: 99px; padding: 1px 8px; }
 
 button, .boton {
@@ -78,8 +82,19 @@ textarea { width: 100%; resize: vertical; }
 .fila input { flex: 1; min-width: 0; }
 .pista { color: var(--suave); font-size: .875rem; margin: 6px 0; }
 
+.introduccion {
+  margin-bottom: 20px; padding: 14px 16px; border: 1px solid var(--borde);
+  border-radius: 14px; background: var(--superficie);
+}
+.introduccion h2 { margin: 0 0 6px; }
+.introduccion h2:not(:first-child) { margin-top: 16px; }
+.introduccion p { margin: 6px 0; }
+.introduccion ol { margin: 6px 0 0; padding-left: 24px; }
+.introduccion li { margin: 5px 0; }
+
 .abrir { display: grid; gap: 10px; margin-bottom: 20px; }
 .abrir .primario { min-height: 56px; font-size: 1.05rem; }
+.aviso-inline { border-left: 3px solid var(--cp-borde); padding-left: 10px; }
 
 .cabecera-lista { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }

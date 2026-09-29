@@ -16,17 +16,33 @@
     <button id="volver" class="icono" aria-label="Volver a la lista" hidden>←</button>
     <h1 id="titulo">Guía de reacondicionado</h1>
     <span id="offline" class="offline" hidden>sin conexión</span>
+    <a class="enlace-cabecera" href="../guia-app/">Documentación</a>
   </header>
 
   <main id="vista-lista">
+    <section id="introduccion" class="introduccion">
+      <h2>¿Para qué sirve?</h2>
+      <p>Esta guía te dice qué hacer y decidir con cada móvil durante el reacondicionado. Guarda el recorrido y te avisa cuándo debes cambiar el estado manualmente en DeviceHub.</p>
+      <p><strong>No modifica DeviceHub ni el teléfono automáticamente.</strong></p>
+      <h2>Empieza con un móvil</h2>
+      <ol>
+        <li>Toma la siguiente etiqueta preimpresa de la plancha.</li>
+        <li>Escanea su QR o escribe el número impreso bajo el QR.</li>
+        <li>Confirma el alta. La guía empezará en INBOX y te indicará el primer paso.</li>
+      </ol>
+    </section>
+
     <section class="abrir">
-      <button id="escanear" class="primario">Escanear etiqueta</button>
+      <h2>Abrir un móvil</h2>
+      <button id="escanear" class="primario">Escanear QR de la etiqueta</button>
       <form id="form-id" class="fila">
         <input id="input-id" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
-               placeholder="o teclea el número" aria-label="Número de la etiqueta">
-        <button type="submit">Abrir</button>
+               placeholder="N.º de etiqueta (ej. 000042)"
+               aria-label="Número de la etiqueta" aria-describedby="ayuda-id">
+        <button type="submit">Abrir móvil</button>
       </form>
-      <p class="pista">Si el número no existe, se da de alta como móvil recibido en INBOX.</p>
+      <p id="sin-escaner" class="pista aviso-inline" hidden>Este navegador no permite escanear el QR. Escribe el número impreso en la etiqueta.</p>
+      <p id="ayuda-id" class="pista">Si ya existe, continuarás por el último paso. Si es nuevo, empezará en INBOX.</p>
     </section>
 
     <section>
@@ -39,7 +55,7 @@
         </select>
       </div>
       <ul id="lista" class="lista"></ul>
-      <p id="lista-vacia" class="pista" hidden>Todavía no hay móviles en este dispositivo.</p>
+      <p id="lista-vacia" class="pista" hidden>No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.</p>
     </section>
 
     <details class="datos">

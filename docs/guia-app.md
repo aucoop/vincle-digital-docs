@@ -10,6 +10,20 @@ PENDING DONOR.
 En Android, desde Chrome, *Añadir a pantalla de inicio* la instala como una app
 más. Funciona sin conexión una vez abierta.
 
+## Cómo empezar
+
+1. Toma la siguiente etiqueta preimpresa de la plancha.
+2. Abre la guía con el botón anterior.
+3. En Android, escanea el QR. En un navegador sin escáner, escribe el número
+   impreso bajo el QR.
+4. Si el móvil todavía no existe en la guía, confirma su alta. Empezará en
+   **INBOX** y la pantalla indicará qué hacer a continuación, comenzando por
+   pegar la etiqueta al móvil.
+
+La guía es una lista de trabajo y un historial local. **No ejecuta acciones en
+el teléfono ni modifica DeviceHub:** cuando sea necesario, mostrará el cambio
+de estado o la nota que el operador debe registrar manualmente.
+
 ## Qué hace
 
 - **Mapa de estados.** Arriba, la línea de estados de DeviceHub con el actual
