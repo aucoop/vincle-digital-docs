@@ -15,6 +15,7 @@ const CLAVE_DEVICEHUB_TOKEN = 'vincle.guia.devicehub.token.v1';
 const CLAVE_BIENVENIDA = 'vincle.guia.bienvenida.v1';
 const DEVICEHUB_POR_DEFECTO = 'https://lab6.ereuse.org';
 const WORKBENCH_ANDROID_URL = 'https://apps.sergiogimenez.com/workbench';
+const DONATE_ANDROID_URL = 'https://aucoop.upc.edu/vincle-digital-donacio/';
 const DIGITOS = 6;
 const DIA = 24 * 3600 * 1000;
 
@@ -491,6 +492,12 @@ function htmlPaso(m, actual, n) {
       ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: 'Descargar Workbench Android', qr: 'Escanea con el dispositivo para descargar Workbench Android', primario: true })}
       <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR con el dispositivo.</span>
     </div>` : '';
+    const instalarDonate = actual === 'install.donate' ? `<div class="recurso-externo">
+      <strong>Descargar donate-android</strong>
+      <p>Página de Vincle Digital con la app para preparar la donación.</p>
+      ${htmlAccesoAdaptado({ id: 'descargar-donate', url: DONATE_ANDROID_URL, texto: 'Abrir página de descarga', qr: 'Escanea con el dispositivo para descargar donate-android', primario: true })}
+      <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR con el dispositivo.</span>
+    </div>` : '';
     const verInventario = actual === 'install.inventario' ? `<div class="recurso-externo">
       <strong>Inventario en DeviceHub</strong>
       <p>Después de enviar el snapshot, abre Componentes para comprobar la información nueva.</p>
@@ -503,7 +510,7 @@ function htmlPaso(m, actual, n) {
     </div>` : '';
     return `${htmlCambio(m)}${htmlMarcas(n)}
       <p class="pregunta">${esc(n.texto)}</p>${ayuda}
-      ${webform}${instalarWorkbench}${verInventario}${verResultados}
+      ${webform}${instalarDonate}${instalarWorkbench}${verInventario}${verResultados}
       ${lista ? `<ul class="checklist">${lista}</ul>` : ''}
       <div class="opciones"><button class="primario" id="hecho" ${bloqueado || !completo ? 'disabled' : ''}>
         <span>Hecho</span>${htmlDestino(actual, { destino: n.siguiente })}</button></div>`;
