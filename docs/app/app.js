@@ -12,6 +12,7 @@
 const CLAVE = 'vincle.guia.moviles.v1';
 const CLAVE_DEVICEHUB = 'vincle.guia.devicehub.base.v1';
 const CLAVE_DEVICEHUB_TOKEN = 'vincle.guia.devicehub.token.v1';
+const CLAVE_BIENVENIDA = 'vincle.guia.bienvenida.v1';
 const DEVICEHUB_POR_DEFECTO = 'https://lab6.ereuse.org';
 const WORKBENCH_ANDROID_URL = 'https://apps.sergiogimenez.com/workbench';
 const DIGITOS = 6;
@@ -200,10 +201,39 @@ function htmlAccesoAdaptado({ id, url, texto, qr, primario = false }) {
   </div>`;
 }
 
-function abrirConfiguracionDeviceHub() {
+function modoBienvenida(activo) {
+  $('dlg-devicehub').classList.toggle('bienvenida', activo);
+  $('devicehub-config-titulo').textContent = activo ? 'Antes de nada…' : 'Servidor de DeviceHub';
+  $('bienvenida-intro').hidden = !activo;
+  $('bienvenida-pasos-token').hidden = !activo;
+  $('bienvenida-privacidad').hidden = !activo;
+  $('devicehub-token-ayuda').hidden = activo;
+  $('devicehub-cancelar').textContent = activo ? 'Hacer más tarde' : 'Cancelar';
+  $('devicehub-guardar').textContent = activo ? 'Guardar y empezar' : 'Guardar';
+}
+
+function primeraVisitaVista() {
+  try {
+    return Boolean(localStorage.getItem(CLAVE_BIENVENIDA) || localStorage.getItem(CLAVE_DEVICEHUB_TOKEN));
+  } catch {
+    return false;
+  }
+}
+
+function marcarBienvenidaVista() {
+  try {
+    localStorage.setItem(CLAVE_BIENVENIDA, '1');
+  } catch {
+    // Sin almacenamiento, la bienvenida volverá a aparecer; no bloquea la guía.
+  }
+}
+
+function abrirConfiguracionDeviceHub(bienvenida = false) {
+  modoBienvenida(bienvenida === true);
   $('devicehub-base').value = baseDeviceHub;
   $('devicehub-token').value = tokenDeviceHub;
   $('devicehub-tokens-enlace').href = urlTokensDeviceHub();
+  $('devicehub-tokens-enlace-bienvenida').href = urlTokensDeviceHub();
   $('devicehub-error').hidden = true;
   $('dlg-devicehub').showModal();
   $('devicehub-base').focus();
@@ -727,9 +757,23 @@ async function iniciar() {
   $('copiar-historial').addEventListener('click', () => copiar(textoHistorial(moviles[location.hash.split('/')[2]])));
   $('exportar').addEventListener('click', exportar);
   $('importar').addEventListener('change', (ev) => ev.target.files[0] && importar(ev.target.files[0]));
-  $('configurar-devicehub').addEventListener('click', abrirConfiguracionDeviceHub);
-  $('configurar-devicehub-cabecera').addEventListener('click', abrirConfiguracionDeviceHub);
-  $('devicehub-cancelar').addEventListener('click', () => $('dlg-devicehub').close());
+  $('configurar-devicehub').addEventListener('click', () => abrirConfiguracionDeviceHub());
+  $('configurar-devicehub-cabecera').addEventListener('click', () => abrirConfiguracionDeviceHub());
+  $('devicehub-cancelar').addEventListener('click', () => {
+    marcarBienvenidaVista();
+    $('dlg-devicehub').close();
+  });
+  $('dlg-devicehub').addEventListener('cancel', marcarBienvenidaVista);
+  // Mientras se escribe la URL base, el enlace a los tokens apunta al servidor nuevo.
+  $('devicehub-base').addEventListener('input', () => {
+    try {
+      const url = `${normalizarBaseDeviceHub($('devicehub-base').value)}/user/v1/tokens/`;
+      $('devicehub-tokens-enlace').href = url;
+      $('devicehub-tokens-enlace-bienvenida').href = url;
+    } catch {
+      // URL incompleta mientras se escribe: se mantiene el enlace anterior.
+    }
+  });
   $('form-devicehub').addEventListener('submit', (ev) => {
     ev.preventDefault();
     try {
@@ -741,6 +785,7 @@ async function iniciar() {
       localStorage.setItem(CLAVE_DEVICEHUB, baseDeviceHub);
       if (tokenDeviceHub) localStorage.setItem(CLAVE_DEVICEHUB_TOKEN, tokenDeviceHub);
       else localStorage.removeItem(CLAVE_DEVICEHUB_TOKEN);
+      marcarBienvenidaVista();
       $('dlg-devicehub').close();
       $('devicehub-base-actual').textContent = baseDeviceHub;
       $('devicehub-token-estado').textContent = tokenDeviceHub ? 'Token configurado' : 'Sin token: cambios manuales';
@@ -783,6 +828,7 @@ async function iniciar() {
   addEventListener('hashchange', ruta);
   ruta();
   if (avisoCarga) avisar(avisoCarga);
+  if (!primeraVisitaVista()) abrirConfiguracionDeviceHub(true);
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});

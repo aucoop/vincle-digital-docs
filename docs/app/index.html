@@ -136,17 +136,24 @@
   <dialog id="dlg-devicehub" aria-labelledby="devicehub-config-titulo">
     <form id="form-devicehub">
       <h3 id="devicehub-config-titulo">Servidor de DeviceHub</h3>
+      <p id="bienvenida-intro" class="pista" hidden>Conecta la guía con tu DeviceHub. Así podrá comprobar y cambiar el estado de cada móvil sin salir de aquí.</p>
       <label for="devicehub-base">URL base</label>
       <input id="devicehub-base" type="url" inputmode="url" autocomplete="url" required
              placeholder="https://lab6.ereuse.org">
       <label for="devicehub-token">Token API</label>
       <input id="devicehub-token" type="password" autocomplete="off"
              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-      <p class="pista">Crea o copia el token desde <a id="devicehub-tokens-enlace" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a>. Se guarda únicamente en este navegador y nunca se incluye en las copias de seguridad. Déjalo vacío para usar solo los enlaces manuales.</p>
+      <ol id="bienvenida-pasos-token" class="pasos-token" hidden>
+        <li>Abre <a id="devicehub-tokens-enlace-bienvenida" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a> e inicia sesión si te lo pide.</li>
+        <li>Pulsa <strong>Generate a new token</strong>, ponle un nombre (por ejemplo, tu nombre y «guía») y guárdalo.</li>
+        <li>Copia el token de la lista (formato <code>xxxxxxxx-xxxx-…</code>) y pégalo en el campo de arriba.</li>
+      </ol>
+      <p id="devicehub-token-ayuda" class="pista">Crea o copia el token desde <a id="devicehub-tokens-enlace" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a>. Se guarda únicamente en este navegador y nunca se incluye en las copias de seguridad. Déjalo vacío para usar solo los enlaces manuales.</p>
+      <p id="bienvenida-privacidad" class="pista" hidden>El token se guarda solo en este navegador. Sin token, la guía funciona igual con enlaces manuales; puedes configurarlo después desde ⚙.</p>
       <p id="devicehub-error" class="error-form" role="alert" hidden></p>
       <div class="fila">
         <button id="devicehub-cancelar" type="button">Cancelar</button>
-        <button type="submit" class="primario">Guardar</button>
+        <button id="devicehub-guardar" type="submit" class="primario">Guardar</button>
       </div>
     </form>
   </dialog>
