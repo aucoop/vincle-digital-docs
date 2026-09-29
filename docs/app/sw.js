@@ -2,8 +2,15 @@
 // para que los cambios de flujo.yaml lleguen en cuanto hay conexión.
 
 const CACHE_PREFIX = 'vincle-guia-';
-const CACHE = `${CACHE_PREFIX}v5`;
-const ARCHIVOS = ['./', 'index.html', 'app.css', 'app.js', 'flujo.json', 'manifest.webmanifest', 'icono.svg', 'icono-192.png', 'icono-512.png'];
+const CACHE = `${CACHE_PREFIX}v7`;
+const ARCHIVOS = [
+  './', 'index.html', 'app.css', 'app.js', 'flujo.json', 'manifest.webmanifest',
+  'icono.svg', 'icono-192.png', 'icono-512.png',
+  'diagramas/INBOX.png', 'diagramas/VISUAL_INSPECTION.png',
+  'diagramas/PENDING_DONOR.png', 'diagramas/INSTALL.png', 'diagramas/TEST.png',
+  'diagramas/REPAIR.png', 'diagramas/PACKAGING.png', 'diagramas/DONATION.png',
+  'diagramas/IN_USE.png', 'diagramas/DISMANTLE.png',
+];
 
 self.addEventListener('install', (ev) => {
   ev.waitUntil(caches.open(CACHE).then((c) => c.addAll(ARCHIVOS)).then(() => self.skipWaiting()));

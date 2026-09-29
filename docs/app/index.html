@@ -72,6 +72,16 @@
   <main id="vista-movil" hidden>
     <nav id="mapa" class="mapa" aria-label="Estados de DeviceHub"></nav>
     <div id="estado-info" class="estado-info"></div>
+    <details id="diagrama-estado" class="diagrama-estado" hidden>
+      <summary><span id="diagrama-titulo">Diagrama de este estado</span></summary>
+      <p class="pista">Desliza para recorrerlo. Toca el diagrama para ampliarlo sin salir de la guía.</p>
+      <div class="diagrama-scroll">
+        <button id="diagrama-ampliar" class="diagrama-ampliar" type="button" aria-label="Ampliar diagrama">
+          <img id="diagrama-imagen" loading="lazy" alt="">
+        </button>
+      </div>
+      <a id="diagrama-doc" class="diagrama-doc" target="_blank" rel="noopener">Abrir explicación completa</a>
+    </details>
     <ol id="recorrido" class="recorrido"></ol>
     <section id="paso" class="paso" aria-live="polite"></section>
     <div class="fila pie">
@@ -101,6 +111,16 @@
         <button value="ok" class="primario" id="nota-ok">Confirmar</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="dlg-diagrama" class="dlg-diagrama" aria-labelledby="visor-diagrama-titulo">
+    <div class="visor-cabecera">
+      <strong id="visor-diagrama-titulo">Diagrama</strong>
+      <button id="diagrama-cerrar" type="button">Cerrar y volver</button>
+    </div>
+    <div class="visor-diagrama">
+      <img id="visor-diagrama-imagen" alt="">
+    </div>
   </dialog>
 
   <div id="aviso" class="aviso" role="status" hidden></div>

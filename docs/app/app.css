@@ -159,9 +159,32 @@ textarea { width: 100%; resize: vertical; }
 .parada.aparte { margin-left: 14px; border-left: 1px dashed var(--borde); padding-left: 6px; }
 .parada.aparte.actual .punto { background: var(--rej-borde); border-color: var(--rej-borde); }
 
-.estado-info { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 2px 0 10px; }
+.estado-info { display: flex; align-items: baseline; gap: 8px; margin: 2px 0 8px; }
 .estado-info .resumen { color: var(--suave); font-size: .9rem; }
-.estado-info a { color: var(--primario); font-size: .85rem; white-space: nowrap; }
+
+.diagrama-estado {
+  margin: 0 0 12px; border: 1px solid var(--borde); border-radius: 12px;
+  background: var(--superficie); overflow: hidden;
+}
+.diagrama-estado summary {
+  cursor: pointer; min-height: 44px; padding: 10px 12px;
+  color: var(--primario); font-size: .9rem; font-weight: 650;
+}
+.diagrama-estado[open] summary { border-bottom: 1px solid var(--borde); }
+.diagrama-estado > .pista { margin: 8px 12px; }
+.diagrama-scroll {
+  margin: 0 10px 10px; overflow: auto; border: 1px solid #dfe3e6;
+  border-radius: 10px; background: #fff; overscroll-behavior-inline: contain;
+}
+.diagrama-ampliar {
+  display: block; width: max-content; min-width: 100%; min-height: 0;
+  margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent;
+}
+.diagrama-scroll img { display: block; width: max(100%, 900px); height: auto; }
+.diagrama-doc {
+  display: inline-flex; min-height: 44px; align-items: center;
+  margin: 0 12px 8px; color: var(--primario); font-size: .85rem;
+}
 
 /* Recorrido dentro del estado actual */
 .recorrido { list-style: none; margin: 0 0 10px; padding: 0 0 0 14px; border-left: 2px solid var(--borde); }
@@ -209,6 +232,24 @@ dialog {
 dialog::backdrop { background: rgb(0 0 0 / .5); }
 dialog form { display: grid; gap: 10px; }
 #video { width: 100%; border-radius: 10px; background: #000; aspect-ratio: 1; object-fit: cover; }
+
+.dlg-diagrama {
+  width: 100vw; max-width: none; height: 100dvh; max-height: none;
+  margin: 0; padding: 0; border: 0; border-radius: 0; overflow: hidden;
+}
+.visor-cabecera {
+  height: calc(60px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 12px 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--cabecera); color: var(--cabecera-texto);
+  border-bottom: 3px solid var(--ereuse-dark);
+}
+.visor-cabecera strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.visor-cabecera button { flex: 0 0 auto; border-color: currentColor; }
+.visor-diagrama {
+  height: calc(100dvh - 60px - env(safe-area-inset-top)); overflow: auto;
+  background: #fff; overscroll-behavior: contain;
+}
+.visor-diagrama img { display: block; width: max(100%, 1100px); height: auto; }
 
 .aviso {
   position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));

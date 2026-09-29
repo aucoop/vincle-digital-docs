@@ -225,9 +225,23 @@ function pintarMovil(m) {
 
   const info = estados[est];
   $('estado-info').innerHTML = info
-    ? `<span>${chipEstado(est)} <span class="resumen">${esc(info.resumen)}</span></span>
-       ${info.doc ? `<a href="../${esc(info.doc)}" target="_blank" rel="noopener">Ver diagrama</a>` : ''}`
+    ? `<span>${chipEstado(est)} <span class="resumen">${esc(info.resumen)}</span></span>`
     : '';
+  const panelDiagrama = $('diagrama-estado');
+  if (info) {
+    const diagramaUrl = `diagramas/${encodeURIComponent(est)}.png`;
+    panelDiagrama.hidden = false;
+    $('diagrama-titulo').textContent = `Diagrama de ${info.nombre}`;
+    $('diagrama-imagen').src = diagramaUrl;
+    $('diagrama-imagen').alt = `Diagrama del estado ${info.nombre}`;
+    $('visor-diagrama-titulo').textContent = `Diagrama de ${info.nombre}`;
+    $('visor-diagrama-imagen').src = diagramaUrl;
+    $('visor-diagrama-imagen').alt = `Diagrama ampliado del estado ${info.nombre}`;
+    $('diagrama-doc').hidden = !info.doc;
+    if (info.doc) $('diagrama-doc').href = `../${info.doc}`;
+  } else {
+    panelDiagrama.hidden = true;
+  }
 
   // Lo recorrido desde que entró en el estado actual.
   const recorrido = m.historial.slice(indiceEntrada(m) + 1);
@@ -538,6 +552,27 @@ async function iniciar() {
   $('copiar-historial').addEventListener('click', () => copiar(textoHistorial(moviles[location.hash.split('/')[2]])));
   $('exportar').addEventListener('click', exportar);
   $('importar').addEventListener('change', (ev) => ev.target.files[0] && importar(ev.target.files[0]));
+  const centrarDiagrama = () => requestAnimationFrame(() => {
+    const contenedor = document.querySelector('.diagrama-scroll');
+    contenedor.scrollLeft = (contenedor.scrollWidth - contenedor.clientWidth) / 2;
+    contenedor.scrollTop = 0;
+  });
+  $('diagrama-estado').addEventListener('toggle', () => {
+    if ($('diagrama-estado').open) centrarDiagrama();
+  });
+  $('diagrama-imagen').addEventListener('load', () => {
+    if ($('diagrama-estado').open) centrarDiagrama();
+  });
+  const dlgDiagrama = $('dlg-diagrama');
+  $('diagrama-ampliar').addEventListener('click', () => {
+    dlgDiagrama.showModal();
+    requestAnimationFrame(() => {
+      const visor = document.querySelector('.visor-diagrama');
+      visor.scrollLeft = (visor.scrollWidth - visor.clientWidth) / 2;
+      visor.scrollTop = 0;
+    });
+  });
+  $('diagrama-cerrar').addEventListener('click', () => dlgDiagrama.close());
 
   const conexion = () => { $('offline').hidden = navigator.onLine; };
   addEventListener('online', conexion);
