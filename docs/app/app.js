@@ -101,7 +101,10 @@ function cargarBaseDeviceHub() {
 }
 
 const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
-const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(m.id)}/`;
+// La guía rellena la etiqueta local hasta seis dígitos para leerla mejor,
+// pero DeviceHub guarda el custom_id numérico sin esos ceros iniciales.
+const customIdDeviceHub = (id) => String(id).replace(/^0+(?=\d)/, '');
+const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/`;
 
 function abrirConfiguracionDeviceHub() {
   $('devicehub-base').value = baseDeviceHub;
