@@ -223,7 +223,6 @@ textarea { width: 100%; resize: vertical; }
 .qr-devicehub code { max-width: 100%; overflow-wrap: anywhere; font-size: .7rem; }
 .qr-lienzo { width: min(210px, 100%); padding: 8px; border-radius: 6px; background: #fff; }
 .qr-lienzo svg { display: block; width: 100%; height: auto; }
-.dispositivo-escritorio .acceso-devicehub.qr-listo > .boton { display: none; }
 .dispositivo-escritorio .acceso-devicehub.qr-listo > .qr-devicehub { display: grid; }
 .enlace-boton {
   min-height: 36px; padding: 4px 0; justify-content: flex-start;

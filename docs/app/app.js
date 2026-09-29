@@ -325,7 +325,7 @@ function htmlCambio(m) {
     <span>Cambia el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
     ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">Copiar nota</button>` : ''}
     ${htmlAccesoAdaptado({ id: 'abrir-estado-devicehub', url, texto: 'Abrir este móvil en DeviceHub', qr: 'Escanea para abrir este móvil en DeviceHub' })}
-    <span class="sub">En un móvil, usa el enlace; en un ordenador, escanea el QR. Después abre «Change state» y elige ${esc(nombre)}.</span>
+    <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR para continuar en el móvil. Después abre «Change state» y elige ${esc(nombre)}.</span>
     <label class="check"><input type="checkbox" id="dh-hecho"> Hecho en DeviceHub</label>
   </div>`;
 }
@@ -362,14 +362,14 @@ function htmlPaso(m, actual, n) {
       <strong>Alta y fotos en DeviceHub</strong>
       <p>Usa DH-Scan o abre el formulario web. Si no hay una sesión iniciada, DeviceHub pedirá usuario y contraseña.</p>
       ${htmlAccesoAdaptado({ id: 'abrir-webform-devicehub', url: urlAltaDeviceHub(), texto: 'Abrir formulario de DeviceHub', qr: 'Escanea para abrir el formulario en el móvil', primario: true })}
-      <span class="sub">En un móvil, usa el enlace directo; en un ordenador, escanea el QR.</span>
+      <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR para continuar en el móvil.</span>
       <button id="configurar-devicehub-paso" class="enlace-boton" type="button">Cambiar servidor (${esc(baseDeviceHub)})</button>
     </div>` : '';
     const instalarWorkbench = actual === 'install.wb' ? `<div class="recurso-externo">
       <strong>Descargar Workbench Android</strong>
       <p>Instala en el dispositivo la última APK publicada por eReuse.</p>
       ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: 'Descargar Workbench Android', qr: 'Escanea con el dispositivo para descargar Workbench Android', primario: true })}
-      <span class="sub">En un móvil, usa el enlace directo; en un ordenador, escanea el QR con el dispositivo.</span>
+      <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR con el dispositivo.</span>
     </div>` : '';
     const verInventario = actual === 'install.inventario' ? `<div class="recurso-externo">
       <strong>Inventario en DeviceHub</strong>
