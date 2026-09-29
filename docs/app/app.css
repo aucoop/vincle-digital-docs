@@ -214,6 +214,17 @@ textarea { width: 100%; resize: vertical; }
 .devicehub-webform p { margin: 0; font-size: .9rem; }
 .devicehub-webform .sub { font-size: .8rem; }
 .devicehub-webform .boton { text-decoration: none; }
+.acceso-devicehub { display: grid; gap: 8px; }
+.qr-devicehub {
+  display: none; justify-items: center; gap: 8px; padding: 12px;
+  border: 1px solid var(--borde); border-radius: 10px; text-align: center;
+}
+.qr-devicehub strong { font-size: .9rem; }
+.qr-devicehub code { max-width: 100%; overflow-wrap: anywhere; font-size: .7rem; }
+.qr-lienzo { width: min(210px, 100%); padding: 8px; border-radius: 6px; background: #fff; }
+.qr-lienzo svg { display: block; width: 100%; height: auto; }
+.dispositivo-escritorio .acceso-devicehub.qr-listo > .boton { display: none; }
+.dispositivo-escritorio .acceso-devicehub.qr-listo > .qr-devicehub { display: grid; }
 .enlace-boton {
   min-height: 36px; padding: 4px 0; justify-content: flex-start;
   border: 0; background: transparent; color: inherit; text-decoration: underline;
@@ -235,6 +246,8 @@ textarea { width: 100%; resize: vertical; }
 .cambio-dh code { font-size: .85rem; white-space: pre-wrap; word-break: break-word; }
 .cambio-dh .boton { justify-self: start; text-decoration: none; }
 .cambio-dh .sub { font-size: .8rem; }
+.cambio-dh .acceso-devicehub { justify-items: start; }
+.cambio-dh .qr-devicehub { justify-self: stretch; }
 .plazo { font-size: .92rem; }
 
 .fin { text-align: center; padding: 12px 0; }

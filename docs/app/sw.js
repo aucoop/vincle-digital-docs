@@ -2,10 +2,15 @@
 // para que los cambios de flujo.yaml lleguen en cuanto hay conexión.
 
 const CACHE_PREFIX = 'vincle-guia-';
-const CACHE = `${CACHE_PREFIX}v14`;
+const CACHE = `${CACHE_PREFIX}v16`;
 const ARCHIVOS = [
-  './', 'index.html', 'app.css', 'app.js', 'flujo.json', 'manifest.webmanifest',
+  './', 'index.html', 'app.css', 'app.js', 'qrcode-ui.js', 'flujo.json', 'manifest.webmanifest',
   'icono.svg', 'icono-192.png', 'icono-512.png',
+  'vendor/qrcode/index.js', 'vendor/qrcode/QR8bitByte.js',
+  'vendor/qrcode/QRBitBuffer.js', 'vendor/qrcode/QRErrorCorrectLevel.js',
+  'vendor/qrcode/QRMaskPattern.js', 'vendor/qrcode/QRMath.js',
+  'vendor/qrcode/QRMode.js', 'vendor/qrcode/QRPolynomial.js',
+  'vendor/qrcode/QRRSBlock.js', 'vendor/qrcode/QRUtil.js',
   'diagramas/INBOX.png', 'diagramas/VISUAL_INSPECTION.png',
   'diagramas/PENDING_DONOR.png', 'diagramas/INSTALL.png', 'diagramas/TEST.png',
   'diagramas/REPAIR.png', 'diagramas/PACKAGING.png', 'diagramas/DONATION.png',

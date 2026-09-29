@@ -106,6 +106,17 @@ const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
 const customIdDeviceHub = (id) => String(id).replace(/^0+(?=\d)/, '');
 const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/`;
 
+function htmlAccesoDeviceHub({ id, url, texto, qr, primario = false }) {
+  return `<div class="acceso-devicehub">
+    <a id="${esc(id)}" class="boton${primario ? ' primario' : ''}" href="${esc(url)}">${esc(texto)}</a>
+    <div class="qr-devicehub" data-qr-url="${esc(url)}" data-qr-label="${esc(qr)}">
+      <strong>${esc(qr)}</strong>
+      <div class="qr-lienzo"></div>
+      <code>${esc(url)}</code>
+    </div>
+  </div>`;
+}
+
 function abrirConfiguracionDeviceHub() {
   $('devicehub-base').value = baseDeviceHub;
   $('devicehub-error').hidden = true;
@@ -287,6 +298,7 @@ function pintarMovil(m) {
   $('paso').className = `paso ${n?.marca ?? ''}`;
   $('paso').innerHTML = n ? htmlPaso(m, actual, n) : htmlPerdido();
   enlazarPaso(m, actual, n);
+  window.renderizarQrsDeviceHub?.();
 
   $('deshacer').disabled = m.historial.length === 0;
   $('historial').innerHTML = m.historial.map((e) =>
@@ -305,11 +317,12 @@ function htmlCambio(m) {
   const e = cambioPendiente(m);
   if (!e) return '';
   const nombre = estados[estadoDe(e.hacia)].nombre;
+  const url = urlDispositivoDeviceHub(m);
   return `<div class="cambio-dh">
     <span>Cambia el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
     ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">Copiar nota</button>` : ''}
-    <a id="abrir-estado-devicehub" class="boton" href="${esc(urlDispositivoDeviceHub(m))}">Abrir este móvil en DeviceHub</a>
-    <span class="sub">En DeviceHub, abre «Change state» y elige ${esc(nombre)}. Para volver, usa Atrás.</span>
+    ${htmlAccesoDeviceHub({ id: 'abrir-estado-devicehub', url, texto: 'Abrir este móvil en DeviceHub', qr: 'Escanea para abrir este móvil en DeviceHub' })}
+    <span class="sub">En un móvil, usa el enlace; en un ordenador, escanea el QR. Después abre «Change state» y elige ${esc(nombre)}.</span>
     <label class="check"><input type="checkbox" id="dh-hecho"> Hecho en DeviceHub</label>
   </div>`;
 }
@@ -345,8 +358,8 @@ function htmlPaso(m, actual, n) {
     const webform = actual === 'inbox.scan' ? `<div class="devicehub-webform">
       <strong>Alta y fotos en DeviceHub</strong>
       <p>Usa DH-Scan o abre el formulario web. Si no hay una sesión iniciada, DeviceHub pedirá usuario y contraseña.</p>
-      <a id="abrir-webform-devicehub" class="boton primario" href="${esc(urlAltaDeviceHub())}">Abrir formulario de DeviceHub</a>
-      <span class="sub">Se abrirá en este navegador. Para volver, usa Atrás.</span>
+      ${htmlAccesoDeviceHub({ id: 'abrir-webform-devicehub', url: urlAltaDeviceHub(), texto: 'Abrir formulario de DeviceHub', qr: 'Escanea para abrir el formulario en el móvil', primario: true })}
+      <span class="sub">En un móvil, usa el enlace directo; en un ordenador, escanea el QR.</span>
       <button id="configurar-devicehub-paso" class="enlace-boton" type="button">Cambiar servidor (${esc(baseDeviceHub)})</button>
     </div>` : '';
     return `${htmlCambio(m)}${htmlMarcas(n)}
