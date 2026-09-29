@@ -36,8 +36,9 @@ y su cookie pertenecen siempre a DeviceHub.
 - **Paso actual.** La acción o la pregunta del diagrama detallado, con su
   criterio y un botón por salida. Las salidas que cambian de estado lo indican.
 - **Cambios de estado.** Al entrar en un estado, recuerda que hay que cambiarlo
-  en DeviceHub y no deja seguir hasta marcarlo como hecho. Las salidas a
-  DISMANTLE piden la nota con el motivo del catálogo, lista para copiar.
+  en DeviceHub, ofrece un enlace directo a la ficha del móvil y no deja seguir
+  hasta marcarlo como hecho. Las salidas a DISMANTLE piden la nota con el
+  motivo del catálogo, lista para copiar.
 - **Plazos.** Las esperas del donante muestran los días que quedan, y la lista
   permite ver los móviles ordenados por vencimiento.
 - **Historial.** Cada paso queda registrado con la hora; se puede deshacer el

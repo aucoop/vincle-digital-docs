@@ -101,6 +101,7 @@ function cargarBaseDeviceHub() {
 }
 
 const urlAltaDeviceHub = () => `${baseDeviceHub}/product/add/`;
+const urlDispositivoDeviceHub = (m) => `${baseDeviceHub}/product/custom_id:${encodeURIComponent(m.id)}/`;
 
 function abrirConfiguracionDeviceHub() {
   $('devicehub-base').value = baseDeviceHub;
@@ -304,6 +305,8 @@ function htmlCambio(m) {
   return `<div class="cambio-dh">
     <span>Cambia el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
     ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">Copiar nota</button>` : ''}
+    <a id="abrir-estado-devicehub" class="boton" href="${esc(urlDispositivoDeviceHub(m))}">Abrir este móvil en DeviceHub</a>
+    <span class="sub">En DeviceHub, abre «Change state» y elige ${esc(nombre)}. Para volver, usa Atrás.</span>
     <label class="check"><input type="checkbox" id="dh-hecho"> Hecho en DeviceHub</label>
   </div>`;
 }

@@ -80,7 +80,7 @@ button, .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
 button:disabled { opacity: .45; cursor: not-allowed; }
-button.primario { background: var(--primario); color: var(--primario-texto); border-color: var(--primario); font-weight: 600; }
+button.primario, .boton.primario { background: var(--primario); color: var(--primario-texto); border-color: var(--primario); font-weight: 600; }
 input, select, textarea {
   font: inherit; min-height: 44px; padding: 8px 10px; border-radius: 10px;
   border: 1px solid var(--borde); background: var(--superficie); color: var(--texto);
@@ -229,6 +229,8 @@ textarea { width: 100%; resize: vertical; }
   border-radius: 10px; padding: 10px 12px; display: grid; gap: 8px; font-size: .92rem;
 }
 .cambio-dh code { font-size: .85rem; white-space: pre-wrap; word-break: break-word; }
+.cambio-dh .boton { justify-self: start; text-decoration: none; }
+.cambio-dh .sub { font-size: .8rem; }
 .plazo { font-size: .92rem; }
 
 .fin { text-align: center; padding: 12px 0; }
@@ -269,5 +271,5 @@ dialog form { display: grid; gap: 10px; }
   position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
   max-width: 560px; margin: 0 auto; z-index: 5;
   background: var(--texto); color: var(--fondo); padding: 12px 14px; border-radius: 10px;
-  font-size: .92rem; box-shadow: 0 4px 16px rgb(0 0 0 / .25);
+  font-size: .92rem; box-shadow: 0 4px 16px rgb(0 0 0 / .25); pointer-events: none;
 }
