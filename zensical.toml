@@ -18,6 +18,7 @@ nav = [
   ] },
   { "Herramientas" = [
     { "Etiquetas" = "etiquetas.md" },
+    { "Guía en el móvil" = "guia-app.md" },
   ] },
 ]
 

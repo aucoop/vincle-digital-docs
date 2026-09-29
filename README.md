@@ -23,6 +23,15 @@ python -m pip install -r etiquetas/requirements.txt
 python etiquetas/generar_planchas.py 1 189 -o plancha-000001.pdf
 ```
 
+## Guía en el móvil
+
+[`docs/app`](docs/app) es una app web instalable que guía el flujo paso a paso.
+El flujo sale de [`flujo/flujo.yaml`](flujo/flujo.yaml); después de editarlo:
+
+```sh
+python flujo/generar.py
+```
+
 ## Desarrollo del sitio
 
 ```sh

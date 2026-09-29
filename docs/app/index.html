@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Guía de reacondicionado</title>
+  <meta name="description" content="Guía paso a paso del flujo de reacondicionado de Vincle Digital">
+  <meta name="theme-color" content="#0a58ca">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icono-192.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="barra">
+    <button id="volver" class="icono" aria-label="Volver a la lista" hidden>←</button>
+    <h1 id="titulo">Guía de reacondicionado</h1>
+    <span id="offline" class="offline" hidden>sin conexión</span>
+  </header>
+
+  <main id="vista-lista">
+    <section class="abrir">
+      <button id="escanear" class="primario">Escanear etiqueta</button>
+      <form id="form-id" class="fila">
+        <input id="input-id" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+               placeholder="o teclea el número" aria-label="Número de la etiqueta">
+        <button type="submit">Abrir</button>
+      </form>
+      <p class="pista">Si el número no existe, se da de alta como móvil recibido en INBOX.</p>
+    </section>
+
+    <section>
+      <div class="cabecera-lista">
+        <h2>Móviles en el taller</h2>
+        <select id="filtro" aria-label="Filtrar">
+          <option value="activos">En curso</option>
+          <option value="plazo">Con plazo</option>
+          <option value="todos">Todos</option>
+        </select>
+      </div>
+      <ul id="lista" class="lista"></ul>
+      <p id="lista-vacia" class="pista" hidden>Todavía no hay móviles en este dispositivo.</p>
+    </section>
+
+    <details class="datos">
+      <summary>Copia de seguridad</summary>
+      <p class="pista">Los datos se guardan solo en este navegador. Exporta una copia de vez en cuando.</p>
+      <div class="fila">
+        <button id="exportar">Exportar JSON</button>
+        <label class="boton">Importar JSON<input id="importar" type="file" accept="application/json" hidden></label>
+      </div>
+    </details>
+  </main>
+
+  <main id="vista-movil" hidden>
+    <nav id="mapa" class="mapa" aria-label="Estados de DeviceHub"></nav>
+    <div id="estado-info" class="estado-info"></div>
+    <ol id="recorrido" class="recorrido"></ol>
+    <section id="paso" class="paso" aria-live="polite"></section>
+    <div class="fila pie">
+      <button id="deshacer">Deshacer último paso</button>
+      <button id="copiar-historial">Copiar historial</button>
+    </div>
+    <details class="historial">
+      <summary>Historial completo</summary>
+      <ol id="historial"></ol>
+    </details>
+  </main>
+
+  <dialog id="dlg-escaner">
+    <p>Apunta al QR de la etiqueta</p>
+    <video id="video" playsinline muted></video>
+    <form method="dialog"><button>Cancelar</button></form>
+  </dialog>
+
+  <dialog id="dlg-nota">
+    <form method="dialog" id="form-nota">
+      <h3 id="nota-titulo"></h3>
+      <label for="nota-texto">Nota para DeviceHub</label>
+      <textarea id="nota-texto" rows="3"></textarea>
+      <label id="nota-foto" class="check"><input type="checkbox" id="nota-foto-ok"> Foto hecha con DH-scan</label>
+      <div class="fila">
+        <button value="cancelar">Cancelar</button>
+        <button value="ok" class="primario" id="nota-ok">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="aviso" class="aviso" role="status" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
