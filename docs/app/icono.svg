@@ -1,5 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#627f40"/>
-  <rect x="176" y="96" width="160" height="288" rx="24" fill="none" stroke="#fff" stroke-width="24"/>
-  <path d="M200 240l40 40 80-88" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="titulo descripcion">
+  <title id="titulo">eReuse</title>
+  <desc id="descripcion">Cable con forma de letra e, símbolo de eReuse</desc>
+  <rect x="6" y="6" width="500" height="500" rx="96" fill="#fff" stroke="#323232" stroke-width="12"/>
+  <svg x="56" y="61" width="400" height="390" viewBox="0 0 57.17725 55.592323">
+    <g transform="translate(-0.26459024 -62.970829)">
+      <g transform="translate(-239.97284 44.44921) scale(.26458333)">
+        <path d="m 923.579,257.73 c 23.539,-74.208 71.556,-39.637 134.77,-58.074 103.229,-30.107 -0.306,-164.158 -88.542,-94.071 -89.261,70.902 -21.903,218.663 114.778,132.933" fill="none" stroke="#323232" stroke-width="31.19" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="m 919.559,272.813 c 24.379,-92.014 73.251,-67.062 128.012,-64.429 81.936,3.939 52.951,-114.011 -0.813,-127.759 -29.725,-7.6 -75.549,2.795 -102.982,45.027 -46.992,72.339 9.183,141.96 59.916,141.634 27.923,-0.18 50.949,-13.168 86.206,-33.85" fill="none" stroke="#d3ff33" stroke-width="1.99" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="m 1091.67,233.531 c -20.588,12.027 -42.756,23.424 -65.795,27.435 -23.7,4.127 -47.202,-2.464 -65.889,-18.07 -17.779,-14.845 -34.049,-35.948 -26.671,-67.323 9.291,-39.512 32.603,-74.373 70.926,-87.757 55.309,-19.316 106.626,14.436 89.444,85.71 -7.46,30.945 -74.748,35.062 -105.084,39.594 -61.903,9.248 -61.336,31.952 -75.41,62.133" fill="none" stroke="#d3ff33" stroke-width="1.99" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="m 1090.48,233.103 c -69.202,51.449 -146.324,17.542 -159.309,-32.037 -35.024,-133.731 178.16,-147.297 169.695,-33.699 -3.9,52.332 -165.551,-1.748 -188.927,99.919" fill="none" stroke="#d3ff33" stroke-width="1.99" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="m 1097.8,210.782 16.49,29.997 -38.218,22.58 c 0,0 -6.054,4.155 -9.359,-0.827 -3.309,-4.988 -9.094,-15.022 -11.882,-21.039 -2.127,-4.596 3.872,-7.447 3.872,-7.447 z" fill="#323232"/>
+        <path d="m 1112.65,234.315 -11.786,-20.801 11.438,-6.48 11.785,20.801 z" fill="#323232"/>
+        <path d="m 1111.95,213.12 -6.008,3.554 m 6.658,8.661 -6.008,3.554 m 0.078,-10.797 -4.371,2.586 m 6.781,1.333 -4.372,2.586" fill="none" stroke="#d3ff33" stroke-width="1.79"/>
+      </g>
+    </g>
+  </svg>
 </svg>

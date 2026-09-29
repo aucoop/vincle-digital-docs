@@ -1,42 +1,23 @@
 :root {
-  --ereuse-primary: #7a9f4f;
-  --ereuse-secondary: #9cc666;
-  --ereuse-dark: #545f71;
-  --ereuse-teal: #56beac;
-  --fondo: #f3f3f3;
+  --ereuse-black: #323232;
+  --ereuse-lime: #d3ff33;
+  --ereuse-gray: #545f71;
+  --ereuse-accent-text: #5b6d00;
+  --fondo: #ffffff;
   --superficie: #ffffff;
-  --texto: #2f343b;
-  --suave: #545f71;
-  --borde: #dfe3e6;
-  --cabecera: var(--ereuse-secondary);
-  --cabecera-texto: #1c2127;
-  --primario: #627f40;
+  --texto: #212529;
+  --suave: var(--ereuse-gray);
+  --borde: #d8dadd;
+  --cabecera: #ffffff;
+  --cabecera-texto: var(--ereuse-black);
+  --primario: var(--ereuse-black);
   --primario-texto: #ffffff;
-  --dh-fondo: #d9f2ed; --dh-borde: #2f8f7f; --dh-texto: #1d5f54;
-  --cp-fondo: #efe3b4; --cp-borde: #9a7b20; --cp-texto: #59460d;
-  --ok-fondo: #e5f0d6; --ok-borde: #7a9f4f; --ok-texto: #40552a;
-  --rej-fondo: #f8d7da; --rej-borde: #b02a37; --rej-texto: #58151c;
-  --nuevo-fondo: #d9f2ed; --nuevo-borde: #56beac; --nuevo-texto: #245f55;
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fondo: #1d2126;
-    --superficie: #282d34;
-    --texto: #f3f3f3;
-    --suave: #bac2ca;
-    --borde: #46505b;
-    --cabecera: var(--ereuse-dark);
-    --cabecera-texto: #ffffff;
-    --primario: var(--ereuse-secondary);
-    --primario-texto: #1c2127;
-    --dh-fondo: #173f38; --dh-borde: #56beac; --dh-texto: #bfe9e1;
-    --cp-fondo: #443a17; --cp-borde: #d7bd55; --cp-texto: #f4eac4;
-    --ok-fondo: #2d3d20; --ok-borde: #9cc666; --ok-texto: #dcebc9;
-    --rej-fondo: #3b1418; --rej-borde: #ea868f; --rej-texto: #f8d7da;
-    --nuevo-fondo: #173f38; --nuevo-borde: #56beac; --nuevo-texto: #bfe9e1;
-  }
+  --dh-fondo: #ffffff; --dh-borde: var(--ereuse-black); --dh-texto: var(--texto);
+  --cp-fondo: #f8ffe0; --cp-borde: #8ca600; --cp-texto: var(--texto);
+  --ok-fondo: #f8ffe0; --ok-borde: #8ca600; --ok-texto: var(--texto);
+  --rej-fondo: #f1f1f1; --rej-borde: var(--ereuse-black); --rej-texto: var(--texto);
+  --nuevo-fondo: #ffffff; --nuevo-borde: var(--ereuse-gray); --nuevo-texto: var(--texto);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -46,7 +27,7 @@ body {
   margin: 0;
   background: var(--fondo);
   color: var(--texto);
-  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -61,12 +42,14 @@ h3 { margin: 0 0 8px; font-size: 1.05rem; }
   display: flex; align-items: center; gap: 8px;
   padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
   background: var(--cabecera); color: var(--cabecera-texto);
-  border-bottom: 3px solid var(--ereuse-dark);
+  border-bottom: 4px solid var(--ereuse-lime);
 }
 .barra .icono {
   background: transparent; color: inherit; border: 0; font-size: 1.4rem;
   padding: 0; min-width: 44px; min-height: 44px;
 }
+.logo-ereuse { width: 36px; height: 36px; flex: 0 0 auto; }
+.config-devicehub { font-size: 1.15rem !important; }
 .enlace-cabecera {
   color: inherit; font-size: .82rem; min-height: 44px; padding: 0 4px;
   display: inline-flex; align-items: center; white-space: nowrap;
@@ -155,7 +138,7 @@ textarea { width: 100%; resize: vertical; }
 .parada.visitada .punto { background: var(--suave); border-color: var(--suave); }
 .parada.visitada::before, .parada.actual::before { background: var(--suave); }
 .parada.actual { color: var(--texto); font-weight: 700; }
-.parada.actual .punto { background: var(--primario); border-color: var(--primario); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primario) 25%, transparent); }
+.parada.actual .punto { background: var(--primario); border-color: var(--primario); box-shadow: 0 0 0 4px var(--ereuse-lime); }
 .parada.nuevo .punto { border-style: dashed; }
 .parada.aparte { margin-left: 14px; border-left: 1px dashed var(--borde); padding-left: 6px; }
 .parada.aparte.actual .punto { background: var(--rej-borde); border-color: var(--rej-borde); }
@@ -169,7 +152,7 @@ textarea { width: 100%; resize: vertical; }
 }
 .diagrama-estado summary {
   cursor: pointer; min-height: 44px; padding: 10px 12px;
-  color: var(--primario); font-size: .9rem; font-weight: 650;
+  color: var(--ereuse-accent-text); font-size: .9rem; font-weight: 650;
 }
 .diagrama-estado[open] summary { border-bottom: 1px solid var(--borde); }
 .diagrama-estado > .pista { margin: 8px 12px; }
@@ -184,7 +167,7 @@ textarea { width: 100%; resize: vertical; }
 .diagrama-scroll img { display: block; width: max(100%, 900px); height: auto; }
 .diagrama-doc {
   display: inline-flex; min-height: 44px; align-items: center;
-  margin: 0 12px 8px; color: var(--primario); font-size: .85rem;
+  margin: 0 12px 8px; color: var(--ereuse-accent-text); font-size: .85rem;
 }
 
 /* Recorrido dentro del estado actual */
@@ -257,7 +240,7 @@ dialog form { display: grid; gap: 10px; }
   height: calc(60px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 12px 0;
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   background: var(--cabecera); color: var(--cabecera-texto);
-  border-bottom: 3px solid var(--ereuse-dark);
+  border-bottom: 4px solid var(--ereuse-lime);
 }
 .visor-cabecera strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .visor-cabecera button { flex: 0 0 auto; border-color: currentColor; }

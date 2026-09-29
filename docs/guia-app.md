@@ -25,7 +25,8 @@ el teléfono ni modifica DeviceHub:** cuando sea necesario, mostrará el cambio
 de estado o la nota que el operador debe registrar manualmente.
 
 En el paso de alta y fotos puede abrir el WebForm de DeviceHub. La URL base se
-configura en **Conexión con DeviceHub** y por defecto es
+configura desde el botón ⚙ de la cabecera, desde el propio paso o en
+**Conexión con DeviceHub**. Por defecto es
 `https://lab6.ereuse.org`. La guía no guarda credenciales: el inicio de sesión
 y su cookie pertenecen siempre a DeviceHub.
 

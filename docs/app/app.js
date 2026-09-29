@@ -199,7 +199,7 @@ function ruta() {
   $('vista-lista').hidden = !!m;
   $('vista-movil').hidden = !m;
   $('volver').hidden = !m;
-  $('titulo').textContent = m ? `Móvil ${m.id}` : 'Guía de reacondicionado';
+  $('titulo').textContent = m ? `Móvil ${m.id}` : 'Guía eReuse';
   if (m) pintarMovil(m);
   else pintarLista();
   window.scrollTo(0, 0);
@@ -597,6 +597,7 @@ async function iniciar() {
   $('exportar').addEventListener('click', exportar);
   $('importar').addEventListener('change', (ev) => ev.target.files[0] && importar(ev.target.files[0]));
   $('configurar-devicehub').addEventListener('click', abrirConfiguracionDeviceHub);
+  $('configurar-devicehub-cabecera').addEventListener('click', abrirConfiguracionDeviceHub);
   $('devicehub-cancelar').addEventListener('click', () => $('dlg-devicehub').close());
   $('form-devicehub').addEventListener('submit', (ev) => {
     ev.preventDefault();

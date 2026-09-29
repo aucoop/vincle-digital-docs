@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Guía de reacondicionado</title>
   <meta name="description" content="Guía paso a paso del flujo de reacondicionado de Vincle Digital">
-  <meta name="theme-color" content="#9cc666" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#545f71" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icono.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icono-192.png">
@@ -15,9 +14,11 @@
 <body>
   <header class="barra">
     <button id="volver" class="icono" aria-label="Volver a la lista" hidden>←</button>
-    <h1 id="titulo">Guía de reacondicionado</h1>
+    <img class="logo-ereuse" src="icono.svg" alt="eReuse">
+    <h1 id="titulo">Guía eReuse</h1>
     <span id="offline" class="offline" hidden>sin conexión</span>
-    <a class="enlace-cabecera" href="../guia-app/">Documentación</a>
+    <button id="configurar-devicehub-cabecera" class="icono config-devicehub" type="button" aria-label="Configurar servidor de DeviceHub" title="Configurar DeviceHub">⚙</button>
+    <a class="enlace-cabecera" href="../guia-app/" title="Abrir documentación">Ayuda</a>
   </header>
 
   <main id="vista-lista">
