@@ -55,7 +55,8 @@ la misma dirección en el teléfono, sin compartirla con ningún servicio extern
 - **Plazos.** Las esperas del donante muestran los días que quedan, y la lista
   permite ver los móviles ordenados por vencimiento.
 - **Historial.** Cada paso queda registrado con la hora; se puede deshacer el
-  último y copiar el historial entero.
+  último, copiar el historial entero o borrar el móvil. Desde **Copia de
+  seguridad** se pueden borrar todos los móviles del navegador.
 
 ## Limitaciones del prototipo
 

@@ -76,6 +76,8 @@
         <button id="exportar">Exportar JSON</button>
         <label class="boton">Importar JSON<input id="importar" type="file" accept="application/json" hidden></label>
       </div>
+      <p class="pista">Borrar quita todos los móviles y sus historiales de este navegador. La conexión con DeviceHub se mantiene.</p>
+      <button id="borrar-todo" type="button" class="peligro">Borrar todos los móviles</button>
     </details>
   </main>
 
@@ -101,6 +103,7 @@
     <details class="historial">
       <summary>Historial completo</summary>
       <ol id="historial"></ol>
+      <button id="borrar-movil" type="button" class="peligro">Borrar este móvil y su historial</button>
     </details>
   </main>
 

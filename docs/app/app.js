@@ -722,6 +722,31 @@ async function importar(archivo) {
   }
 }
 
+// --- Borrado ----------------------------------------------------------------
+
+function borrarMovil() {
+  const id = location.hash.split('/')[2];
+  if (!moviles[id]) return;
+  if (!confirm(`¿Borrar el móvil ${id} y todo su historial de este navegador?\n\nNo se toca DeviceHub. No se puede deshacer.`)) return;
+  delete moviles[id];
+  guardar();
+  location.hash = '';
+  avisar(`Móvil ${id} borrado.`);
+}
+
+function borrarTodo() {
+  const total = Object.keys(moviles).length;
+  if (!total) {
+    avisar('No hay móviles guardados.');
+    return;
+  }
+  if (!confirm(`¿Borrar los ${total} móviles y sus historiales de este navegador?\n\nNo se toca DeviceHub. No se puede deshacer: exporta antes una copia si la necesitas.`)) return;
+  moviles = {};
+  guardar();
+  pintarLista();
+  avisar('Móviles borrados.');
+}
+
 // --- Arranque ---------------------------------------------------------------
 
 async function iniciar() {
@@ -765,7 +790,9 @@ async function iniciar() {
     pintarMovil(m);
   });
   $('copiar-historial').addEventListener('click', () => copiar(textoHistorial(moviles[location.hash.split('/')[2]])));
+  $('borrar-movil').addEventListener('click', borrarMovil);
   $('exportar').addEventListener('click', exportar);
+  $('borrar-todo').addEventListener('click', borrarTodo);
   $('importar').addEventListener('change', (ev) => ev.target.files[0] && importar(ev.target.files[0]));
   $('configurar-devicehub').addEventListener('click', () => abrirConfiguracionDeviceHub());
   $('configurar-devicehub-cabecera').addEventListener('click', () => abrirConfiguracionDeviceHub());

@@ -262,6 +262,7 @@ textarea { width: 100%; resize: vertical; }
 .pie button { flex: 1; }
 .historial ol { font-size: .85rem; padding-left: 20px; color: var(--suave); }
 .historial li { margin: 4px 0; }
+button.peligro { margin-top: 12px; border-color: var(--rej-borde); border-style: dashed; }
 
 dialog {
   border: 1px solid var(--borde); border-radius: 14px; padding: 16px;
