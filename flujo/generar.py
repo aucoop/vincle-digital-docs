@@ -31,6 +31,9 @@ def validar(flujo):
             errores.append(f"estado {e['id']}: inicio {e['inicio']} no existe")
         elif nodos[e["inicio"]]["estado"] != e["id"]:
             errores.append(f"estado {e['id']}: inicio {e['inicio']} es de otro estado")
+        marcar = e.get("marcar_tras")
+        if marcar and nodos.get(marcar, {}).get("estado") != e["id"]:
+            errores.append(f"estado {e['id']}: marcar_tras {marcar} no es un paso de este estado")
 
     for nid, n in nodos.items():
         donde = f"nodo {nid}"

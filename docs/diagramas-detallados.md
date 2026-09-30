@@ -131,7 +131,7 @@ Queda en DeviceHub al salir de INBOX:
 | tipo | `DeviceType` de móvil o de tablet de la institución |
 | fotos | DH-scan o WebForm de DeviceHub |
 | fabricante, modelo, serial, product code, GTIN | Barcode u OCR de la etiqueta, si la hay, como propiedades |
-| estado `INBOX` | Automático al crear el dispositivo con el primer POST, en el lote Inbox |
+| estado `INBOX` | La guía lo marca tras el primer POST, con el token API o a mano |
 
 
 ---

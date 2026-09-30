@@ -21,6 +21,10 @@
 #   opciones[].foto    pedir foto como evidencia
 #   opciones[].pausa   el móvil se queda donde está hasta volver a mirarlo
 #   opciones[].vence   la opción solo corresponde una vez vencido el plazo
+#
+# Estados:
+#   marcar_tras  en el estado inicial, paso tras el que se marca el estado en
+#                DeviceHub (el dispositivo no existe hasta el primer POST)
 
 version: 1
 
@@ -29,7 +33,7 @@ estados:
     nombre: INBOX
     resumen: Etiquetado y cribado rápido
     inicio: inbox.pegar
-    cambio: automatico
+    marcar_tras: inbox.post
     doc: diagramas-detallados/#2-inbox-etiquetado-y-cribado-rapido
   - id: VISUAL_INSPECTION
     nombre: VISUAL INSPECTION
@@ -141,7 +145,7 @@ nodos:
     tipo: accion
     marca: dh
     texto: Primer POST de evidencia a DeviceHub
-    ayuda: El móvil consta como recibido y queda en estado INBOX, en el lote Inbox.
+    ayuda: El móvil consta como recibido, en el lote Inbox. Después la guía marca el estado INBOX.
     siguiente: inbox.criba
 
   inbox.criba:

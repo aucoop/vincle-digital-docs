@@ -155,7 +155,8 @@ async function sincronizarCambioDeviceHub(m, soloComprobar = false) {
   const e = cambioPendiente(m);
   if (!e) return;
   const objetivo = estadoDeviceHub(estadoDe(e.hacia));
-  const anteriorEsperado = estadoDeviceHub(estadoDe(e.desde));
+  // Al marcar el estado inicial el dispositivo aún no tiene estado.
+  const anteriorEsperado = cruza(e) ? estadoDeviceHub(estadoDe(e.desde)) : null;
   const botones = [$('cambiar-estado-devicehub'), $('comprobar-estado-devicehub')].filter(Boolean);
   botones.forEach((b) => { b.disabled = true; });
   if ($('dh-api-mensaje')) $('dh-api-mensaje').textContent = 'Comprobando DeviceHub…';
@@ -275,13 +276,15 @@ function plazoDe(m, n) {
   return { vence, dias: Math.ceil((vence - Date.now()) / DIA) };
 }
 
-// Cambio de estado que falta anotar a mano en DeviceHub.
+// Cambio de estado que falta anotar en DeviceHub. En el estado inicial no hay
+// entrada que cruce: se marca tras el paso `marcar_tras`, cuando el
+// dispositivo ya existe en DeviceHub.
 function cambioPendiente(m) {
   const i = indiceEntrada(m);
-  if (i < 0) return null;
-  const e = m.historial[i];
-  if (e.dhHecho || estados[estadoDe(e.hacia)].cambio === 'automatico') return null;
-  return e;
+  const e = i >= 0
+    ? m.historial[i]
+    : m.historial.find((p) => p.desde === estados.INBOX.marcar_tras);
+  return e && !e.dhHecho ? e : null;
 }
 
 function actualizado(m) {

@@ -6,7 +6,7 @@
    "nombre": "INBOX",
    "resumen": "Etiquetado y cribado rápido",
    "inicio": "inbox.pegar",
-   "cambio": "automatico",
+   "marcar_tras": "inbox.post",
    "doc": "diagramas-detallados/#2-inbox-etiquetado-y-cribado-rapido"
   },
   {
@@ -142,7 +142,7 @@
    "tipo": "accion",
    "marca": "dh",
    "texto": "Primer POST de evidencia a DeviceHub",
-   "ayuda": "El móvil consta como recibido y queda en estado INBOX, en el lote Inbox.",
+   "ayuda": "El móvil consta como recibido, en el lote Inbox. Después la guía marca el estado INBOX.",
    "siguiente": "inbox.criba"
   },
   "inbox.criba": {
