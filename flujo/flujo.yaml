@@ -33,11 +33,13 @@ estados:
     doc: diagramas-detallados/#2-inbox-etiquetado-y-cribado-rapido
   - id: VISUAL_INSPECTION
     nombre: VISUAL INSPECTION
+    devicehub: VISUAL INSPECTION
     resumen: Carga, arranque y bloqueo
     inicio: vi.carga
     doc: diagramas-detallados/#3-visual-inspection-carga-arranque-y-bloqueo
   - id: PENDING_DONOR
     nombre: PENDING DONOR
+    devicehub: PENDING DONOR
     resumen: Espera de liberación (PIN, verificación FRP o gestión empresarial)
     nuevo: true
     inicio: pd.inicio
