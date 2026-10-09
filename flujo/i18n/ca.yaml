@@ -1,0 +1,328 @@
+# Textos en català de flujo/flujo.yaml, pels mateixos ids.
+#
+# Només es tradueixen els textos: ids, destins, motius ([MOTIVO]) i noms
+# d'estat de DeviceHub es queden com a flujo.yaml. Les opcions van en el mateix
+# ordre. flujo/generar.py falla si hi falta o hi sobra algun text.
+
+estados:
+  INBOX: {resumen: Etiquetatge i triatge ràpid}
+  VISUAL_INSPECTION: {resumen: Càrrega, arrencada i bloqueig}
+  PENDING_DONOR: {resumen: "Espera d'alliberament (PIN, verificació FRP o gestió empresarial)"}
+  INSTALL: {resumen: Esborrat de comptes, reset i registre}
+  TEST: {resumen: Diagnòstic amb workbench-android}
+  REPAIR: {resumen: Reparació i tornada a TEST}
+  PACKAGING: {resumen: Preparació per al lliurament}
+  DONATION: {resumen: Lliurament al receptor}
+  IN_USE: {resumen: Període d'ús}
+  DISMANTLE: {resumen: Peces o reciclatge}
+
+nodos:
+
+  # --- INBOX ---------------------------------------------------------------
+
+  inbox.pegar:
+    texto: Enganxar la següent etiqueta preimpresa del full
+
+  inbox.scan:
+    texto: Registrar custom_id, fotos i tipus a DeviceHub
+    ayuda: Fes servir DH-Scan o el formulari web de DeviceHub.
+
+  inbox.etiqueta_fab:
+    texto: Té l'etiqueta del fabricant a la vista?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  inbox.ocr:
+    texto: "DH-scan: codi de barres o OCR de l'etiqueta del fabricant"
+    checklist: [Fabricant, Model, Número de sèrie, Product code, GTIN]
+
+  inbox.post:
+    texto: Primer POST d'evidència a DeviceHub
+    ayuda: El mòbil consta com a rebut, al lot Inbox. Després la guia marca l'estat INBOX.
+
+  inbox.criba:
+    texto: Triatge a simple vista
+    ayuda: >-
+      Només allò evident: no s'encén el mòbil ni es busca informació del model.
+      La resta del maquinari es prova a TEST.
+    opciones:
+      - texto: Mòbil o tauleta Android
+      - texto: Trencat, mullat o un altre dany greu
+      - texto: Bateria inflada
+        ayuda: Apartar l'aparell pel risc d'incendi.
+      - texto: iPhone
+      - texto: Mòbil de tecles o un altre aparell
+        ayuda: O reclassificar-lo si té un altre ús.
+
+  inbox.iphone:
+    texto: Fora del flux Android
+    ayuda: Pregunta oberta a la documentació; encara no s'ha decidit què fer amb els iPhone.
+
+  # --- VISUAL INSPECTION ---------------------------------------------------
+
+  vi.carga:
+    texto: Endollar 15 min. Carrega? (icona o LED)
+    ayuda: >-
+      La càrrega va abans que l'arrencada: un mòbil sense bateria no arrenca i
+      no es pot distingir d'un d'espatllat. N'hi ha prou que s'encengui. Si tens
+      un tester USB a mà, fes-lo servir per comprovar si el mòbil consumeix
+      corrent, encara que no mostri cap icona ni LED.
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  vi.otro_cable:
+    texto: Provar un altre cable i netejar el connector
+
+  vi.carga2:
+    texto: Carrega ara?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+        nota: provat amb dos cables
+
+  vi.arranca:
+    texto: Arrenca?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+        nota: bootloop o pantalla negra
+
+  vi.pantalla:
+    texto: Quina pantalla surt?
+    opciones:
+      - texto: Escriptori sense bloqueig
+      - texto: Assistent inicial
+      - texto: Pantalla de bloqueig
+
+  vi.frp:
+    texto: Demana el compte anterior? (FRP)
+    opciones:
+      - texto: "No"
+      - texto: Sí
+
+  vi.pin:
+    texto: El PIN venia amb la donació i funciona?
+    ayuda: >-
+      Mai no es proven PIN a cegues: després de diversos intents el mòbil es
+      bloqueja durant un temps o s'esborra, i això darrer deixa l'FRP armat.
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  # --- PENDING DONOR -------------------------------------------------------
+
+  pd.inicio:
+    texto: "Nota a DeviceHub: data límit = avui + 30 dies"
+
+  pd.guardar:
+    texto: Desar-lo a la prestatgeria d'espera, etiquetat
+
+  pd.contacto:
+    texto: Hi ha contacte del donant, propietari o empresa?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  pd.msg:
+    texto: Demanar que desbloquegi el dispositiu, completi la verificació FRP o retiri la gestió empresarial
+
+  pd.r1:
+    texto: Respon en 7 dies?
+    opciones:
+      - texto: Sí, ha respost
+      - texto: Encara no, continuar esperant
+      - texto: No, han passat 7 dies
+
+  pd.rec:
+    texto: Enviar un recordatori
+
+  pd.r2:
+    texto: Respon abans de la data límit?
+    opciones:
+      - texto: Sí, ha respost
+      - texto: Encara no, continuar esperant
+      - texto: No, ha vençut el termini
+
+  pd.que:
+    texto: Què respon?
+    opciones:
+      - texto: Dona el PIN
+      - texto: FRP actiu
+      - texto: Gestió empresarial
+      - texto: No vol o no pot
+
+  pd.probar:
+    texto: Provar el PIN per desbloquejar el mòbil. Es desbloqueja?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  pd.frp:
+    texto: El donant completa la verificació amb un compte sincronitzat prèviament
+
+  pd.mdm:
+    texto: L'empresa retira MDM, zero-touch o Knox
+
+  pd.ok:
+    texto: "Nota a DeviceHub: accés recuperat"
+
+  # --- INSTALL -------------------------------------------------------------
+
+  install.emm:
+    texto: Gestió empresarial? (perfil de treball, zero-touch, Knox)
+    opciones:
+      - texto: "No"
+      - texto: Sí
+        nota: bloqueig MDM empresarial, demanar la baixa a l'empresa
+
+  install.bandeja:
+    texto: Treure la safata i retirar la SIM i la SD del donant
+
+  install.donate:
+    texto: Instal·lar donate-android
+    ayuda: APK sense permisos ni xarxa; es pot instal·lar amb dades del donant.
+
+  install.cuentas:
+    texto: "Amb donate-android: eliminar tots els comptes, Google i fabricant"
+    ayuda: >-
+      Comptes fora abans del reset. Si es reseteja amb el compte posat, apareix
+      l'FRP i només el propietari el pot treure. No s'intenta cap bypass.
+
+  install.pass:
+    texto: Demana una contrasenya que no tenim?
+    opciones:
+      - texto: "No"
+      - texto: Sí
+
+  install.lock:
+    texto: Treure el bloqueig de pantalla
+
+  install.reset:
+    texto: Factory reset des de donate-android
+    ayuda: donate-android obre el factory reset del sistema; l'app no ho pot fer pel seu compte.
+
+  install.usuario:
+    texto: Arrenca a l'assistent inicial. Configurar l'usuari de test
+    checklist:
+      - Sense compte de Google
+      - Idioma i data
+      - Sense PIN
+      - Connectar a la WiFi del taller
+
+  install.wb:
+    texto: Instal·lar workbench-android i teclejar el número de l'etiqueta
+    ayuda: L'app comprova a DeviceHub que el número existeix.
+
+  install.inventario:
+    texto: Snapshot d'inventari amb workbench-android
+    ayuda: Model, Android, pedaç de seguretat, RAM, emmagatzematge i bateria.
+
+  install.obsoleto:
+    texto: Obsolet? (pedaç de seguretat de fa més de X anys)
+    ayuda: Falta fixar la X del criteri (pregunta oberta).
+    opciones:
+      - texto: "No"
+      - texto: Sí
+        nota: "model, Android i pedaç: "
+
+  # --- TEST ----------------------------------------------------------------
+
+  test.wb:
+    texto: Completar tots els tests a Workbench Android i enviar el snapshot
+    ayuda: L'app guia les proves, registra PASS, FAIL o SKIP i desa les notes. Es passen sempre totes, encara que alguna falli.
+
+  test.decision:
+    texto: Apte per al lliurament?
+    ayuda: Es decideix amb els resultats de workbench-android i els criteris de lliurament.
+    opciones:
+      - texto: Pendent de decidir
+      - texto: Apte segons els criteris de lliurament
+      - texto: Requereix reparació
+
+  # --- REPAIR --------------------------------------------------------------
+
+  repair.resultado:
+    texto: Resultat de la reparació?
+    ayuda: >-
+      El procediment intern de REPAIR queda fora de l'abast de la
+      documentació. Una reparació completada torna a TEST.
+    opciones:
+      - texto: En reparació
+      - texto: Reparació completada
+      - texto: No reparable o reparació no viable
+
+  # --- PACKAGING -----------------------------------------------------------
+
+  pack.reset2:
+    texto: "Reset II: factory reset des d'Ajustos"
+    ayuda: Esborra l'usuari de test i la WiFi.
+
+  pack.asistente:
+    texto: Arrenca correctament a l'assistent inicial?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  pack.frp:
+    texto: Demana un compte anterior? (FRP)
+    opciones:
+      - texto: "No"
+      - texto: Sí
+
+  pack.preparar:
+    texto: Preparar el kit
+    checklist:
+      - Apagar amb la bateria al 50-80 %
+      - Neteja exterior i protector si cal
+      - "Kit: mòbil, carregador, cable, funda, guia de primers passos"
+      - Etiqueta QR visible amb custom_id
+      - Deixar-lo a la prestatgeria de llestos
+
+  pack.receptor:
+    texto: Hi ha receptor assignat?
+    opciones:
+      - texto: No, continua a la prestatgeria
+      - texto: Sí
+
+  pack.entrega:
+    texto: Lliurament al receptor amb signatura de recepció
+
+  # --- DONATION ------------------------------------------------------------
+
+  don.nota:
+    texto: "Nota a DeviceHub: entitat o receptor"
+
+  don.config:
+    texto: Primera configuració amb el receptor, si ho necessita
+
+  # --- IN USE --------------------------------------------------------------
+
+  use.chk:
+    texto: Passada de workbench-android, periòdica o en tornar
+
+  use.evento:
+    texto: Què passa?
+    opciones:
+      - texto: Continua en ús
+      - texto: Canvi de persona o devolució
+      - texto: Es trenca
+
+  use.reparable:
+    texto: És reparable?
+    opciones:
+      - texto: Sí
+      - texto: "No"
+
+  # --- DISMANTLE -----------------------------------------------------------
+
+  dis.destino:
+    texto: Destinació
+    opciones:
+      - texto: Donant de peces (pantalla, bateria, càmera)
+      - texto: Gestor autoritzat RAEE
+        ayuda: Amb esborrat certificat si no s'ha pogut resetejar.
+
+  dis.fin:
+    texto: Fora del circuit

@@ -29,7 +29,10 @@ jobs:
           python-version: "3.x"
       - run: pip install -r requirements-docs.txt
       - run: python flujo/generar.py --check
+      # El castellano primero: su build vacía site/, donde van site/en y site/ca.
       - run: zensical build --clean --strict
+      - run: zensical build --strict -f zensical.en.toml
+      - run: zensical build --strict -f zensical.ca.toml
 
   deploy:
     if: github.event_name != 'pull_request'
@@ -44,7 +47,10 @@ jobs:
           python-version: "3.x"
       - run: pip install -r requirements-docs.txt
       - run: python flujo/generar.py --check
+      # El castellano primero: su build vacía site/, donde van site/en y site/ca.
       - run: zensical build --clean
+      - run: zensical build -f zensical.en.toml
+      - run: zensical build -f zensical.ca.toml
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

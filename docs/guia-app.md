@@ -9,7 +9,8 @@ PENDING DONOR.
 
 En Android, desde Chrome, *Añadir a pantalla de inicio* la instala como una app
 más. Funciona sin conexión una vez abierta y adapta automáticamente su tema
-claro u oscuro a la configuración del teléfono.
+claro u oscuro a la configuración del teléfono. La guía está en castellano,
+inglés y catalán; el idioma se elige con el selector de la cabecera.
 
 ## Cómo empezar
 
@@ -67,16 +68,22 @@ la misma dirección en el teléfono, sin compartirla con ningún servicio extern
   la confirmación manual.
 - El escáner de QR usa la API `BarcodeDetector`, que tiene Chrome en Android.
   Donde no existe, el número se teclea.
+- Las notas que se envían a DeviceHub se escriben en el idioma de la guía; el
+  código de motivo entre corchetes (`[NO-CARGA]`, …) es el mismo en todos los
+  idiomas.
 
 ## De dónde sale el flujo
 
 El flujo está en [`flujo/flujo.yaml`](https://github.com/aucoop/vincle-digital-docs/blob/main/flujo/flujo.yaml),
 que es la versión ejecutable de los [diagramas detallados](diagramas-detallados.md).
-Tras editarlo:
+Los textos en inglés y catalán están en
+[`flujo/i18n/`](https://github.com/aucoop/vincle-digital-docs/tree/main/flujo/i18n),
+por los mismos ids. Tras editarlos:
 
 ```sh
-python flujo/generar.py                      # valida y regenera docs/app/flujo.json
-python flujo/generar.py --mermaid INSTALL    # diagrama de un estado, para comparar
+python flujo/generar.py                                  # valida y regenera docs/app/flujo*.json
+python flujo/generar.py --mermaid INSTALL --idioma en    # diagrama de un estado, para comparar
 ```
 
-El despliegue falla si `flujo.json` no está al día con el YAML.
+El despliegue falla si algún `flujo*.json` no está al día con el YAML, o si a
+una traducción le falta un texto.

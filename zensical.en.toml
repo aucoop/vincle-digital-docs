@@ -1,38 +1,38 @@
 [project]
 site_name = "Vincle Digital"
-site_url = "https://aucoop.github.io/vincle-digital-docs/"
-site_description = "Flujo de reacondicionado de móviles Android con trazabilidad en DeviceHub"
+site_url = "https://aucoop.github.io/vincle-digital-docs/en/"
+site_description = "Android phone refurbishing flow with traceability in DeviceHub"
 site_author = "aucoop"
-copyright = "Documentación de Vincle Digital"
-docs_dir = "docs"
-site_dir = "site"
+copyright = "Vincle Digital documentation"
+docs_dir = "i18n/en"
+site_dir = "site/en"
 repo_url = "https://github.com/aucoop/vincle-digital-docs"
 repo_name = "aucoop/vincle-digital-docs"
-edit_uri = "edit/main/docs/"
-extra_css = ["stylesheets/extra.css"]
-extra_javascript = ["javascripts/acceso-guia.js", "javascripts/idioma.js"]
-# Selector de idioma. Castellano en la raíz, inglés en /en/ y catalán en /ca/
-# (zensical.en.toml y zensical.ca.toml). javascripts/idioma.js reescribe estos
-# enlaces para ir a la misma página en el otro idioma.
+edit_uri = "edit/main/i18n/en/"
+extra_css = ["../stylesheets/extra.css"]
+extra_javascript = ["../javascripts/acceso-guia.js", "../javascripts/idioma.js"]
+# English site, built into site/en after the Spanish one (which wipes site/).
+# Pages keep the Spanish file names and heading ids so the language selector
+# lands on the same page and section. Shared CSS and JS come from the root.
 extra.alternate = [
   { name = "Español", link = "https://aucoop.github.io/vincle-digital-docs/", lang = "es" },
   { name = "English", link = "https://aucoop.github.io/vincle-digital-docs/en/", lang = "en" },
   { name = "Català", link = "https://aucoop.github.io/vincle-digital-docs/ca/", lang = "ca" },
 ]
 nav = [
-  { "Inicio" = "index.md" },
-  { "Proceso" = [
-    { "Vista rápida" = "diagrama-alto-nivel.md" },
-    { "Flujo detallado" = "diagramas-detallados.md" },
+  { "Home" = "index.md" },
+  { "Process" = [
+    { "Quick view" = "diagrama-alto-nivel.md" },
+    { "Detailed flow" = "diagramas-detallados.md" },
   ] },
-  { "Herramientas" = [
-    { "Etiquetas" = "etiquetas.md" },
-    { "Guía en el móvil" = "guia-app.md" },
+  { "Tools" = [
+    { "Labels" = "etiquetas.md" },
+    { "Guide on the phone" = "guia-app.md" },
   ] },
 ]
 
 [project.theme]
-language = "es"
+language = "en"
 features = [
   "navigation.instant",
   "navigation.instant.prefetch",
@@ -57,7 +57,7 @@ scheme = "default"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/sun"
-toggle.name = "Cambiar a modo oscuro"
+toggle.name = "Switch to dark mode"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
@@ -65,7 +65,7 @@ scheme = "slate"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/moon"
-toggle.name = "Cambiar a modo claro"
+toggle.name = "Switch to light mode"
 
 [project.markdown_extensions]
 attr_list = {}

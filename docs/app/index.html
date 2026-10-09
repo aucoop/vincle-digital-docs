@@ -14,47 +14,49 @@
 </head>
 <body>
   <header class="barra">
-    <button id="volver" class="icono" aria-label="Volver a la lista" hidden>←</button>
+    <button id="volver" class="icono" aria-label="Volver a la lista" data-i18n-attr="aria-label:cabecera.volver" hidden>←</button>
     <img class="logo-ereuse" src="icono.svg" alt="eReuse">
-    <h1 id="titulo">Guía eReuse</h1>
-    <span id="offline" class="offline" hidden>sin conexión</span>
-    <button id="configurar-devicehub-cabecera" class="icono config-devicehub" type="button" aria-label="Configurar servidor de DeviceHub" title="Configurar DeviceHub">⚙</button>
-    <a class="enlace-cabecera" href="../guia-app/" title="Abrir documentación">Ayuda</a>
+    <h1 id="titulo" data-i18n="cabecera.titulo">Guía eReuse</h1>
+    <span id="offline" class="offline" data-i18n="cabecera.offline" hidden>sin conexión</span>
+    <button id="configurar-devicehub-cabecera" class="icono config-devicehub" type="button" aria-label="Configurar servidor de DeviceHub" title="Configurar DeviceHub" data-i18n-attr="aria-label:cabecera.configurar; title:cabecera.configurar.titulo">⚙</button>
+    <select id="idioma" class="selector-idioma" aria-label="Idioma" data-i18n-attr="aria-label:cabecera.idioma; title:cabecera.idioma"></select>
+    <a id="enlace-ayuda" class="enlace-cabecera" href="../guia-app/" title="Abrir documentación" data-i18n="cabecera.ayuda" data-i18n-attr="title:cabecera.ayuda.titulo">Ayuda</a>
   </header>
 
   <main id="vista-lista">
     <section id="introduccion" class="introduccion">
-      <h2>¿Para qué sirve?</h2>
-      <p>Esta guía te dice qué hacer y decidir con cada móvil durante el reacondicionado. Guarda el recorrido y puede avanzar sus estados en DeviceHub.</p>
-      <p><strong>Solo modifica DeviceHub cuando confirmas un cambio de estado.</strong> No ejecuta acciones en el teléfono.</p>
-      <h2>Empieza con un móvil</h2>
+      <h2 data-i18n="intro.titulo">¿Para qué sirve?</h2>
+      <p data-i18n="intro.p1">Esta guía te dice qué hacer y decidir con cada móvil durante el reacondicionado. Guarda el recorrido y puede avanzar sus estados en DeviceHub.</p>
+      <p data-i18n-html="intro.p2"><strong>Solo modifica DeviceHub cuando confirmas un cambio de estado.</strong> No ejecuta acciones en el teléfono.</p>
+      <h2 data-i18n="intro.empezar">Empieza con un móvil</h2>
       <ol>
-        <li>Toma la siguiente etiqueta preimpresa de la plancha.</li>
-        <li>Escanea su QR o escribe el número impreso bajo el QR.</li>
-        <li>Confirma el alta. La guía empezará en INBOX y te indicará el primer paso.</li>
+        <li data-i18n="intro.paso1">Toma la siguiente etiqueta preimpresa de la plancha.</li>
+        <li data-i18n="intro.paso2">Escanea su QR o escribe el número impreso bajo el QR.</li>
+        <li data-i18n="intro.paso3">Confirma el alta. La guía empezará en INBOX y te indicará el primer paso.</li>
       </ol>
     </section>
 
     <section class="abrir">
-      <h2>Registrar o continuar un móvil</h2>
-      <button id="escanear" class="primario">Escanear QR de la etiqueta</button>
+      <h2 data-i18n="abrir.titulo">Registrar o continuar un móvil</h2>
+      <button id="escanear" class="primario" data-i18n="abrir.escanear">Escanear QR de la etiqueta</button>
       <form id="form-id" class="fila">
         <input id="input-id" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
                placeholder="N.º de etiqueta (ej. 000042)"
-               aria-label="Número de la etiqueta" aria-describedby="ayuda-id">
-        <button type="submit">Continuar</button>
+               aria-label="Número de la etiqueta" aria-describedby="ayuda-id"
+               data-i18n-attr="placeholder:abrir.placeholder; aria-label:abrir.etiqueta">
+        <button type="submit" data-i18n="abrir.continuar">Continuar</button>
       </form>
-      <p id="sin-escaner" class="pista aviso-inline" hidden>Este navegador no permite escanear el QR. Escribe el número impreso en la etiqueta.</p>
-      <p id="ayuda-id" class="pista">Si es nuevo, se registra y empieza en INBOX. Si ya existe, sigues por el último paso.</p>
+      <p id="sin-escaner" class="pista aviso-inline" data-i18n="abrir.sin-escaner" hidden>Este navegador no permite escanear el QR. Escribe el número impreso en la etiqueta.</p>
+      <p id="ayuda-id" class="pista" data-i18n="abrir.ayuda">Si es nuevo, se registra y empieza en INBOX. Si ya existe, sigues por el último paso.</p>
     </section>
 
     <section>
       <div class="cabecera-lista">
-        <h2>Móviles en el taller</h2>
-        <select id="filtro" aria-label="Filtrar">
-          <option value="activos">En curso</option>
-          <option value="plazo">Con plazo</option>
-          <option value="todos">Todos</option>
+        <h2 data-i18n="lista.titulo">Móviles en el taller</h2>
+        <select id="filtro" aria-label="Filtrar" data-i18n-attr="aria-label:lista.filtrar">
+          <option value="activos" data-i18n="lista.activos">En curso</option>
+          <option value="plazo" data-i18n="lista.plazo">Con plazo</option>
+          <option value="todos" data-i18n="lista.todos">Todos</option>
         </select>
       </div>
       <ul id="lista" class="lista"></ul>
@@ -62,74 +64,74 @@
     </section>
 
     <details class="datos integracion-config">
-      <summary>Conexión con DeviceHub</summary>
-      <p class="pista">La guía usa un token API para comprobar y avanzar estados. Los formularios y fichas siguen abriéndose con la sesión normal de DeviceHub.</p>
-      <p class="pista">Servidor actual: <code id="devicehub-base-actual">https://lab6.ereuse.org</code></p>
-      <p class="pista">API: <strong id="devicehub-token-estado">Sin token: cambios manuales</strong></p>
-      <button id="configurar-devicehub" type="button">Configurar conexión</button>
+      <summary data-i18n="conexion.titulo">Conexión con DeviceHub</summary>
+      <p class="pista" data-i18n="conexion.explica">La guía usa un token API para comprobar y avanzar estados. Los formularios y fichas siguen abriéndose con la sesión normal de DeviceHub.</p>
+      <p class="pista"><span data-i18n="conexion.servidor">Servidor actual:</span> <code id="devicehub-base-actual">https://lab6.ereuse.org</code></p>
+      <p class="pista"><span data-i18n="conexion.api">API:</span> <strong id="devicehub-token-estado">Sin token: cambios manuales</strong></p>
+      <button id="configurar-devicehub" type="button" data-i18n="conexion.configurar">Configurar conexión</button>
     </details>
 
     <details class="datos">
-      <summary>Copia de seguridad</summary>
-      <p class="pista">Los datos se guardan solo en este navegador. Exporta una copia de vez en cuando.</p>
+      <summary data-i18n="copia.titulo">Copia de seguridad</summary>
+      <p class="pista" data-i18n="copia.explica">Los datos se guardan solo en este navegador. Exporta una copia de vez en cuando.</p>
       <div class="fila">
-        <button id="exportar">Exportar JSON</button>
-        <label class="boton">Importar JSON<input id="importar" type="file" accept="application/json" hidden></label>
+        <button id="exportar" data-i18n="copia.exportar">Exportar JSON</button>
+        <label class="boton"><span data-i18n="copia.importar">Importar JSON</span><input id="importar" type="file" accept="application/json" hidden></label>
       </div>
-      <p class="pista">Borrar quita todos los móviles y sus historiales de este navegador. La conexión con DeviceHub se mantiene.</p>
-      <button id="borrar-todo" type="button" class="peligro">Borrar todos los móviles</button>
+      <p class="pista" data-i18n="copia.borrar-explica">Borrar quita todos los móviles y sus historiales de este navegador. La conexión con DeviceHub se mantiene.</p>
+      <button id="borrar-todo" type="button" class="peligro" data-i18n="copia.borrar">Borrar todos los móviles</button>
     </details>
   </main>
 
   <main id="vista-movil" hidden>
-    <nav id="mapa" class="mapa" aria-label="Estados de DeviceHub"></nav>
+    <nav id="mapa" class="mapa" aria-label="Estados de DeviceHub" data-i18n-attr="aria-label:movil.mapa"></nav>
     <div id="estado-info" class="estado-info"></div>
     <details id="diagrama-estado" class="diagrama-estado" hidden>
       <summary><span id="diagrama-titulo">Diagrama de este estado</span></summary>
-      <p class="pista">Desliza para recorrerlo. Toca el diagrama para ampliarlo sin salir de la guía.</p>
+      <p class="pista" data-i18n="diagrama.desliza">Desliza para recorrerlo. Toca el diagrama para ampliarlo sin salir de la guía.</p>
       <div class="diagrama-scroll">
-        <button id="diagrama-ampliar" class="diagrama-ampliar" type="button" aria-label="Ampliar diagrama">
+        <button id="diagrama-ampliar" class="diagrama-ampliar" type="button" aria-label="Ampliar diagrama" data-i18n-attr="aria-label:diagrama.ampliar">
           <img id="diagrama-imagen" loading="lazy" alt="">
         </button>
       </div>
-      <a id="diagrama-doc" class="diagrama-doc" target="_blank" rel="noopener">Abrir explicación completa</a>
+      <a id="diagrama-doc" class="diagrama-doc" target="_blank" rel="noopener" data-i18n="diagrama.doc">Abrir explicación completa</a>
     </details>
     <ol id="recorrido" class="recorrido"></ol>
     <section id="paso" class="paso" aria-live="polite"></section>
     <div class="fila pie">
-      <button id="deshacer">Deshacer último paso</button>
-      <button id="copiar-historial">Copiar historial</button>
+      <button id="deshacer" data-i18n="movil.deshacer">Deshacer último paso</button>
+      <button id="copiar-historial" data-i18n="movil.copiar-historial">Copiar historial</button>
     </div>
     <details class="historial">
-      <summary>Historial completo</summary>
+      <summary data-i18n="movil.historial">Historial completo</summary>
       <ol id="historial"></ol>
-      <button id="borrar-movil" type="button" class="peligro">Borrar este móvil y su historial</button>
+      <button id="borrar-movil" type="button" class="peligro" data-i18n="movil.borrar">Borrar este móvil y su historial</button>
     </details>
   </main>
 
   <dialog id="dlg-escaner">
-    <p>Apunta al QR de la etiqueta</p>
+    <p data-i18n="escaner.apunta">Apunta al QR de la etiqueta</p>
     <video id="video" playsinline muted></video>
-    <form method="dialog"><button>Cancelar</button></form>
+    <form method="dialog"><button data-i18n="comun.cancelar">Cancelar</button></form>
   </dialog>
 
   <dialog id="dlg-nota">
     <form method="dialog" id="form-nota">
       <h3 id="nota-titulo"></h3>
-      <label for="nota-texto">Nota para DeviceHub</label>
+      <label for="nota-texto" data-i18n="nota.etiqueta">Nota para DeviceHub</label>
       <textarea id="nota-texto" rows="3"></textarea>
-      <label id="nota-foto" class="check"><input type="checkbox" id="nota-foto-ok"> Foto hecha con DH-scan</label>
+      <label id="nota-foto" class="check"><input type="checkbox" id="nota-foto-ok"> <span data-i18n="nota.foto">Foto hecha con DH-scan</span></label>
       <div class="fila">
-        <button value="cancelar">Cancelar</button>
-        <button value="ok" class="primario" id="nota-ok">Confirmar</button>
+        <button value="cancelar" data-i18n="comun.cancelar">Cancelar</button>
+        <button value="ok" class="primario" id="nota-ok" data-i18n="comun.confirmar">Confirmar</button>
       </div>
     </form>
   </dialog>
 
   <dialog id="dlg-diagrama" class="dlg-diagrama" aria-labelledby="visor-diagrama-titulo">
     <div class="visor-cabecera">
-      <strong id="visor-diagrama-titulo">Diagrama</strong>
-      <button id="diagrama-cerrar" type="button">Cerrar y volver</button>
+      <strong id="visor-diagrama-titulo" data-i18n="diagrama.titulo">Diagrama</strong>
+      <button id="diagrama-cerrar" type="button" data-i18n="diagrama.cerrar">Cerrar y volver</button>
     </div>
     <div class="visor-diagrama">
       <img id="visor-diagrama-imagen" alt="">
@@ -139,20 +141,20 @@
   <dialog id="dlg-devicehub" aria-labelledby="devicehub-config-titulo">
     <form id="form-devicehub">
       <h3 id="devicehub-config-titulo">Servidor de DeviceHub</h3>
-      <p id="bienvenida-intro" class="pista" hidden>Conecta la guía con tu DeviceHub. Así podrá comprobar y cambiar el estado de cada móvil sin salir de aquí.</p>
-      <label for="devicehub-base">URL base</label>
+      <p id="bienvenida-intro" class="pista" data-i18n="dh.bienvenida-intro" hidden>Conecta la guía con tu DeviceHub. Así podrá comprobar y cambiar el estado de cada móvil sin salir de aquí.</p>
+      <label for="devicehub-base" data-i18n="dh.url">URL base</label>
       <input id="devicehub-base" type="url" inputmode="url" autocomplete="url" required
              placeholder="https://lab6.ereuse.org">
-      <label for="devicehub-token">Token API</label>
+      <label for="devicehub-token" data-i18n="dh.token">Token API</label>
       <input id="devicehub-token" type="password" autocomplete="off"
              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
       <ol id="bienvenida-pasos-token" class="pasos-token" hidden>
-        <li>Abre <a id="devicehub-tokens-enlace-bienvenida" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a> e inicia sesión si te lo pide.</li>
-        <li>Pulsa <strong>Generate a new token</strong>, ponle un nombre (por ejemplo, tu nombre y «guía») y guárdalo.</li>
-        <li>Copia el token de la lista (formato <code>xxxxxxxx-xxxx-…</code>) y pégalo en el campo de arriba.</li>
+        <li data-i18n-html="dh.paso1">Abre <a id="devicehub-tokens-enlace-bienvenida" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a> e inicia sesión si te lo pide.</li>
+        <li data-i18n-html="dh.paso2">Pulsa <strong>Generate a new token</strong>, ponle un nombre (por ejemplo, tu nombre y «guía») y guárdalo.</li>
+        <li data-i18n-html="dh.paso3">Copia el token de la lista (formato <code>xxxxxxxx-xxxx-…</code>) y pégalo en el campo de arriba.</li>
       </ol>
-      <p id="devicehub-token-ayuda" class="pista">Crea o copia el token desde <a id="devicehub-tokens-enlace" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a>. Se guarda únicamente en este navegador y nunca se incluye en las copias de seguridad. Déjalo vacío para usar solo los enlaces manuales.</p>
-      <p id="bienvenida-privacidad" class="pista" hidden>El token se guarda solo en este navegador. Sin token, la guía funciona igual con enlaces manuales; puedes configurarlo después desde ⚙.</p>
+      <p id="devicehub-token-ayuda" class="pista" data-i18n-html="dh.token-ayuda">Crea o copia el token desde <a id="devicehub-tokens-enlace" href="https://lab6.ereuse.org/user/v1/tokens/" target="_blank" rel="noopener">Tokens de DeviceHub</a>. Se guarda únicamente en este navegador y nunca se incluye en las copias de seguridad. Déjalo vacío para usar solo los enlaces manuales.</p>
+      <p id="bienvenida-privacidad" class="pista" data-i18n="dh.privacidad" hidden>El token se guarda solo en este navegador. Sin token, la guía funciona igual con enlaces manuales; puedes configurarlo después desde ⚙.</p>
       <p id="devicehub-error" class="error-form" role="alert" hidden></p>
       <div class="fila">
         <button id="devicehub-cancelar" type="button">Cancelar</button>
@@ -163,6 +165,7 @@
 
   <div id="aviso" class="aviso" role="status" hidden></div>
 
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
   <script type="module" src="qrcode-ui.js"></script>
 </body>
