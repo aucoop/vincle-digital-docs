@@ -2,19 +2,22 @@
 // para que los cambios de flujo.yaml lleguen en cuanto hay conexión.
 
 const CACHE_PREFIX = 'vincle-guia-';
-const CACHE = `${CACHE_PREFIX}v32`;
+const CACHE = `${CACHE_PREFIX}v33`;
+const ESTADOS = [
+  'INBOX', 'VISUAL_INSPECTION', 'PENDING_DONOR', 'INSTALL', 'TEST',
+  'REPAIR', 'PACKAGING', 'DONATION', 'IN_USE', 'DISMANTLE',
+];
 const ARCHIVOS = [
-  './', 'index.html', 'app.css', 'app.js', 'qrcode-ui.js', 'flujo.json', 'manifest.webmanifest',
+  './', 'index.html', 'app.css', 'i18n.js', 'app.js', 'qrcode-ui.js', 'manifest.webmanifest',
+  'flujo.json', 'flujo.en.json', 'flujo.ca.json',
   'icono.svg', 'icono-192.png', 'icono-512.png',
   'vendor/qrcode/index.js', 'vendor/qrcode/QR8bitByte.js',
   'vendor/qrcode/QRBitBuffer.js', 'vendor/qrcode/QRErrorCorrectLevel.js',
   'vendor/qrcode/QRMaskPattern.js', 'vendor/qrcode/QRMath.js',
   'vendor/qrcode/QRMode.js', 'vendor/qrcode/QRPolynomial.js',
   'vendor/qrcode/QRRSBlock.js', 'vendor/qrcode/QRUtil.js',
-  'diagramas/INBOX.png', 'diagramas/VISUAL_INSPECTION.png',
-  'diagramas/PENDING_DONOR.png', 'diagramas/INSTALL.png', 'diagramas/TEST.png',
-  'diagramas/REPAIR.png', 'diagramas/PACKAGING.png', 'diagramas/DONATION.png',
-  'diagramas/IN_USE.png', 'diagramas/DISMANTLE.png',
+  // Diagramas en castellano en diagramas/, el resto en diagramas/<idioma>/.
+  ...['', 'en/', 'ca/'].flatMap((p) => ESTADOS.map((e) => `diagramas/${p}${e}.png`)),
 ];
 
 self.addEventListener('install', (ev) => {

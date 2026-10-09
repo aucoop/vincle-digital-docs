@@ -26,36 +26,38 @@ let moviles = {};
 let avisoCarga;
 let baseDeviceHub = DEVICEHUB_POR_DEFECTO;
 let tokenDeviceHub = '';
+// Diagramas y documentación en castellano en la raíz; el resto en <idioma>/.
+const prefijoIdioma = idioma === 'es' ? '' : `${idioma}/`;
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fecha = (t) => new Date(t).toLocaleDateString('es', { day: 'numeric', month: 'short' });
-const fechaHora = (t) => new Date(t).toLocaleString('es', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+const fecha = (t) => new Date(t).toLocaleDateString(idioma, { day: 'numeric', month: 'short' });
+const fechaHora = (t) => new Date(t).toLocaleString(idioma, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 // --- Almacenamiento ---------------------------------------------------------
 
 function validarMovil(id, m) {
-  if (!/^\d+$/.test(id)) return `identificador «${id}» no numérico`;
-  if (!m || typeof m !== 'object' || Array.isArray(m)) return `móvil ${id} no es un objeto`;
-  if (m.id !== id) return `móvil ${id}: el identificador interior no coincide`;
-  if (!Number.isFinite(m.creado)) return `móvil ${id}: fecha de alta inválida`;
-  if (!Array.isArray(m.historial)) return `móvil ${id}: historial inválido`;
+  if (!/^\d+$/.test(id)) return t('validar.id', { id });
+  if (!m || typeof m !== 'object' || Array.isArray(m)) return t('validar.objeto', { id });
+  if (m.id !== id) return t('validar.id-interior', { id });
+  if (!Number.isFinite(m.creado)) return t('validar.fecha', { id });
+  if (!Array.isArray(m.historial)) return t('validar.historial', { id });
   for (const [i, e] of m.historial.entries()) {
     if (!e || typeof e !== 'object' || !Number.isFinite(e.t) ||
         typeof e.desde !== 'string' || typeof e.hacia !== 'string') {
-      return `móvil ${id}: paso ${i + 1} del historial inválido`;
+      return t('validar.paso', { id, paso: i + 1 });
     }
   }
   if (m.marcados !== undefined &&
       (!m.marcados || typeof m.marcados !== 'object' || Array.isArray(m.marcados))) {
-    return `móvil ${id}: checklist inválido`;
+    return t('validar.checklist', { id });
   }
   return null;
 }
 
 function leerMoviles(datos, estricto = false) {
   if (!datos || typeof datos !== 'object' || Array.isArray(datos)) {
-    throw new Error('la copia no contiene una colección de móviles válida');
+    throw new Error(t('importar.no-coleccion'));
   }
   const validos = {};
   const errores = [];
@@ -73,10 +75,10 @@ function cargar() {
     const guardados = JSON.parse(localStorage.getItem(CLAVE)) || {};
     const { validos, errores } = leerMoviles(guardados);
     moviles = validos;
-    if (errores.length) avisoCarga = `Se han ignorado ${errores.length} móviles con datos dañados.`;
+    if (errores.length) avisoCarga = t('carga.ignorados', { n: errores.length });
   } catch (err) {
     moviles = {};
-    avisoCarga = `No se han podido cargar los datos guardados: ${err.message}`;
+    avisoCarga = t('carga.error', { error: err.message });
   }
 }
 
@@ -84,14 +86,14 @@ function guardar() {
   try {
     localStorage.setItem(CLAVE, JSON.stringify(moviles));
   } catch {
-    avisar('No se ha podido guardar. Exporta una copia de seguridad.');
+    avisar(t('guardar.error'));
   }
 }
 
 function normalizarBaseDeviceHub(valor) {
   const url = new URL(String(valor).trim());
-  if (!['http:', 'https:'].includes(url.protocol)) throw new Error('usa una URL http o https');
-  if (url.username || url.password) throw new Error('no incluyas usuario ni contraseña en la URL');
+  if (!['http:', 'https:'].includes(url.protocol)) throw new Error(t('dh.error.protocolo'));
+  if (url.username || url.password) throw new Error(t('dh.error.credenciales'));
   url.search = '';
   url.hash = '';
   url.pathname = url.pathname.replace(/\/+$/, '');
@@ -119,7 +121,7 @@ const estadoDeviceHub = (id) => estados[id]?.devicehub ?? id;
 const urlEstadoApiDeviceHub = (m) => `${baseDeviceHub}/api/v1/devices/custom_id:${encodeURIComponent(customIdDeviceHub(m.id))}/state/`;
 
 async function peticionDeviceHub(m, opciones = {}) {
-  if (!tokenDeviceHub) throw new Error('Configura primero un token API de DeviceHub.');
+  if (!tokenDeviceHub) throw new Error(t('dh.error.sin-token'));
   let respuesta;
   try {
     respuesta = await fetch(urlEstadoApiDeviceHub(m), {
@@ -132,12 +134,12 @@ async function peticionDeviceHub(m, opciones = {}) {
       },
     });
   } catch {
-    throw new Error('No se puede conectar con DeviceHub. Comprueba la conexión y el servidor configurado.');
+    throw new Error(t('dh.error.conexion'));
   }
   const datos = await respuesta.json().catch(() => ({}));
   if (!respuesta.ok) {
-    if (respuesta.status === 401) throw new Error('El token de DeviceHub no es válido o está desactivado.');
-    throw new Error(datos.detail || datos.error || `DeviceHub ha respondido ${respuesta.status}.`);
+    if (respuesta.status === 401) throw new Error(t('dh.error.401'));
+    throw new Error(datos.detail || datos.error || t('dh.error.estado', { estado: respuesta.status }));
   }
   return datos;
 }
@@ -148,7 +150,7 @@ function confirmarCambioDeviceHub(m, e, estado) {
   e.dhT = Date.now();
   guardar();
   pintarMovil(m);
-  avisar(`Estado ${estado} confirmado en DeviceHub.`);
+  avisar(t('dh.confirmado', { estado }));
 }
 
 async function sincronizarCambioDeviceHub(m, soloComprobar = false) {
@@ -159,7 +161,7 @@ async function sincronizarCambioDeviceHub(m, soloComprobar = false) {
   const anteriorEsperado = cruza(e) ? estadoDeviceHub(estadoDe(e.desde)) : null;
   const botones = [$('cambiar-estado-devicehub'), $('comprobar-estado-devicehub')].filter(Boolean);
   botones.forEach((b) => { b.disabled = true; });
-  if ($('dh-api-mensaje')) $('dh-api-mensaje').textContent = 'Comprobando DeviceHub…';
+  if ($('dh-api-mensaje')) $('dh-api-mensaje').textContent = t('dh.comprobando');
 
   try {
     const consulta = await peticionDeviceHub(m);
@@ -170,11 +172,11 @@ async function sincronizarCambioDeviceHub(m, soloComprobar = false) {
     }
     if (soloComprobar) {
       throw new Error(actual
-        ? `DeviceHub está en ${actual}; todavía falta cambiarlo a ${objetivo}.`
-        : `El dispositivo todavía no tiene estado en DeviceHub.`);
+        ? t('dh.falta-cambiar', { actual, objetivo })
+        : t('dh.sin-estado'));
     }
     if (actual !== null && actual !== anteriorEsperado) {
-      throw new Error(`DeviceHub está en ${actual}, pero la guía esperaba ${anteriorEsperado}. Revísalo antes de cambiarlo.`);
+      throw new Error(t('dh.otro-estado', { actual, esperado: anteriorEsperado }));
     }
 
     const actualizado = await peticionDeviceHub(m, {
@@ -208,13 +210,13 @@ function htmlAccesoAdaptado({ id, url, texto, qr, primario = false, qrSiempre = 
 
 function modoBienvenida(activo) {
   $('dlg-devicehub').classList.toggle('bienvenida', activo);
-  $('devicehub-config-titulo').textContent = activo ? 'Antes de nada…' : 'Servidor de DeviceHub';
+  $('devicehub-config-titulo').textContent = t(activo ? 'dh.bienvenida-titulo' : 'dh.titulo');
   $('bienvenida-intro').hidden = !activo;
   $('bienvenida-pasos-token').hidden = !activo;
   $('bienvenida-privacidad').hidden = !activo;
   $('devicehub-token-ayuda').hidden = activo;
-  $('devicehub-cancelar').textContent = activo ? 'Hacer más tarde' : 'Cancelar';
-  $('devicehub-guardar').textContent = activo ? 'Guardar y empezar' : 'Guardar';
+  $('devicehub-cancelar').textContent = t(activo ? 'dh.mas-tarde' : 'comun.cancelar');
+  $('devicehub-guardar').textContent = t(activo ? 'dh.guardar-empezar' : 'comun.guardar');
 }
 
 function primeraVisitaVista() {
@@ -251,6 +253,9 @@ const estadoDe = (id) => nodo(id)?.estado;
 const ultimo = (m) => m.historial[m.historial.length - 1];
 const pasoActual = (m) => (m.historial.length ? ultimo(m).hacia : estados.INBOX.inicio);
 const cruza = (e) => estadoDe(e.desde) !== estadoDe(e.hacia);
+// La opción elegida en el idioma actual. `oi` (índice de la opción) falta en
+// los pasos guardados antes de las traducciones: se muestra el texto guardado.
+const opcionDe = (e) => (e.oi !== undefined && nodo(e.desde)?.opciones?.[e.oi]?.texto) || e.opcion;
 
 // Índice de la entrada con la que se entró en el estado actual (-1 si es el inicial).
 function indiceEntrada(m) {
@@ -302,9 +307,9 @@ function chipEstado(id) {
 
 function chipPlazo(p) {
   if (!p) return '';
-  if (p.dias < 0) return `<span class="chip plazo-vencido">Vencido hace ${-p.dias} d</span>`;
-  if (p.dias === 0) return `<span class="chip plazo-vencido">Vence hoy</span>`;
-  return `<span class="chip cp">Quedan ${p.dias} d · ${fecha(p.vence)}</span>`;
+  if (p.dias < 0) return `<span class="chip plazo-vencido">${esc(t('plazo.vencido', { dias: -p.dias }))}</span>`;
+  if (p.dias === 0) return `<span class="chip plazo-vencido">${esc(t('plazo.hoy'))}</span>`;
+  return `<span class="chip cp">${esc(t('plazo.quedan', { dias: p.dias, fecha: fecha(p.vence) }))}</span>`;
 }
 
 // --- Navegación -------------------------------------------------------------
@@ -318,11 +323,11 @@ function normalizarId(texto) {
 function abrir(texto) {
   const id = normalizarId(texto);
   if (!id) {
-    avisar(`«${texto}» no es un número de etiqueta.`);
+    avisar(t('abrir.no-numero', { texto }));
     return;
   }
   if (!moviles[id]) {
-    if (!confirm(`El móvil ${id} no está en este dispositivo. ¿Darlo de alta como recibido?`)) return;
+    if (!confirm(t('abrir.alta', { id }))) return;
     moviles[id] = { id, creado: Date.now(), historial: [], marcados: {} };
     guardar();
   }
@@ -335,7 +340,7 @@ function ruta() {
   $('vista-lista').hidden = !!m;
   $('vista-movil').hidden = !m;
   $('volver').hidden = !m;
-  $('titulo').textContent = m ? `Móvil ${m.id}` : 'Guía eReuse';
+  $('titulo').textContent = m ? t('movil.titulo', { id: m.id }) : t('cabecera.titulo');
   if (m) pintarMovil(m);
   else pintarLista();
   window.scrollTo(0, 0);
@@ -360,16 +365,16 @@ function pintarLista() {
   $('lista').innerHTML = lista.map(({ m, n, plazo }) => `
     <li><button data-id="${esc(m.id)}">
       <span class="linea"><span class="id">${esc(m.id)}</span>${chipEstado(n?.estado)}</span>
-      <span class="donde">${esc(n?.texto ?? 'Paso que ya no existe en el flujo')}</span>
+      <span class="donde">${esc(n?.texto ?? t('lista.paso-perdido'))}</span>
       <span class="linea"><span class="donde">${fecha(actualizado(m))}</span>${chipPlazo(plazo)}</span>
     </button></li>`).join('');
   $('introduccion').hidden = total > 0;
   $('lista-vacia').textContent = total
-    ? 'No hay móviles que coincidan con este filtro.'
-    : 'No hay móviles guardados en este navegador. Empieza con una etiqueta arriba.';
+    ? t('lista.sin-coincidencias')
+    : t('lista.vacia');
   $('lista-vacia').hidden = lista.length > 0;
   $('devicehub-base-actual').textContent = baseDeviceHub;
-  $('devicehub-token-estado').textContent = tokenDeviceHub ? 'Token configurado' : 'Sin token: cambios manuales';
+  $('devicehub-token-estado').textContent = t(tokenDeviceHub ? 'conexion.con-token' : 'conexion.sin-token');
 }
 
 // --- Móvil ------------------------------------------------------------------
@@ -398,16 +403,16 @@ function pintarMovil(m) {
     : '';
   const panelDiagrama = $('diagrama-estado');
   if (info) {
-    const diagramaUrl = `diagramas/${encodeURIComponent(est)}.png`;
+    const diagramaUrl = `diagramas/${prefijoIdioma}${encodeURIComponent(est)}.png`;
     panelDiagrama.hidden = false;
-    $('diagrama-titulo').textContent = `Diagrama de ${info.nombre}`;
+    $('diagrama-titulo').textContent = t('diagrama.de', { estado: info.nombre });
     $('diagrama-imagen').src = diagramaUrl;
-    $('diagrama-imagen').alt = `Diagrama del estado ${info.nombre}`;
-    $('visor-diagrama-titulo').textContent = `Diagrama de ${info.nombre}`;
+    $('diagrama-imagen').alt = t('diagrama.alt', { estado: info.nombre });
+    $('visor-diagrama-titulo').textContent = t('diagrama.de', { estado: info.nombre });
     $('visor-diagrama-imagen').src = diagramaUrl;
-    $('visor-diagrama-imagen').alt = `Diagrama ampliado del estado ${info.nombre}`;
+    $('visor-diagrama-imagen').alt = t('diagrama.alt-ampliado', { estado: info.nombre });
     $('diagrama-doc').hidden = !info.doc;
-    if (info.doc) $('diagrama-doc').href = `../${info.doc}`;
+    if (info.doc) $('diagrama-doc').href = `../${prefijoIdioma}${info.doc}`;
   } else {
     panelDiagrama.hidden = true;
   }
@@ -415,7 +420,7 @@ function pintarMovil(m) {
   // Lo recorrido desde que entró en el estado actual.
   const recorrido = m.historial.slice(indiceEntrada(m) + 1);
   $('recorrido').innerHTML = recorrido.map((e) =>
-    `<li>${esc(nodo(e.desde)?.texto ?? e.desde)}${e.opcion ? ` · <b>${esc(e.opcion)}</b>` : ''}</li>`).join('');
+    `<li>${esc(nodo(e.desde)?.texto ?? e.desde)}${opcionDe(e) ? ` · <b>${esc(opcionDe(e))}</b>` : ''}</li>`).join('');
   $('recorrido').hidden = recorrido.length === 0;
 
   $('paso').className = `paso ${n?.marca ?? ''}`;
@@ -425,14 +430,14 @@ function pintarMovil(m) {
 
   $('deshacer').disabled = m.historial.length === 0;
   $('historial').innerHTML = m.historial.map((e) =>
-    `<li>${fechaHora(e.t)} · ${esc(estados[estadoDe(e.desde)]?.nombre ?? '?')} · ${esc(nodo(e.desde)?.texto ?? e.desde)}${e.opcion ? ` → ${esc(e.opcion)}` : ''}${e.nota ? `<br><i>${esc(e.nota)}</i>` : ''}</li>`).join('')
-    || `<li>Alta el ${fechaHora(m.creado)}</li>`;
+    `<li>${fechaHora(e.t)} · ${esc(estados[estadoDe(e.desde)]?.nombre ?? '?')} · ${esc(nodo(e.desde)?.texto ?? e.desde)}${opcionDe(e) ? ` → ${esc(opcionDe(e))}` : ''}${e.nota ? `<br><i>${esc(e.nota)}</i>` : ''}</li>`).join('')
+    || `<li>${esc(t('historial.alta', { fecha: fechaHora(m.creado) }))}</li>`;
 }
 
 function htmlMarcas(n) {
   const marcas = [];
-  if (n.marca === 'dh') marcas.push('<span class="chip dh">Queda en DeviceHub</span>');
-  if (n.marca === 'checkpoint') marcas.push('<span class="chip cp">Checkpoint</span>');
+  if (n.marca === 'dh') marcas.push(`<span class="chip dh">${esc(t('marca.dh'))}</span>`);
+  if (n.marca === 'checkpoint') marcas.push(`<span class="chip cp">${esc(t('marca.checkpoint'))}</span>`);
   return marcas.length ? `<div class="marcas">${marcas.join('')}</div>` : '';
 }
 
@@ -442,24 +447,24 @@ function htmlCambio(m) {
   const nombre = estados[estadoDe(e.hacia)].nombre;
   const url = urlDispositivoDeviceHub(m);
   return `<div class="cambio-dh">
-    <span>Cambiar el estado en DeviceHub a <b>${esc(nombre)}</b>${e.nota ? ' con esta nota:' : '.'}</span>
-    ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">Copiar nota</button>` : ''}
+    <span>${t('cambio.texto', { estado: esc(nombre) })}${e.nota ? esc(t('cambio.con-nota')) : '.'}</span>
+    ${e.nota ? `<code>${esc(e.nota)}</code><button type="button" id="copiar-nota">${esc(t('cambio.copiar-nota'))}</button>` : ''}
     ${tokenDeviceHub ? `<div class="acciones-devicehub">
-      <button type="button" id="cambiar-estado-devicehub" class="primario">Cambiar a ${esc(nombre)}</button>
-      <button type="button" id="comprobar-estado-devicehub">Solo comprobar</button>
+      <button type="button" id="cambiar-estado-devicehub" class="primario">${esc(t('cambio.cambiar-a', { estado: nombre }))}</button>
+      <button type="button" id="comprobar-estado-devicehub">${esc(t('cambio.solo-comprobar'))}</button>
     </div>
-    <span id="dh-api-mensaje" class="sub" role="status">La guía comprobará primero el estado actual para evitar sobrescribir otro cambio.</span>`
-    : `<p class="sub">Configura un token API para hacerlo desde la guía, o utiliza el enlace manual.</p>
-      <button type="button" id="configurar-devicehub-paso">Configurar conexión API</button>`}
-    ${htmlAccesoAdaptado({ id: 'abrir-estado-devicehub', url, texto: 'Abrir este móvil en DeviceHub', qr: 'Escanea para abrir este móvil en DeviceHub' })}
-    <span class="sub">Alternativa manual: abre «Change state», elige ${esc(nombre)} y vuelve aquí.</span>
-    <label class="check"><input type="checkbox" id="dh-hecho"> Ya lo he cambiado manualmente</label>
+    <span id="dh-api-mensaje" class="sub" role="status">${esc(t('cambio.comprobara'))}</span>`
+    : `<p class="sub">${esc(t('cambio.sin-token'))}</p>
+      <button type="button" id="configurar-devicehub-paso">${esc(t('cambio.configurar-api'))}</button>`}
+    ${htmlAccesoAdaptado({ id: 'abrir-estado-devicehub', url, texto: t('cambio.abrir-movil'), qr: t('cambio.qr-movil') })}
+    <span class="sub">${esc(t('cambio.manual', { estado: nombre }))}</span>
+    <label class="check"><input type="checkbox" id="dh-hecho"> ${esc(t('cambio.hecho-manual'))}</label>
   </div>`;
 }
 
 function htmlDestino(desde, o) {
   const destino = estadoDe(o.destino);
-  if (o.pausa) return '<span class="sub">El móvil se queda en este paso</span>';
+  if (o.pausa) return `<span class="sub">${esc(t('paso.se-queda'))}</span>`;
   if (destino !== estadoDe(desde)) {
     const motivo = o.nota?.motivo ? ` [${esc(o.nota.motivo)}]` : '';
     return `<span class="chip ${claseEstado(destino)}">→ ${esc(estados[destino].nombre)}${motivo}</span>`;
@@ -486,40 +491,40 @@ function htmlPaso(m, actual, n) {
       `<li><label class="check"><input type="checkbox" data-i="${i}" ${marcados[i] ? 'checked' : ''}> ${esc(c)}</label></li>`).join('');
     const completo = (n.checklist ?? []).every((_, i) => marcados[i]);
     const webform = actual === 'inbox.scan' ? `<div class="devicehub-webform">
-      <strong>Alta y fotos en DeviceHub</strong>
-      <p>Usa DH-Scan o abre el formulario web. Si no hay una sesión iniciada, DeviceHub pedirá usuario y contraseña.</p>
-      ${htmlAccesoAdaptado({ id: 'abrir-webform-devicehub', url: urlAltaDeviceHub(), texto: 'Abrir formulario de DeviceHub', qr: 'Escanea para abrir el formulario en el móvil', primario: true })}
-      <span class="sub">Abre el enlace aquí o, en un ordenador, escanea el QR para continuar en el móvil.</span>
-      <button id="configurar-devicehub-paso" class="enlace-boton" type="button">Cambiar servidor (${esc(baseDeviceHub)})</button>
+      <strong>${esc(t('webform.titulo'))}</strong>
+      <p>${esc(t('webform.explica'))}</p>
+      ${htmlAccesoAdaptado({ id: 'abrir-webform-devicehub', url: urlAltaDeviceHub(), texto: t('webform.abrir'), qr: t('webform.qr'), primario: true })}
+      <span class="sub">${esc(t('webform.sub'))}</span>
+      <button id="configurar-devicehub-paso" class="enlace-boton" type="button">${esc(t('webform.cambiar-servidor', { servidor: baseDeviceHub }))}</button>
     </div>` : '';
     const instalarWorkbench = actual === 'install.wb' ? `<div class="recurso-externo">
-      <strong>Descargar Workbench Android</strong>
-      <p>Instala en el dispositivo la última APK publicada por eReuse.</p>
-      ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: 'Descargar Workbench Android', qr: 'Escanea con el dispositivo para descargar Workbench Android', primario: true, qrSiempre: true })}
-      <span class="sub">Escanea el QR con el móvil que estás reacondicionando, o pulsa el botón si la guía está abierta en ese mismo móvil.</span>
+      <strong>${esc(t('workbench.titulo'))}</strong>
+      <p>${esc(t('workbench.explica'))}</p>
+      ${htmlAccesoAdaptado({ id: 'descargar-workbench', url: WORKBENCH_ANDROID_URL, texto: t('workbench.titulo'), qr: t('workbench.qr'), primario: true, qrSiempre: true })}
+      <span class="sub">${esc(t('descarga.sub'))}</span>
     </div>` : '';
     const instalarDonate = actual === 'install.donate' ? `<div class="recurso-externo">
-      <strong>Descargar donate-android</strong>
-      <p>Descarga directa de la APK. Más información en la <a href="${esc(DONATE_ANDROID_URL)}">página de Vincle Digital</a>.</p>
-      ${htmlAccesoAdaptado({ id: 'descargar-donate', url: DONATE_ANDROID_APK_URL, texto: 'Descargar donate-android', qr: 'Escanea con el dispositivo para descargar donate-android', primario: true, qrSiempre: true })}
-      <span class="sub">Escanea el QR con el móvil que estás reacondicionando, o pulsa el botón si la guía está abierta en ese mismo móvil.</span>
+      <strong>${esc(t('donate.titulo'))}</strong>
+      <p>${t('donate.explica', { url: esc(DONATE_ANDROID_URL) })}</p>
+      ${htmlAccesoAdaptado({ id: 'descargar-donate', url: DONATE_ANDROID_APK_URL, texto: t('donate.titulo'), qr: t('donate.qr'), primario: true, qrSiempre: true })}
+      <span class="sub">${esc(t('descarga.sub'))}</span>
     </div>` : '';
     const verInventario = actual === 'install.inventario' ? `<div class="recurso-externo">
-      <strong>Inventario en DeviceHub</strong>
-      <p>Después de enviar el snapshot, abre Componentes para comprobar la información nueva.</p>
-      <a id="ver-componentes-devicehub" class="boton" href="${esc(urlComponentesDeviceHub(m))}">Ver componentes en DeviceHub</a>
+      <strong>${esc(t('inventario.titulo'))}</strong>
+      <p>${esc(t('inventario.explica'))}</p>
+      <a id="ver-componentes-devicehub" class="boton" href="${esc(urlComponentesDeviceHub(m))}">${esc(t('inventario.ver'))}</a>
     </div>` : '';
     const verResultados = actual === 'test.wb' ? `<div class="recurso-externo">
-      <strong>Resultados en DeviceHub</strong>
-      <p>Después de enviar el snapshot, abre Propiedades para revisar los resultados <code>hwtest:*</code>.</p>
-      <a id="ver-resultados-devicehub" class="boton" href="${esc(urlPropiedadesDeviceHub(m))}">Ver resultados en DeviceHub</a>
+      <strong>${esc(t('resultados.titulo'))}</strong>
+      <p>${t('resultados.explica')}</p>
+      <a id="ver-resultados-devicehub" class="boton" href="${esc(urlPropiedadesDeviceHub(m))}">${esc(t('resultados.ver'))}</a>
     </div>` : '';
     return `${htmlCambio(m)}${htmlMarcas(n)}
       <p class="pregunta">${esc(n.texto)}</p>${ayuda}
       ${webform}${instalarDonate}${instalarWorkbench}${verInventario}${verResultados}
       ${lista ? `<ul class="checklist">${lista}</ul>` : ''}
       <div class="opciones"><button class="primario" id="hecho" ${bloqueado || !completo ? 'disabled' : ''}>
-        <span>Hecho</span>${htmlDestino(actual, { destino: n.siguiente })}</button></div>`;
+        <span>${esc(t('paso.hecho'))}</span>${htmlDestino(actual, { destino: n.siguiente })}</button></div>`;
   }
 
   const opciones = n.opciones.map((o, i) => `
@@ -534,8 +539,8 @@ function htmlPaso(m, actual, n) {
 
 function htmlPerdido() {
   const botones = flujo.estados.map((e) => `<button data-reubicar="${esc(e.id)}"><span>${esc(e.nombre)}</span></button>`).join('');
-  return `<p class="pregunta">Este paso ya no existe en el flujo</p>
-    <p class="ayuda">El flujo ha cambiado desde que se guardó el móvil. Elige en qué estado está ahora; empezará por su primer paso.</p>
+  return `<p class="pregunta">${esc(t('perdido.titulo'))}</p>
+    <p class="ayuda">${esc(t('perdido.explica'))}</p>
     <div class="opciones">${botones}</div>`;
 }
 
@@ -544,7 +549,7 @@ function enlazarPaso(m, actual, n) {
 
   $('dh-hecho')?.addEventListener('change', (ev) => {
     if (!ev.target.checked) return;
-    if (!confirm('¿Has comprobado el nuevo estado en DeviceHub?')) {
+    if (!confirm(t('cambio.confirmar-manual'))) {
       ev.target.checked = false;
       return;
     }
@@ -558,7 +563,7 @@ function enlazarPaso(m, actual, n) {
 
   paso.querySelectorAll('[data-reubicar]').forEach((b) => b.addEventListener('click', () => {
     const e = estados[b.dataset.reubicar];
-    avanzar(m, { desde: actual, hacia: e.inicio, opcion: `Reubicado en ${e.nombre} tras un cambio del flujo` });
+    avanzar(m, { desde: actual, hacia: e.inicio, opcion: t('perdido.reubicado', { estado: e.nombre }) });
   }));
 
   if (!n) return;
@@ -581,16 +586,16 @@ function enlazarPaso(m, actual, n) {
 async function elegir(m, actual, n, o) {
   const plazo = plazoDe(m, n);
   if (o.vence && plazo && plazo.dias > 0 &&
-      !confirm(`Aún quedan ${plazo.dias} días de plazo (hasta el ${fecha(plazo.vence)}). ¿Seguro?`)) return;
+      !confirm(t('elegir.quedan', { dias: plazo.dias, fecha: fecha(plazo.vence) }))) return;
 
   let nota;
   if (o.nota || o.foto) {
     nota = await pedirNota(o);
     if (nota === null) return;
   }
-  avanzar(m, { desde: actual, hacia: o.destino, opcion: o.texto, nota });
+  avanzar(m, { desde: actual, hacia: o.destino, opcion: o.texto, oi: n.opciones.indexOf(o), nota });
   if (o.pausa) {
-    avisar(`Móvil ${m.id}: sigue en «${n.texto}».`);
+    avisar(t('elegir.sigue', { id: m.id, paso: n.texto }));
     location.hash = '';
   }
 }
@@ -628,10 +633,10 @@ function pedirNota(o) {
 }
 
 function textoHistorial(m) {
-  const lineas = [`Móvil ${m.id} · alta ${fechaHora(m.creado)}`];
+  const lineas = [t('historial.cabecera', { id: m.id, fecha: fechaHora(m.creado) })];
   m.historial.forEach((e) => {
     let l = `${fechaHora(e.t)} · ${estados[estadoDe(e.desde)]?.nombre ?? '?'} · ${nodo(e.desde)?.texto ?? e.desde}`;
-    if (e.opcion) l += ` → ${e.opcion}`;
+    if (opcionDe(e)) l += ` → ${opcionDe(e)}`;
     if (cruza(e)) l += ` ⇒ ${estados[estadoDe(e.hacia)]?.nombre ?? '?'}`;
     if (e.nota) l += ` · ${e.nota}`;
     lineas.push(l);
@@ -653,9 +658,9 @@ function avisar(texto) {
 async function copiar(texto) {
   try {
     await navigator.clipboard.writeText(texto);
-    avisar('Copiado');
+    avisar(t('copiar.hecho'));
   } catch {
-    prompt('Copia el texto:', texto);
+    prompt(t('copiar.manual'), texto);
   }
 }
 
@@ -687,7 +692,7 @@ async function escanear() {
     }
   } catch (err) {
     if (dlg.open) dlg.close();
-    avisar(`No se puede usar la cámara: ${err.message}. Teclea el número.`);
+    avisar(t('escaner.error', { error: err.message }));
   }
 }
 
@@ -705,7 +710,7 @@ function exportar() {
 async function importar(archivo) {
   try {
     const datos = JSON.parse(await archivo.text());
-    if (!datos || !Object.hasOwn(datos, 'moviles')) throw new Error('la copia no contiene «moviles»');
+    if (!datos || !Object.hasOwn(datos, 'moviles')) throw new Error(t('importar.sin-moviles'));
     const { validos: entrantes } = leerMoviles(datos.moviles, true);
     const mezclados = { ...moviles };
     let nuevos = 0;
@@ -719,9 +724,9 @@ async function importar(archivo) {
     moviles = mezclados;
     guardar();
     pintarLista();
-    avisar(`${nuevos} móviles importados o actualizados.`);
+    avisar(t('importar.hecho', { n: nuevos }));
   } catch (err) {
-    avisar(`No se ha podido importar: ${err.message}`);
+    avisar(t('importar.error', { error: err.message }));
   }
 }
 
@@ -730,35 +735,46 @@ async function importar(archivo) {
 function borrarMovil() {
   const id = location.hash.split('/')[2];
   if (!moviles[id]) return;
-  if (!confirm(`¿Borrar el móvil ${id} y todo su historial de este navegador?\n\nNo se toca DeviceHub. No se puede deshacer.`)) return;
+  if (!confirm(t('borrar.confirmar-uno', { id }))) return;
   delete moviles[id];
   guardar();
   location.hash = '';
-  avisar(`Móvil ${id} borrado.`);
+  avisar(t('borrar.hecho-uno', { id }));
 }
 
 function borrarTodo() {
   const total = Object.keys(moviles).length;
   if (!total) {
-    avisar('No hay móviles guardados.');
+    avisar(t('borrar.ninguno'));
     return;
   }
-  if (!confirm(`¿Borrar los ${total} móviles y sus historiales de este navegador?\n\nNo se toca DeviceHub. No se puede deshacer: exporta antes una copia si la necesitas.`)) return;
+  if (!confirm(t('borrar.confirmar-todos', { n: total }))) return;
   moviles = {};
   guardar();
   pintarLista();
-  avisar('Móviles borrados.');
+  avisar(t('borrar.hecho-todos'));
 }
 
 // --- Arranque ---------------------------------------------------------------
 
+function prepararIdioma() {
+  traducirDocumento();
+  const selector = $('idioma');
+  selector.innerHTML = Object.entries(IDIOMAS)
+    .map(([codigo, nombre]) => `<option value="${codigo}" lang="${codigo}" title="${esc(nombre)}" aria-label="${esc(nombre)}">${codigo.toUpperCase()}</option>`).join('');
+  selector.value = idioma;
+  selector.addEventListener('change', () => cambiarIdioma(selector.value));
+  $('enlace-ayuda').href = `../${prefijoIdioma}guia-app/`;
+}
+
 async function iniciar() {
+  prepararIdioma();
   cargar();
   cargarBaseDeviceHub();
   try {
-    flujo = await (await fetch('flujo.json', { cache: 'no-cache' })).json();
+    flujo = await (await fetch(idioma === 'es' ? 'flujo.json' : `flujo.${idioma}.json`, { cache: 'no-cache' })).json();
   } catch {
-    document.body.innerHTML = '<main><p>No se ha podido cargar el flujo. Abre la app una vez con conexión.</p></main>';
+    document.body.innerHTML = `<main><p>${esc(t('carga.flujo'))}</p></main>`;
     return;
   }
   estados = Object.fromEntries(flujo.estados.map((e) => [e.id, e]));
@@ -783,11 +799,11 @@ async function iniciar() {
     const m = moviles[location.hash.split('/')[2]];
     if (!m?.historial.length) return;
     const e = ultimo(m);
-    const descripcion = `«${nodo(e.desde)?.texto ?? e.desde}${e.opcion ? ` → ${e.opcion}` : ''}»`;
+    const descripcion = t('cita', { texto: `${nodo(e.desde)?.texto ?? e.desde}${opcionDe(e) ? ` → ${opcionDe(e)}` : ''}` });
     if (cruza(e) && e.dhHecho) {
       const anterior = estados[estadoDe(e.desde)]?.nombre ?? estadoDe(e.desde);
-      if (!confirm(`Este cambio ya se marcó como hecho en DeviceHub. Antes de deshacer ${descripcion}, devuelve allí el estado a ${anterior}.\n\n¿Ya lo has hecho?`)) return;
-    } else if (!confirm(`¿Deshacer ${descripcion}?`)) return;
+      if (!confirm(t('deshacer.ya-en-dh', { paso: descripcion, anterior }))) return;
+    } else if (!confirm(t('deshacer.confirmar', { paso: descripcion }))) return;
     m.historial.pop();
     guardar();
     pintarMovil(m);
@@ -820,7 +836,7 @@ async function iniciar() {
       baseDeviceHub = normalizarBaseDeviceHub($('devicehub-base').value);
       tokenDeviceHub = $('devicehub-token').value.trim();
       if (tokenDeviceHub && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(tokenDeviceHub)) {
-        throw new Error('el token debe ser un UUID válido');
+        throw new Error(t('dh.error.token-uuid'));
       }
       localStorage.setItem(CLAVE_DEVICEHUB, baseDeviceHub);
       if (tokenDeviceHub) localStorage.setItem(CLAVE_DEVICEHUB_TOKEN, tokenDeviceHub);
@@ -828,13 +844,13 @@ async function iniciar() {
       marcarBienvenidaVista();
       $('dlg-devicehub').close();
       $('devicehub-base-actual').textContent = baseDeviceHub;
-      $('devicehub-token-estado').textContent = tokenDeviceHub ? 'Token configurado' : 'Sin token: cambios manuales';
+      $('devicehub-token-estado').textContent = t(tokenDeviceHub ? 'conexion.con-token' : 'conexion.sin-token');
       $('devicehub-tokens-enlace').href = urlTokensDeviceHub();
       const m = moviles[location.hash.split('/')[2]];
       if (m) pintarMovil(m);
-      avisar('Conexión con DeviceHub guardada.');
+      avisar(t('dh.guardada'));
     } catch (err) {
-      $('devicehub-error').textContent = `URL no válida: ${err.message}`;
+      $('devicehub-error').textContent = t('dh.url-invalida', { error: err.message });
       $('devicehub-error').hidden = false;
     }
   });
