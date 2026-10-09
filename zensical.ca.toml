@@ -1,38 +1,39 @@
 [project]
 site_name = "Vincle Digital"
-site_url = "https://aucoop.github.io/vincle-digital-docs/"
-site_description = "Flujo de reacondicionado de móviles Android con trazabilidad en DeviceHub"
+site_url = "https://aucoop.github.io/vincle-digital-docs/ca/"
+site_description = "Flux de recondicionament de mòbils Android amb traçabilitat a DeviceHub"
 site_author = "aucoop"
-copyright = "Documentación de Vincle Digital"
-docs_dir = "docs"
-site_dir = "site"
+copyright = "Documentació de Vincle Digital"
+docs_dir = "i18n/ca"
+site_dir = "site/ca"
 repo_url = "https://github.com/aucoop/vincle-digital-docs"
 repo_name = "aucoop/vincle-digital-docs"
-edit_uri = "edit/main/docs/"
-extra_css = ["stylesheets/extra.css"]
-extra_javascript = ["javascripts/acceso-guia.js", "javascripts/idioma.js"]
-# Selector de idioma. Castellano en la raíz, inglés en /en/ y catalán en /ca/
-# (zensical.en.toml y zensical.ca.toml). javascripts/idioma.js reescribe estos
-# enlaces para ir a la misma página en el otro idioma.
+edit_uri = "edit/main/i18n/ca/"
+extra_css = ["../stylesheets/extra.css"]
+extra_javascript = ["../javascripts/acceso-guia.js", "../javascripts/idioma.js"]
+# Lloc en català, construït a site/ca després del castellà (que buida site/).
+# Les pàgines mantenen els noms de fitxer i els ids de títol en castellà perquè
+# el selector d'idioma porti a la mateixa pàgina i secció. El CSS i el JS
+# compartits vénen de l'arrel.
 extra.alternate = [
   { name = "Español", link = "https://aucoop.github.io/vincle-digital-docs/", lang = "es" },
   { name = "English", link = "https://aucoop.github.io/vincle-digital-docs/en/", lang = "en" },
   { name = "Català", link = "https://aucoop.github.io/vincle-digital-docs/ca/", lang = "ca" },
 ]
 nav = [
-  { "Inicio" = "index.md" },
-  { "Proceso" = [
-    { "Vista rápida" = "diagrama-alto-nivel.md" },
-    { "Flujo detallado" = "diagramas-detallados.md" },
+  { "Inici" = "index.md" },
+  { "Procés" = [
+    { "Vista ràpida" = "diagrama-alto-nivel.md" },
+    { "Flux detallat" = "diagramas-detallados.md" },
   ] },
-  { "Herramientas" = [
-    { "Etiquetas" = "etiquetas.md" },
-    { "Guía en el móvil" = "guia-app.md" },
+  { "Eines" = [
+    { "Etiquetes" = "etiquetas.md" },
+    { "Guia al mòbil" = "guia-app.md" },
   ] },
 ]
 
 [project.theme]
-language = "es"
+language = "ca"
 features = [
   "navigation.instant",
   "navigation.instant.prefetch",
@@ -57,7 +58,7 @@ scheme = "default"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/sun"
-toggle.name = "Cambiar a modo oscuro"
+toggle.name = "Canviar a mode fosc"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
@@ -65,7 +66,7 @@ scheme = "slate"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/moon"
-toggle.name = "Cambiar a modo claro"
+toggle.name = "Canviar a mode clar"
 
 [project.markdown_extensions]
 attr_list = {}
