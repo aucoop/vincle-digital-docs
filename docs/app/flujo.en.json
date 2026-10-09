@@ -4,7 +4,7 @@
   {
    "id": "INBOX",
    "nombre": "INBOX",
-   "resumen": "Etiquetado y cribado rápido",
+   "resumen": "Labelling and quick triage",
    "inicio": "inbox.pegar",
    "marcar_tras": "inbox.post",
    "doc": "diagramas-detallados/#2-inbox-etiquetado-y-cribado-rapido"
@@ -13,7 +13,7 @@
    "id": "VISUAL_INSPECTION",
    "nombre": "VISUAL INSPECTION",
    "devicehub": "VISUAL INSPECTION",
-   "resumen": "Carga, arranque y bloqueo",
+   "resumen": "Charging",
    "inicio": "vi.carga",
    "doc": "diagramas-detallados/#3-visual-inspection-carga-arranque-y-bloqueo"
   },
@@ -21,7 +21,7 @@
    "id": "PENDING_DONOR",
    "nombre": "PENDING DONOR",
    "devicehub": "PENDING DONOR",
-   "resumen": "Espera de liberación (PIN, verificación FRP o gestión empresarial)",
+   "resumen": "Waiting for release (PIN, FRP verification or enterprise management)",
    "nuevo": true,
    "inicio": "pd.inicio",
    "doc": "diagramas-detallados/#4-pending-donor-release-espera-de-liberacion-estado-nuevo"
@@ -29,35 +29,35 @@
   {
    "id": "INSTALL",
    "nombre": "INSTALL",
-   "resumen": "Borrado de cuentas, reset y registro",
+   "resumen": "Account removal",
    "inicio": "install.emm",
    "doc": "diagramas-detallados/#5-install-borrado-de-cuentas-reset-y-registro-con-workbench-android"
   },
   {
    "id": "TEST",
    "nombre": "TEST",
-   "resumen": "Diagnóstico con workbench-android",
+   "resumen": "Diagnostics with workbench-android",
    "inicio": "test.wb",
    "doc": "diagramas-detallados/#6-test-diagnostico-con-workbench-android"
   },
   {
    "id": "REPAIR",
    "nombre": "REPAIR",
-   "resumen": "Reparación y vuelta a TEST",
+   "resumen": "Repair and back to TEST",
    "inicio": "repair.resultado",
    "doc": "diagramas-detallados/#1-maquina-de-estados"
   },
   {
    "id": "PACKAGING",
    "nombre": "PACKAGING",
-   "resumen": "Preparación para la entrega",
+   "resumen": "Getting ready for handover",
    "inicio": "pack.reset2",
    "doc": "diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso"
   },
   {
    "id": "DONATION",
    "nombre": "DONATION",
-   "resumen": "Entrega al receptor",
+   "resumen": "Handover to the recipient",
    "inicio": "don.nota",
    "doc": "diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso"
   },
@@ -65,7 +65,7 @@
    "id": "IN_USE",
    "nombre": "IN USE",
    "devicehub": "IN USE",
-   "resumen": "Periodo de uso",
+   "resumen": "Period of use",
    "nuevo": true,
    "inicio": "use.chk",
    "doc": "diagramas-detallados/#7-packaging-donation-in-use-preparacion-entrega-y-uso"
@@ -73,7 +73,7 @@
   {
    "id": "DISMANTLE",
    "nombre": "DISMANTLE",
-   "resumen": "Piezas o reciclaje",
+   "resumen": "Parts or recycling",
    "inicio": "dis.destino",
    "salida": true,
    "doc": "diagramas-detallados/#8-dismantle-catalogo-de-motivos"
@@ -97,24 +97,24 @@
   "inbox.pegar": {
    "estado": "INBOX",
    "tipo": "accion",
-   "texto": "Pegar la siguiente etiqueta preimpresa de la plancha",
+   "texto": "Stick the next pre-printed label from the sheet",
    "siguiente": "inbox.scan"
   },
   "inbox.scan": {
    "estado": "INBOX",
    "tipo": "accion",
    "marca": "checkpoint",
-   "texto": "Registrar custom_id, fotos y tipo en DeviceHub",
-   "ayuda": "Usa DH-Scan o el formulario web de DeviceHub.",
+   "texto": "Register custom_id, photos and type in DeviceHub",
+   "ayuda": "Use DH-Scan or the DeviceHub web form.",
    "siguiente": "inbox.etiqueta_fab"
   },
   "inbox.etiqueta_fab": {
    "estado": "INBOX",
    "tipo": "pregunta",
-   "texto": "¿Tiene etiqueta del fabricante a la vista?",
+   "texto": "Is the manufacturer label visible?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "inbox.ocr"
     },
     {
@@ -127,10 +127,10 @@
    "estado": "INBOX",
    "tipo": "accion",
    "marca": "checkpoint",
-   "texto": "DH-scan: barcode u OCR de la etiqueta del fabricante",
+   "texto": "DH-scan: barcode or OCR of the manufacturer label",
    "checklist": [
-    "Fabricante",
-    "Modelo",
+    "Manufacturer",
+    "Model",
     "Serial",
     "Product code",
     "GTIN"
@@ -141,22 +141,22 @@
    "estado": "INBOX",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Primer POST de evidencia a DeviceHub",
-   "ayuda": "El móvil consta como recibido, en el lote Inbox. Después la guía marca el estado INBOX.",
+   "texto": "First evidence POST to DeviceHub",
+   "ayuda": "The phone is recorded as received, in the Inbox lot. The guide then sets the INBOX state.",
    "siguiente": "inbox.criba"
   },
   "inbox.criba": {
    "estado": "INBOX",
    "tipo": "pregunta",
-   "texto": "Cribado a simple vista",
-   "ayuda": "Solo lo evidente: no se enciende el móvil ni se busca información del modelo. El resto del hardware se prueba en TEST.",
+   "texto": "Triage at a glance",
+   "ayuda": "Only the obvious: do not switch the phone on or look up the model. The rest of the hardware is tested in TEST.",
    "opciones": [
     {
-     "texto": "Móvil o tablet Android",
+     "texto": "Android phone or tablet",
      "destino": "vi.carga"
     },
     {
-     "texto": "Partido, mojado u otro daño grave",
+     "texto": "Cracked, wet or other serious damage",
      "destino": "dis.destino",
      "nota": {
       "motivo": "DAÑO-EVIDENTE",
@@ -165,13 +165,13 @@
      "foto": true
     },
     {
-     "texto": "Batería hinchada",
+     "texto": "Swollen battery",
      "destino": "dis.destino",
      "nota": {
       "motivo": "BATERIA-HINCHADA",
       "texto": ""
      },
-     "ayuda": "Apartar el aparato por riesgo de incendio.",
+     "ayuda": "Set the device aside because of the fire risk.",
      "foto": true
     },
     {
@@ -179,30 +179,30 @@
      "destino": "inbox.iphone"
     },
     {
-     "texto": "Móvil de teclas u otro aparato",
+     "texto": "Feature phone or other device",
      "destino": "dis.destino",
      "nota": {
       "motivo": "NO-ANDROID",
       "texto": ""
      },
-     "ayuda": "O reclasificarlo si tiene otro uso."
+     "ayuda": "Or reclassify it if it has another use."
     }
    ]
   },
   "inbox.iphone": {
    "estado": "INBOX",
    "tipo": "fin",
-   "texto": "Fuera del flujo Android",
-   "ayuda": "Pregunta abierta en la documentación, todavía sin decidir qué hacer con los iPhone."
+   "texto": "Outside the Android flow",
+   "ayuda": "Open question in the documentation; it is not yet decided what to do with iPhones."
   },
   "vi.carga": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "pregunta",
-   "texto": "Enchufar 15 min. ¿Carga? (icono o LED)",
-   "ayuda": "La carga va antes que el arranque: un móvil sin batería no arranca y no se distingue de uno roto. Basta con que encienda. Si tienes un tester USB a mano, úsalo para comprobar si el móvil está consumiendo corriente, aunque no muestre ningún icono o LED.",
+   "texto": "Plug in for 15 min. Is it charging? (icon or LED)",
+   "ayuda": "Charging comes before booting: a phone with a flat battery does not boot and cannot be told apart from a broken one. It only needs to switch on. If you have a USB tester at hand, use it to check whether the phone is drawing current, even if it shows no icon or LED.",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "vi.arranca"
     },
     {
@@ -214,16 +214,16 @@
   "vi.otro_cable": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "accion",
-   "texto": "Probar otro cable y limpiar el conector",
+   "texto": "Try another cable and clean the connector",
    "siguiente": "vi.carga2"
   },
   "vi.carga2": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "pregunta",
-   "texto": "¿Carga ahora?",
+   "texto": "Is it charging now?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "vi.arranca"
     },
     {
@@ -231,7 +231,7 @@
      "destino": "dis.destino",
      "nota": {
       "motivo": "NO-CARGA",
-      "texto": "probado con dos cables"
+      "texto": "tried with two cables"
      }
     }
    ]
@@ -239,10 +239,10 @@
   "vi.arranca": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "pregunta",
-   "texto": "¿Arranca?",
+   "texto": "Does it boot?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "vi.pantalla"
     },
     {
@@ -250,7 +250,7 @@
      "destino": "dis.destino",
      "nota": {
       "motivo": "NO-ARRANCA",
-      "texto": "bootloop o pantalla negra"
+      "texto": "bootloop or black screen"
      }
     }
    ]
@@ -258,18 +258,18 @@
   "vi.pantalla": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "pregunta",
-   "texto": "¿Qué pantalla sale?",
+   "texto": "Which screen comes up?",
    "opciones": [
     {
-     "texto": "Escritorio sin bloqueo",
+     "texto": "Home screen, no lock",
      "destino": "install.emm"
     },
     {
-     "texto": "Asistente inicial",
+     "texto": "Setup wizard",
      "destino": "vi.frp"
     },
     {
-     "texto": "Pantalla de bloqueo",
+     "texto": "Lock screen",
      "destino": "vi.pin"
     }
    ]
@@ -277,14 +277,14 @@
   "vi.frp": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "pregunta",
-   "texto": "¿Pide la cuenta anterior? (FRP)",
+   "texto": "Does it ask for the previous account? (FRP)",
    "opciones": [
     {
      "texto": "No",
      "destino": "install.emm"
     },
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pd.inicio"
     }
    ]
@@ -292,11 +292,11 @@
   "vi.pin": {
    "estado": "VISUAL_INSPECTION",
    "tipo": "pregunta",
-   "texto": "¿El PIN venía con la donación y funciona?",
-   "ayuda": "Nunca se prueban PINs a ciegas: tras varios intentos el móvil se bloquea por tiempo o se borra, y lo segundo deja el FRP armado.",
+   "texto": "Did the PIN come with the donation, and does it work?",
+   "ayuda": "Never guess PINs: after a few attempts the phone locks for a while or wipes itself, and a wipe leaves FRP armed.",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "install.emm"
     },
     {
@@ -309,22 +309,22 @@
    "estado": "PENDING_DONOR",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Nota en DeviceHub: fecha límite = hoy + 30 días",
+   "texto": "Note in DeviceHub: deadline = today + 30 days",
    "siguiente": "pd.guardar"
   },
   "pd.guardar": {
    "estado": "PENDING_DONOR",
    "tipo": "accion",
-   "texto": "Guardar en la estantería de espera, etiquetado",
+   "texto": "Store it, labelled, on the waiting shelf",
    "siguiente": "pd.contacto"
   },
   "pd.contacto": {
    "estado": "PENDING_DONOR",
    "tipo": "pregunta",
-   "texto": "¿Hay contacto del donante, propietario o empresa?",
+   "texto": "Do we have a contact for the donor, owner or company?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pd.msg"
     },
     {
@@ -341,29 +341,29 @@
    "estado": "PENDING_DONOR",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Pedir que desbloquee el dispositivo, complete la verificación FRP o retire la gestión empresarial",
+   "texto": "Ask them to unlock the device, complete the FRP verification or remove enterprise management",
    "siguiente": "pd.r1"
   },
   "pd.r1": {
    "estado": "PENDING_DONOR",
    "tipo": "pregunta",
-   "texto": "¿Responde en 7 días?",
+   "texto": "Do they reply within 7 days?",
    "plazo": {
     "dias": 7,
     "desde": "pd.msg"
    },
    "opciones": [
     {
-     "texto": "Sí, ha respondido",
+     "texto": "Yes, they replied",
      "destino": "pd.que"
     },
     {
-     "texto": "Aún no, seguir esperando",
+     "texto": "Not yet, keep waiting",
      "destino": "pd.r1",
      "pausa": true
     },
     {
-     "texto": "No, han pasado 7 días",
+     "texto": "No, 7 days have passed",
      "destino": "pd.rec",
      "vence": true
     }
@@ -373,29 +373,29 @@
    "estado": "PENDING_DONOR",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Enviar recordatorio",
+   "texto": "Send a reminder",
    "siguiente": "pd.r2"
   },
   "pd.r2": {
    "estado": "PENDING_DONOR",
    "tipo": "pregunta",
-   "texto": "¿Responde antes de la fecha límite?",
+   "texto": "Do they reply before the deadline?",
    "plazo": {
     "dias": 30,
     "desde": "estado"
    },
    "opciones": [
     {
-     "texto": "Sí, ha respondido",
+     "texto": "Yes, they replied",
      "destino": "pd.que"
     },
     {
-     "texto": "Aún no, seguir esperando",
+     "texto": "Not yet, keep waiting",
      "destino": "pd.r2",
      "pausa": true
     },
     {
-     "texto": "No, ha vencido el plazo",
+     "texto": "No, the deadline has passed",
      "destino": "dis.destino",
      "vence": true,
      "nota": {
@@ -408,22 +408,22 @@
   "pd.que": {
    "estado": "PENDING_DONOR",
    "tipo": "pregunta",
-   "texto": "¿Qué responde?",
+   "texto": "What do they answer?",
    "opciones": [
     {
-     "texto": "Da el PIN",
+     "texto": "They give the PIN",
      "destino": "pd.probar"
     },
     {
-     "texto": "FRP activo",
+     "texto": "FRP active",
      "destino": "pd.frp"
     },
     {
-     "texto": "Gestión empresarial",
+     "texto": "Enterprise management",
      "destino": "pd.mdm"
     },
     {
-     "texto": "No quiere o no puede",
+     "texto": "They will not or cannot",
      "destino": "dis.destino",
      "nota": {
       "motivo": "DONANTE-RECHAZA",
@@ -435,10 +435,10 @@
   "pd.probar": {
    "estado": "PENDING_DONOR",
    "tipo": "pregunta",
-   "texto": "Probar el PIN para desbloquear el móvil. ¿Desbloquea?",
+   "texto": "Try the PIN to unlock the phone. Does it unlock?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pd.ok"
     },
     {
@@ -450,37 +450,37 @@
   "pd.frp": {
    "estado": "PENDING_DONOR",
    "tipo": "accion",
-   "texto": "El donante completa la verificación con una cuenta previamente sincronizada",
+   "texto": "The donor completes the verification with a previously synced account",
    "siguiente": "pd.ok"
   },
   "pd.mdm": {
    "estado": "PENDING_DONOR",
    "tipo": "accion",
-   "texto": "La empresa retira MDM, zero-touch o Knox",
+   "texto": "The company removes MDM, zero-touch or Knox",
    "siguiente": "pd.ok"
   },
   "pd.ok": {
    "estado": "PENDING_DONOR",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Nota en DeviceHub: acceso recuperado",
+   "texto": "Note in DeviceHub: access recovered",
    "siguiente": "install.emm"
   },
   "install.emm": {
    "estado": "INSTALL",
    "tipo": "pregunta",
-   "texto": "¿Gestión empresarial? (perfil de trabajo, zero-touch, Knox)",
+   "texto": "Enterprise management? (work profile, zero-touch, Knox)",
    "opciones": [
     {
      "texto": "No",
      "destino": "install.bandeja"
     },
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pd.inicio",
      "nota": {
       "motivo": "MDM-EMPRESA",
-      "texto": "bloqueo MDM empresarial",
+      "texto": "enterprise MDM lock, ask the company to release it",
       "pedir baja a la empresa": null
      }
     }
@@ -489,34 +489,34 @@
   "install.bandeja": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Sacar la bandeja y retirar la SIM y la SD del donante",
+   "texto": "Pull out the tray and remove the donor's SIM and SD card",
    "siguiente": "install.donate"
   },
   "install.donate": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Instalar donate-android",
-   "ayuda": "APK sin permisos ni red; se puede instalar con datos del donante.",
+   "texto": "Install donate-android",
+   "ayuda": "APK with no permissions and no network; it can be installed while the donor's data is still there.",
    "siguiente": "install.cuentas"
   },
   "install.cuentas": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Con donate-android: eliminar todas las cuentas, Google y fabricante",
-   "ayuda": "Cuentas fuera antes del reset. Si se resetea con la cuenta puesta, aparece el FRP y solo el propietario puede quitarlo. No se intenta ningún bypass.",
+   "texto": "With donate-android: remove every account, Google and manufacturer",
+   "ayuda": "Accounts out before the reset. If the phone is reset with an account still signed in, FRP kicks in and only the owner can remove it. No bypass is ever attempted.",
    "siguiente": "install.pass"
   },
   "install.pass": {
    "estado": "INSTALL",
    "tipo": "pregunta",
-   "texto": "¿Pide una contraseña que no tenemos?",
+   "texto": "Does it ask for a password we do not have?",
    "opciones": [
     {
      "texto": "No",
      "destino": "install.lock"
     },
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pd.inicio"
     }
    ]
@@ -524,59 +524,59 @@
   "install.lock": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Quitar el bloqueo de pantalla",
+   "texto": "Remove the screen lock",
    "siguiente": "install.reset"
   },
   "install.reset": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Factory reset desde donate-android",
-   "ayuda": "donate-android abre el factory reset del sistema; la app no puede hacerlo por su cuenta.",
+   "texto": "Factory reset from donate-android",
+   "ayuda": "donate-android opens the system factory reset; the app cannot do it on its own.",
    "siguiente": "install.usuario"
   },
   "install.usuario": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Arranca en el asistente inicial. Configurar el usuario de test",
+   "texto": "It boots into the setup wizard. Set up the test user",
    "checklist": [
-    "Sin cuenta Google",
-    "Idioma y fecha",
-    "Sin PIN",
-    "Conectar a la WiFi del taller"
+    "No Google account",
+    "Language and date",
+    "No PIN",
+    "Connect to the workshop WiFi"
    ],
    "siguiente": "install.wb"
   },
   "install.wb": {
    "estado": "INSTALL",
    "tipo": "accion",
-   "texto": "Instalar workbench-android y teclear el número de la etiqueta",
-   "ayuda": "La app comprueba en DeviceHub que el número existe.",
+   "texto": "Install workbench-android and type in the label number",
+   "ayuda": "The app checks in DeviceHub that the number exists.",
    "siguiente": "install.inventario"
   },
   "install.inventario": {
    "estado": "INSTALL",
    "tipo": "accion",
    "marca": "checkpoint",
-   "texto": "Snapshot de inventario con workbench-android",
-   "ayuda": "Modelo, Android, parche de seguridad, RAM, almacenamiento y batería.",
+   "texto": "Inventory snapshot with workbench-android",
+   "ayuda": "Model, Android, security patch, RAM, storage and battery.",
    "siguiente": "install.obsoleto"
   },
   "install.obsoleto": {
    "estado": "INSTALL",
    "tipo": "pregunta",
-   "texto": "¿Obsoleto? (parche de seguridad de hace más de X años)",
-   "ayuda": "Falta fijar la X del criterio (pregunta abierta).",
+   "texto": "Obsolete? (security patch older than X years)",
+   "ayuda": "The X in this criterion is still to be decided (open question).",
    "opciones": [
     {
      "texto": "No",
      "destino": "test.wb"
     },
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "dis.destino",
      "nota": {
       "motivo": "OBSOLETO",
-      "texto": "modelo, Android y parche: "
+      "texto": "model, Android and patch: "
      }
     }
    ]
@@ -585,27 +585,27 @@
    "estado": "TEST",
    "tipo": "accion",
    "marca": "checkpoint",
-   "texto": "Completar todos los tests en Workbench Android y enviar el snapshot",
-   "ayuda": "La app guía las pruebas, registra PASS, FAIL o SKIP y guarda las notas. Se pasan siempre todas, aunque alguna falle.",
+   "texto": "Complete every test in Workbench Android and send the snapshot",
+   "ayuda": "The app guides the tests, records PASS, FAIL or SKIP and keeps the notes. Always run all of them, even if one fails.",
    "siguiente": "test.decision"
   },
   "test.decision": {
    "estado": "TEST",
    "tipo": "pregunta",
-   "texto": "¿Apto para la entrega?",
-   "ayuda": "Se decide con los resultados de workbench-android y los criterios de entrega.",
+   "texto": "Fit for handover?",
+   "ayuda": "Decided from the workbench-android results and the handover criteria.",
    "opciones": [
     {
-     "texto": "Pendiente de decidir",
+     "texto": "Not decided yet",
      "destino": "test.decision",
      "pausa": true
     },
     {
-     "texto": "Apto según los criterios de entrega",
+     "texto": "Fit according to the handover criteria",
      "destino": "pack.reset2"
     },
     {
-     "texto": "Requiere reparación",
+     "texto": "Needs repair",
      "destino": "repair.resultado"
     }
    ]
@@ -613,20 +613,20 @@
   "repair.resultado": {
    "estado": "REPAIR",
    "tipo": "pregunta",
-   "texto": "¿Resultado de la reparación?",
-   "ayuda": "El procedimiento interno de REPAIR está fuera del alcance de la documentación. Una reparación completada vuelve a TEST.",
+   "texto": "Repair outcome?",
+   "ayuda": "The internal REPAIR procedure is outside the scope of the documentation. A completed repair goes back to TEST.",
    "opciones": [
     {
-     "texto": "En reparación",
+     "texto": "Under repair",
      "destino": "repair.resultado",
      "pausa": true
     },
     {
-     "texto": "Reparación completada",
+     "texto": "Repair completed",
      "destino": "test.wb"
     },
     {
-     "texto": "No reparable o reparación no viable",
+     "texto": "Not repairable or repair not worthwhile",
      "destino": "dis.destino",
      "nota": {
       "motivo": "NO-REPARABLE",
@@ -638,17 +638,17 @@
   "pack.reset2": {
    "estado": "PACKAGING",
    "tipo": "accion",
-   "texto": "Reset II: factory reset desde Ajustes",
-   "ayuda": "Borra el usuario de test y la WiFi.",
+   "texto": "Reset II: factory reset from Settings",
+   "ayuda": "Wipes the test user and the WiFi.",
    "siguiente": "pack.asistente"
   },
   "pack.asistente": {
    "estado": "PACKAGING",
    "tipo": "pregunta",
-   "texto": "¿Arranca correctamente en el asistente inicial?",
+   "texto": "Does it boot properly into the setup wizard?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pack.frp"
     },
     {
@@ -660,14 +660,14 @@
   "pack.frp": {
    "estado": "PACKAGING",
    "tipo": "pregunta",
-   "texto": "¿Pide una cuenta anterior? (FRP)",
+   "texto": "Does it ask for a previous account? (FRP)",
    "opciones": [
     {
      "texto": "No",
      "destino": "pack.preparar"
     },
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pd.inicio"
     }
    ]
@@ -675,28 +675,28 @@
   "pack.preparar": {
    "estado": "PACKAGING",
    "tipo": "accion",
-   "texto": "Preparar el kit",
+   "texto": "Prepare the kit",
    "checklist": [
-    "Apagar con la batería al 50-80 %",
-    "Limpieza exterior y protector si procede",
-    "Kit: móvil, cargador, cable, funda, guía de primeros pasos",
-    "Etiqueta QR visible con custom_id",
-    "Dejar en la estantería de listos"
+    "Switch off with the battery at 50-80 %",
+    "Clean the outside and fit a screen protector if needed",
+    "Kit: phone, charger, cable, case, getting-started guide",
+    "QR label with custom_id visible",
+    "Leave it on the ready shelf"
    ],
    "siguiente": "pack.receptor"
   },
   "pack.receptor": {
    "estado": "PACKAGING",
    "tipo": "pregunta",
-   "texto": "¿Hay receptor asignado?",
+   "texto": "Is a recipient assigned?",
    "opciones": [
     {
-     "texto": "No, sigue en la estantería",
+     "texto": "No, it stays on the shelf",
      "destino": "pack.receptor",
      "pausa": true
     },
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "pack.entrega"
     }
    ]
@@ -704,45 +704,45 @@
   "pack.entrega": {
    "estado": "PACKAGING",
    "tipo": "accion",
-   "texto": "Entrega al receptor con firma de recepción",
+   "texto": "Hand over to the recipient, with a signed receipt",
    "siguiente": "don.nota"
   },
   "don.nota": {
    "estado": "DONATION",
    "tipo": "accion",
    "marca": "dh",
-   "texto": "Nota en DeviceHub: entidad o receptor",
+   "texto": "Note in DeviceHub: organisation or recipient",
    "siguiente": "don.config"
   },
   "don.config": {
    "estado": "DONATION",
    "tipo": "accion",
-   "texto": "Primera configuración con el receptor, si lo necesita",
+   "texto": "First setup with the recipient, if they need it",
    "siguiente": "use.chk"
   },
   "use.chk": {
    "estado": "IN_USE",
    "tipo": "accion",
    "marca": "checkpoint",
-   "texto": "Pasada de workbench-android, periódica o al volver",
+   "texto": "workbench-android run, periodically or when it comes back",
    "siguiente": "use.evento"
   },
   "use.evento": {
    "estado": "IN_USE",
    "tipo": "pregunta",
-   "texto": "¿Qué pasa?",
+   "texto": "What happens?",
    "opciones": [
     {
-     "texto": "Sigue en uso",
+     "texto": "Still in use",
      "destino": "use.chk",
      "pausa": true
     },
     {
-     "texto": "Cambio de persona o devolución",
+     "texto": "New user or returned",
      "destino": "vi.carga"
     },
     {
-     "texto": "Se rompe",
+     "texto": "It breaks",
      "destino": "use.reparable"
     }
    ]
@@ -750,10 +750,10 @@
   "use.reparable": {
    "estado": "IN_USE",
    "tipo": "pregunta",
-   "texto": "¿Es reparable?",
+   "texto": "Is it repairable?",
    "opciones": [
     {
-     "texto": "Sí",
+     "texto": "Yes",
      "destino": "vi.carga"
     },
     {
@@ -769,24 +769,24 @@
   "dis.destino": {
    "estado": "DISMANTLE",
    "tipo": "pregunta",
-   "texto": "Destino",
+   "texto": "Destination",
    "opciones": [
     {
-     "texto": "Donante de piezas (pantalla, batería, cámara)",
+     "texto": "Parts donor (screen, battery, camera)",
      "destino": "dis.fin"
     },
     {
-     "texto": "Gestor autorizado WEEE",
+     "texto": "Authorised WEEE handler",
      "destino": "dis.fin",
-     "ayuda": "Con borrado certificado si no se pudo resetear."
+     "ayuda": "With certified erasure if it could not be reset."
     }
    ]
   },
   "dis.fin": {
    "estado": "DISMANTLE",
    "tipo": "fin",
-   "texto": "Fuera del circuito"
+   "texto": "Out of the circuit"
   }
  },
- "idioma": "es"
+ "idioma": "en"
 }

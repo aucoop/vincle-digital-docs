@@ -1,11 +1,17 @@
-"""Valida flujo/flujo.yaml y genera sus salidas.
+"""Valida flujo/flujo.yaml y sus traducciones y genera sus salidas.
 
-    python flujo/generar.py                  # valida y escribe docs/app/flujo.json
-    python flujo/generar.py --check          # falla si flujo.json no está al día
-    python flujo/generar.py --mermaid INBOX  # imprime el diagrama de un estado
+    python flujo/generar.py                             # valida y escribe docs/app/flujo*.json
+    python flujo/generar.py --check                     # falla si algún flujo*.json no está al día
+    python flujo/generar.py --mermaid INBOX             # imprime el diagrama de un estado
+    python flujo/generar.py --mermaid INBOX --idioma en # el mismo diagrama, traducido
+
+flujo.yaml está en castellano. flujo/i18n/<idioma>.yaml traduce sus textos
+(resúmenes de estado, pasos, ayudas, checklists, opciones y notas) por id; los
+ids, destinos, motivos y nombres de estado de DeviceHub no se traducen.
 """
 
 import argparse
+import copy
 import json
 import sys
 from pathlib import Path
@@ -15,6 +21,12 @@ import yaml
 RAIZ = Path(__file__).resolve().parent.parent
 FUENTE = RAIZ / "flujo" / "flujo.yaml"
 SALIDA = RAIZ / "docs" / "app" / "flujo.json"
+TRADUCCIONES = RAIZ / "flujo" / "i18n"
+IDIOMAS = ("en", "ca")
+
+
+def salida(idioma):
+    return SALIDA if idioma == "es" else SALIDA.with_name(f"flujo.{idioma}.json")
 
 TIPOS = {"accion", "pregunta", "fin"}
 MARCAS = {"dh", "checkpoint"}
@@ -81,6 +93,70 @@ def validar(flujo):
     return errores
 
 
+def traducir(flujo, trad, idioma):
+    """Copia del flujo con los textos de `trad`. Exige traducir todo texto no vacío."""
+    errores = []
+    salida = copy.deepcopy(flujo)
+    donde = f"i18n/{idioma}.yaml"
+
+    def exigir(origen, destino, campo, t, ctx):
+        if campo in origen and origen[campo] != "":
+            if not isinstance(t.get(campo), str) or not t[campo].strip():
+                errores.append(f"{donde}: {ctx}: falta {campo}")
+            else:
+                destino[campo] = t[campo]
+        elif campo in t:
+            errores.append(f"{donde}: {ctx}: {campo} sobra, el original no lo tiene")
+
+    t_estados = trad.get("estados") or {}
+    for e in salida["estados"]:
+        exigir(e, e, "resumen", t_estados.get(e["id"]) or {}, f"estado {e['id']}")
+    for eid in t_estados.keys() - {e["id"] for e in salida["estados"]}:
+        errores.append(f"{donde}: estado {eid} no existe")
+
+    t_nodos = trad.get("nodos") or {}
+    for nid, n in salida["nodos"].items():
+        t = t_nodos.get(nid)
+        if t is None:
+            errores.append(f"{donde}: nodo {nid}: sin traducir")
+            continue
+        exigir(n, n, "texto", t, f"nodo {nid}")
+        exigir(n, n, "ayuda", t, f"nodo {nid}")
+        if "checklist" in n:
+            if len(t.get("checklist") or []) != len(n["checklist"]):
+                errores.append(f"{donde}: nodo {nid}: checklist con otro número de elementos")
+            else:
+                n["checklist"] = t["checklist"]
+        opciones, t_opciones = n.get("opciones", []), t.get("opciones") or []
+        if len(t_opciones) != len(opciones):
+            errores.append(f"{donde}: nodo {nid}: {len(t_opciones)} opciones traducidas de {len(opciones)}")
+            continue
+        for i, (o, to) in enumerate(zip(opciones, t_opciones)):
+            ctx = f"nodo {nid}, opción {i + 1}"
+            exigir(o, o, "texto", to, ctx)
+            exigir(o, o, "ayuda", to, ctx)
+            if "nota" in o:
+                # La traducción de la nota va como `nota: texto`; el motivo no se traduce.
+                exigir(o["nota"], o["nota"], "texto", {"texto": to["nota"]} if "nota" in to else {}, ctx + ", nota")
+            elif "nota" in to:
+                errores.append(f"{donde}: {ctx}: nota sobra, el original no la tiene")
+    for nid in t_nodos.keys() - salida["nodos"].keys():
+        errores.append(f"{donde}: nodo {nid} no existe")
+
+    salida["idioma"] = idioma
+    return salida, errores
+
+
+def flujos(flujo):
+    """{idioma: flujo} con el original y cada traducción, o los errores de traducción."""
+    resultado, errores = {"es": dict(flujo, idioma="es")}, []
+    for idioma in IDIOMAS:
+        trad = yaml.safe_load((TRADUCCIONES / f"{idioma}.yaml").read_text(encoding="utf-8"))
+        resultado[idioma], e = traducir(flujo, trad, idioma)
+        errores += e
+    return resultado, errores
+
+
 def sucesores(nodo):
     if nodo["tipo"] == "accion":
         return [nodo["siguiente"]]
@@ -142,10 +218,13 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--check", action="store_true", help="fallar si flujo.json no está al día")
     p.add_argument("--mermaid", metavar="ESTADO", help="imprimir el diagrama Mermaid de un estado")
+    p.add_argument("--idioma", default="es", choices=("es", *IDIOMAS), help="idioma del diagrama (es por defecto)")
     args = p.parse_args()
 
     flujo = yaml.safe_load(FUENTE.read_text(encoding="utf-8"))
     errores = validar(flujo)
+    if not errores:
+        traducidos, errores = flujos(flujo)
     if errores:
         print("\n".join(errores), file=sys.stderr)
         sys.exit(1)
@@ -156,18 +235,23 @@ def main():
             disponibles = ", ".join(sorted(estados))
             print(f"estado {args.mermaid} desconocido; disponibles: {disponibles}", file=sys.stderr)
             sys.exit(2)
-        print(mermaid(flujo, args.mermaid))
+        print(mermaid(traducidos[args.idioma], args.mermaid))
         return
 
-    salida = json.dumps(flujo, ensure_ascii=False, indent=1) + "\n"
-    if args.check:
-        if not SALIDA.exists() or SALIDA.read_text(encoding="utf-8") != salida:
-            print(f"{SALIDA.relative_to(RAIZ)} no está al día: python flujo/generar.py", file=sys.stderr)
-            sys.exit(1)
-        return
-    SALIDA.parent.mkdir(parents=True, exist_ok=True)
-    SALIDA.write_text(salida, encoding="utf-8")
-    print(f"{len(flujo['nodos'])} nodos → {SALIDA.relative_to(RAIZ)}")
+    desfasados = []
+    for idioma, f in traducidos.items():
+        ruta = salida(idioma)
+        contenido = json.dumps(f, ensure_ascii=False, indent=1) + "\n"
+        if args.check:
+            if not ruta.exists() or ruta.read_text(encoding="utf-8") != contenido:
+                desfasados.append(str(ruta.relative_to(RAIZ)))
+            continue
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        ruta.write_text(contenido, encoding="utf-8")
+        print(f"{len(f['nodos'])} nodos → {ruta.relative_to(RAIZ)}")
+    if desfasados:
+        print(f"{', '.join(desfasados)} no está al día: python flujo/generar.py", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

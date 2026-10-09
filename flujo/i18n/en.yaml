@@ -1,0 +1,329 @@
+# English texts for flujo/flujo.yaml, keyed by the same ids.
+#
+# Only texts are translated: ids, destinations, reasons ([MOTIVO]) and
+# DeviceHub state names stay as in flujo.yaml. Options go in the same order.
+# flujo/generar.py fails if a text is missing or left over.
+
+estados:
+  INBOX: {resumen: Labelling and quick triage}
+  VISUAL_INSPECTION: {resumen: Charging, boot and lock}
+  PENDING_DONOR: {resumen: "Waiting for release (PIN, FRP verification or enterprise management)"}
+  INSTALL: {resumen: Account removal, reset and registration}
+  TEST: {resumen: Diagnostics with workbench-android}
+  REPAIR: {resumen: Repair and back to TEST}
+  PACKAGING: {resumen: Getting ready for handover}
+  DONATION: {resumen: Handover to the recipient}
+  IN_USE: {resumen: Period of use}
+  DISMANTLE: {resumen: Parts or recycling}
+
+nodos:
+
+  # --- INBOX ---------------------------------------------------------------
+
+  inbox.pegar:
+    texto: Stick the next pre-printed label from the sheet
+
+  inbox.scan:
+    texto: Register custom_id, photos and type in DeviceHub
+    ayuda: Use DH-Scan or the DeviceHub web form.
+
+  inbox.etiqueta_fab:
+    texto: Is the manufacturer label visible?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  inbox.ocr:
+    texto: "DH-scan: barcode or OCR of the manufacturer label"
+    checklist: [Manufacturer, Model, Serial, Product code, GTIN]
+
+  inbox.post:
+    texto: First evidence POST to DeviceHub
+    ayuda: The phone is recorded as received, in the Inbox lot. The guide then sets the INBOX state.
+
+  inbox.criba:
+    texto: Triage at a glance
+    ayuda: >-
+      Only the obvious: do not switch the phone on or look up the model. The
+      rest of the hardware is tested in TEST.
+    opciones:
+      - texto: Android phone or tablet
+      - texto: Cracked, wet or other serious damage
+      - texto: Swollen battery
+        ayuda: Set the device aside because of the fire risk.
+      - texto: iPhone
+      - texto: Feature phone or other device
+        ayuda: Or reclassify it if it has another use.
+
+  inbox.iphone:
+    texto: Outside the Android flow
+    ayuda: Open question in the documentation; it is not yet decided what to do with iPhones.
+
+  # --- VISUAL INSPECTION ---------------------------------------------------
+
+  vi.carga:
+    texto: Plug in for 15 min. Is it charging? (icon or LED)
+    ayuda: >-
+      Charging comes before booting: a phone with a flat battery does not boot
+      and cannot be told apart from a broken one. It only needs to switch on.
+      If you have a USB tester at hand, use it to check whether the phone is
+      drawing current, even if it shows no icon or LED.
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  vi.otro_cable:
+    texto: Try another cable and clean the connector
+
+  vi.carga2:
+    texto: Is it charging now?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+        nota: tried with two cables
+
+  vi.arranca:
+    texto: Does it boot?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+        nota: bootloop or black screen
+
+  vi.pantalla:
+    texto: Which screen comes up?
+    opciones:
+      - texto: Home screen, no lock
+      - texto: Setup wizard
+      - texto: Lock screen
+
+  vi.frp:
+    texto: Does it ask for the previous account? (FRP)
+    opciones:
+      - texto: "No"
+      - texto: "Yes"
+
+  vi.pin:
+    texto: Did the PIN come with the donation, and does it work?
+    ayuda: >-
+      Never guess PINs: after a few attempts the phone locks for a while or
+      wipes itself, and a wipe leaves FRP armed.
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  # --- PENDING DONOR -------------------------------------------------------
+
+  pd.inicio:
+    texto: "Note in DeviceHub: deadline = today + 30 days"
+
+  pd.guardar:
+    texto: Store it, labelled, on the waiting shelf
+
+  pd.contacto:
+    texto: Do we have a contact for the donor, owner or company?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  pd.msg:
+    texto: Ask them to unlock the device, complete the FRP verification or remove enterprise management
+
+  pd.r1:
+    texto: Do they reply within 7 days?
+    opciones:
+      - texto: Yes, they replied
+      - texto: Not yet, keep waiting
+      - texto: No, 7 days have passed
+
+  pd.rec:
+    texto: Send a reminder
+
+  pd.r2:
+    texto: Do they reply before the deadline?
+    opciones:
+      - texto: Yes, they replied
+      - texto: Not yet, keep waiting
+      - texto: No, the deadline has passed
+
+  pd.que:
+    texto: What do they answer?
+    opciones:
+      - texto: They give the PIN
+      - texto: FRP active
+      - texto: Enterprise management
+      - texto: They will not or cannot
+
+  pd.probar:
+    texto: Try the PIN to unlock the phone. Does it unlock?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  pd.frp:
+    texto: The donor completes the verification with a previously synced account
+
+  pd.mdm:
+    texto: The company removes MDM, zero-touch or Knox
+
+  pd.ok:
+    texto: "Note in DeviceHub: access recovered"
+
+  # --- INSTALL -------------------------------------------------------------
+
+  install.emm:
+    texto: Enterprise management? (work profile, zero-touch, Knox)
+    opciones:
+      - texto: "No"
+      - texto: "Yes"
+        nota: enterprise MDM lock, ask the company to release it
+
+  install.bandeja:
+    texto: Pull out the tray and remove the donor's SIM and SD card
+
+  install.donate:
+    texto: Install donate-android
+    ayuda: APK with no permissions and no network; it can be installed while the donor's data is still there.
+
+  install.cuentas:
+    texto: "With donate-android: remove every account, Google and manufacturer"
+    ayuda: >-
+      Accounts out before the reset. If the phone is reset with an account
+      still signed in, FRP kicks in and only the owner can remove it. No
+      bypass is ever attempted.
+
+  install.pass:
+    texto: Does it ask for a password we do not have?
+    opciones:
+      - texto: "No"
+      - texto: "Yes"
+
+  install.lock:
+    texto: Remove the screen lock
+
+  install.reset:
+    texto: Factory reset from donate-android
+    ayuda: donate-android opens the system factory reset; the app cannot do it on its own.
+
+  install.usuario:
+    texto: It boots into the setup wizard. Set up the test user
+    checklist:
+      - No Google account
+      - Language and date
+      - No PIN
+      - Connect to the workshop WiFi
+
+  install.wb:
+    texto: Install workbench-android and type in the label number
+    ayuda: The app checks in DeviceHub that the number exists.
+
+  install.inventario:
+    texto: Inventory snapshot with workbench-android
+    ayuda: Model, Android, security patch, RAM, storage and battery.
+
+  install.obsoleto:
+    texto: Obsolete? (security patch older than X years)
+    ayuda: The X in this criterion is still to be decided (open question).
+    opciones:
+      - texto: "No"
+      - texto: "Yes"
+        nota: "model, Android and patch: "
+
+  # --- TEST ----------------------------------------------------------------
+
+  test.wb:
+    texto: Complete every test in Workbench Android and send the snapshot
+    ayuda: The app guides the tests, records PASS, FAIL or SKIP and keeps the notes. Always run all of them, even if one fails.
+
+  test.decision:
+    texto: Fit for handover?
+    ayuda: Decided from the workbench-android results and the handover criteria.
+    opciones:
+      - texto: Not decided yet
+      - texto: Fit according to the handover criteria
+      - texto: Needs repair
+
+  # --- REPAIR --------------------------------------------------------------
+
+  repair.resultado:
+    texto: Repair outcome?
+    ayuda: >-
+      The internal REPAIR procedure is outside the scope of the documentation.
+      A completed repair goes back to TEST.
+    opciones:
+      - texto: Under repair
+      - texto: Repair completed
+      - texto: Not repairable or repair not worthwhile
+
+  # --- PACKAGING -----------------------------------------------------------
+
+  pack.reset2:
+    texto: "Reset II: factory reset from Settings"
+    ayuda: Wipes the test user and the WiFi.
+
+  pack.asistente:
+    texto: Does it boot properly into the setup wizard?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  pack.frp:
+    texto: Does it ask for a previous account? (FRP)
+    opciones:
+      - texto: "No"
+      - texto: "Yes"
+
+  pack.preparar:
+    texto: Prepare the kit
+    checklist:
+      - Switch off with the battery at 50-80 %
+      - Clean the outside and fit a screen protector if needed
+      - "Kit: phone, charger, cable, case, getting-started guide"
+      - QR label with custom_id visible
+      - Leave it on the ready shelf
+
+  pack.receptor:
+    texto: Is a recipient assigned?
+    opciones:
+      - texto: No, it stays on the shelf
+      - texto: "Yes"
+
+  pack.entrega:
+    texto: Hand over to the recipient, with a signed receipt
+
+  # --- DONATION ------------------------------------------------------------
+
+  don.nota:
+    texto: "Note in DeviceHub: organisation or recipient"
+
+  don.config:
+    texto: First setup with the recipient, if they need it
+
+  # --- IN USE --------------------------------------------------------------
+
+  use.chk:
+    texto: workbench-android run, periodically or when it comes back
+
+  use.evento:
+    texto: What happens?
+    opciones:
+      - texto: Still in use
+      - texto: New user or returned
+      - texto: It breaks
+
+  use.reparable:
+    texto: Is it repairable?
+    opciones:
+      - texto: "Yes"
+      - texto: "No"
+
+  # --- DISMANTLE -----------------------------------------------------------
+
+  dis.destino:
+    texto: Destination
+    opciones:
+      - texto: Parts donor (screen, battery, camera)
+      - texto: Authorised WEEE handler
+        ayuda: With certified erasure if it could not be reset.
+
+  dis.fin:
+    texto: Out of the circuit
