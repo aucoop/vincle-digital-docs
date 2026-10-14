@@ -22,6 +22,14 @@
     });
   }
 
+  // Guarda la elección con la misma clave que la guía (docs/app/i18n.js): así
+  // la raíz (overrides/main.html) y la guía la respetan en vez del navegador.
+  document.addEventListener('click', (ev) => {
+    const enlace = ev.target.closest && ev.target.closest('a.md-select__link[hreflang]');
+    if (!enlace) return;
+    try { localStorage.setItem('vincle.guia.idioma.v1', enlace.hreflang); } catch { /* sin almacenamiento */ }
+  }, true);
+
   enlazarIdiomas();
   // Con navigation.instant la página cambia sin recargar.
   if (window.document$) window.document$.subscribe(enlazarIdiomas);
