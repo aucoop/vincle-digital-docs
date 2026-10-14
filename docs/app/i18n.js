@@ -550,6 +550,8 @@ function cambiarIdioma(nuevo) {
 // data-i18n-attr="atributo:clave; …".
 function traducirDocumento() {
   document.documentElement.lang = idioma;
+  // Nombre de la app instalada en su idioma (manifest.<idioma>.webmanifest).
+  if (idioma !== 'es') document.querySelector('link[rel="manifest"]')?.setAttribute('href', `manifest.${idioma}.webmanifest`);
   document.title = t('doc.titulo');
   document.querySelector('meta[name="description"]')?.setAttribute('content', t('doc.descripcion'));
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
