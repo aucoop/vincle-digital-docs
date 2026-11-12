@@ -1,52 +1,25 @@
 [project]
 site_name = "Vincle Digital"
 site_url = "https://aucoop.github.io/vincle-digital-docs/"
-site_description = "Flujo de reacondicionado de móviles Android con trazabilidad en DeviceHub"
+site_description = "Guia per als participants del Repair Cafè Vincle Digital"
 site_author = "aucoop"
-copyright = "Documentación de Vincle Digital"
+copyright = "Vincle Digital · AUCOOP"
 docs_dir = "docs"
 site_dir = "site"
 repo_url = "https://github.com/aucoop/vincle-digital-docs"
 repo_name = "aucoop/vincle-digital-docs"
-edit_uri = "edit/main/docs/"
 extra_css = ["stylesheets/extra.css"]
-extra_javascript = ["javascripts/acceso-guia.js", "javascripts/idioma.js"]
-# Selector de idioma. Castellano en la raíz, inglés en /en/ y catalán en /ca/
-# (zensical.en.toml y zensical.ca.toml). javascripts/idioma.js reescribe estos
-# enlaces para ir a la misma página en el otro idioma.
-extra.alternate = [
-  { name = "Español", link = "https://aucoop.github.io/vincle-digital-docs/", lang = "es" },
-  { name = "English", link = "https://aucoop.github.io/vincle-digital-docs/en/", lang = "en" },
-  { name = "Català", link = "https://aucoop.github.io/vincle-digital-docs/ca/", lang = "ca" },
-]
 nav = [
-  { "Inicio" = "index.md" },
-  { "Proceso" = [
-    { "Vista rápida" = "diagrama-alto-nivel.md" },
-    { "Flujo detallado" = "diagramas-detallados.md" },
-  ] },
-  { "Herramientas" = [
-    { "Etiquetas" = "etiquetas.md" },
-    { "Guía en el móvil" = "guia-app.md" },
-  ] },
+  { "Guia per als participants" = "guia.md" },
 ]
 
 [project.theme]
-# overrides/main.html: lleva a /en/ o /ca/ según el idioma guardado o el del
-# navegador. Solo en castellano; los otros idiomas no redirigen.
-custom_dir = "overrides"
-language = "es"
+language = "ca"
 features = [
   "navigation.instant",
-  "navigation.instant.prefetch",
   "navigation.instant.progress",
-  "navigation.tabs",
-  "navigation.tabs.sticky",
-  "navigation.path",
   "navigation.top",
   "toc.follow",
-  "content.action.edit",
-  "content.action.view",
   "search.suggest",
   "search.highlight",
 ]
@@ -60,7 +33,7 @@ scheme = "default"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/sun"
-toggle.name = "Cambiar a modo oscuro"
+toggle.name = "Canvia a mode fosc"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
@@ -68,17 +41,12 @@ scheme = "slate"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/moon"
-toggle.name = "Cambiar a modo claro"
+toggle.name = "Canvia a mode clar"
 
 [project.markdown_extensions]
 attr_list = {}
 md_in_html = {}
-pymdownx.superfences.custom_fences = [
-  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
-]
-pymdownx.details = {}
 pymdownx.emoji = {}
-pymdownx.tabbed = { alternate_style = true }
 pymdownx.tasklist = { custom_checkbox = true }
 admonition = {}
 footnotes = {}

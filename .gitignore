@@ -7,3 +7,6 @@ etiquetas/*.pdf
 
 # Sitio generado por Zensical
 site/
+
+# Caché de Python
+__pycache__/

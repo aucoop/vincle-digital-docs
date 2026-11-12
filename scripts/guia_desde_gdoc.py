@@ -282,7 +282,6 @@ def main():
         "---\n"
         "title: Guia per als participants\n"
         "hide:\n  - navigation\n"
-        "sense_traduccio: true\n"
         "---\n\n"
         "<!-- Generat amb scripts/guia_desde_gdoc.py a partir del Google Doc. No l'editis a mà: "
         "els canvis es fan al document. -->\n\n"

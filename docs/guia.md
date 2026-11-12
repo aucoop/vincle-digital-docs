@@ -2,7 +2,6 @@
 title: Guia per als participants
 hide:
   - navigation
-sense_traduccio: true
 ---
 
 <!-- Generat amb scripts/guia_desde_gdoc.py a partir del Google Doc. No l'editis a mà: els canvis es fan al document. -->

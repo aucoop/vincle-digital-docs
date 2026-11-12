@@ -1,67 +1,19 @@
-# Documentación de Vincle Digital
+# Vincle Digital
 
-Documentación del flujo de reacondicionado de móviles Android y herramientas
-de apoyo para su trazabilidad en DeviceHub.
+Guia per als participants del Repair Cafè Vincle Digital, publicada a
+<https://aucoop.github.io/vincle-digital-docs/guia/> amb
+[Zensical](https://zensical.org/). L'arrel del lloc porta a la guia.
 
-## Documentación
-
-- [Sitio web](https://aucoop.github.io/vincle-digital-docs/)
-- [Diagrama de alto nivel](docs/diagrama-alto-nivel.md)
-- [Diagramas detallados del reacondicionado](docs/diagramas-detallados.md)
-- [Diagrama fuente de Lucidchart](Diagrama%20reparació%20%20Vincle%20Digital.json)
-
-Los diagramas Mermaid se renderizan en GitHub y en el sitio generado con
-[Zensical](https://zensical.org/).
-
-## Etiquetas
-
-El directorio [`etiquetas`](etiquetas) contiene el generador de planchas A4
-con QR y los requisitos de Python.
+La font és la pestanya "Guia per als participants" del Google Doc de l'equip:
+`docs/guia.md` no s'edita a mà, es regenera amb l'script.
 
 ```sh
-python -m pip install -r etiquetas/requirements.txt
-python etiquetas/generar_planchas.py 1 189 -o plancha-000001.pdf
-```
-
-## Guía en el móvil
-
-[`docs/app`](docs/app) es una app web instalable que guía el flujo paso a paso.
-El flujo sale de [`flujo/flujo.yaml`](flujo/flujo.yaml) y sus textos en
-inglés y catalán de [`flujo/i18n/`](flujo/i18n); los textos de la interfaz
-están en [`docs/app/i18n.js`](docs/app/i18n.js). Después de editar el flujo:
-
-```sh
-python flujo/generar.py
-```
-
-Si cambian textos de los diagramas por estado, se regeneran los PNG (en
-`docs/app/diagramas/`, `diagramas/en/` y `diagramas/ca/`) con
-`node flujo/diagramas-png.cjs`.
-
-## Idiomas
-
-El sitio está en castellano (`docs/`, en la raíz), inglés (`i18n/en/`, en
-`/en/`) y catalán (`i18n/ca/`, en `/ca/`). Las páginas traducidas mantienen
-el nombre de fichero y los ids de los títulos en castellano para que el
-selector de idioma lleve a la misma página y sección. Al cambiar una página,
-conviene actualizar las tres.
-
-Quien entra en castellano sin haber elegido idioma va a la misma página en
-inglés o catalán si su navegador está en uno de ellos (`overrides/main.html`).
-La elección del selector se guarda y vale también para la guía (`docs/app/`),
-que usa la misma regla y la misma clave.
-
-## Desarrollo del sitio
-
-```sh
+# lectura.json: documents.get amb includeTabsContent (o la sortida de read_doc).
+# Executa-ho just després de llegir el document: els enllaços de les imatges caduquen en pocs minuts.
+python scripts/guia_desde_gdoc.py lectura.json
 python -m pip install -r requirements-docs.txt
-zensical serve                          # castellano
-zensical serve -f zensical.en.toml      # inglés (o zensical.ca.toml)
+zensical serve
 ```
 
-Para el sitio completo, con los tres idiomas y el selector funcionando:
-
-```sh
-zensical build --clean && zensical build -f zensical.en.toml && zensical build -f zensical.ca.toml
-python -m http.server -d site 8000
-```
+El contingut anterior (diagrames del flux, guia al mòbil, generador d'etiquetes,
+versions en anglès i castellà) és a l'historial de git, abans del commit que el va treure.
