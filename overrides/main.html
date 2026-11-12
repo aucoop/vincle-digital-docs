@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{#
+  Solo lo usa zensical.toml (castellano, en la raíz). Si el idioma guardado o,
+  en su defecto, el del navegador es inglés o catalán, lleva a la misma página
+  en /en/ o /ca/ antes de pintar nada. Misma regla y misma clave que la guía
+  (docs/app/i18n.js), así que elegir idioma en una vale para la otra.
+#}
+{% block extrahead %}
+  {# sense_traduccio: página sin versión en /en/ ni /ca/ (p. ej. la guía, solo en catalán). #}
+  {% if not (page and page.meta and page.meta.sense_traduccio) %}
+  <script>
+    (function () {
+      var CLAVE_IDIOMA = 'vincle.guia.idioma.v1';
+      var IDIOMAS = { es: true, en: true, ca: true };
+      var idioma;
+      try {
+        var guardado = localStorage.getItem(CLAVE_IDIOMA);
+        if (IDIOMAS[guardado]) idioma = guardado;
+      } catch (e) { /* sin almacenamiento */ }
+      var preferidos = navigator.languages || [navigator.language];
+      for (var i = 0; !idioma && i < preferidos.length; i++) {
+        var base = String(preferidos[i]).slice(0, 2).toLowerCase();
+        if (IDIOMAS[base]) idioma = base;
+      }
+      if (!idioma || idioma === 'es') return;
+      // extra.css cuelga siempre de la raíz del sitio (ver javascripts/idioma.js).
+      var hoja = document.querySelector('link[href*="stylesheets/extra.css"]');
+      if (!hoja) return;
+      var raiz = new URL('../', hoja.href);
+      var pagina = location.pathname.slice(raiz.pathname.length);
+      // Ya en /en/ o /ca/ (p. ej. el 404 de la raíz): no redirigir, o entra en bucle.
+      if (/^(en|ca)\//.test(pagina)) return;
+      location.replace(new URL(idioma + '/' + pagina, raiz).href + location.hash);
+    })();
+  </script>
+  {% endif %}
+{% endblock %}

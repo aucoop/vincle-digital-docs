@@ -32,6 +32,9 @@ nav = [
 ]
 
 [project.theme]
+# overrides/main.html: lleva a /en/ o /ca/ según el idioma guardado o el del
+# navegador. Solo en castellano; los otros idiomas no redirigen.
+custom_dir = "overrides"
 language = "es"
 features = [
   "navigation.instant",
@@ -78,3 +81,4 @@ pymdownx.emoji = {}
 pymdownx.tabbed = { alternate_style = true }
 pymdownx.tasklist = { custom_checkbox = true }
 admonition = {}
+footnotes = {}

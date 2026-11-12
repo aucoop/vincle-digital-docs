@@ -46,6 +46,11 @@ el nombre de fichero y los ids de los títulos en castellano para que el
 selector de idioma lleve a la misma página y sección. Al cambiar una página,
 conviene actualizar las tres.
 
+Quien entra en castellano sin haber elegido idioma va a la misma página en
+inglés o catalán si su navegador está en uno de ellos (`overrides/main.html`).
+La elección del selector se guarda y vale también para la guía (`docs/app/`),
+que usa la misma regla y la misma clave.
+
 ## Desarrollo del sitio
 
 ```sh
