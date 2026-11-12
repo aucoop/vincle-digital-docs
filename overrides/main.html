@@ -7,6 +7,8 @@
   (docs/app/i18n.js), así que elegir idioma en una vale para la otra.
 #}
 {% block extrahead %}
+  {# sense_traduccio: página sin versión en /en/ ni /ca/ (p. ej. la guía, solo en catalán). #}
+  {% if not (page and page.meta and page.meta.sense_traduccio) %}
   <script>
     (function () {
       var CLAVE_IDIOMA = 'vincle.guia.idioma.v1';
@@ -27,7 +29,10 @@
       if (!hoja) return;
       var raiz = new URL('../', hoja.href);
       var pagina = location.pathname.slice(raiz.pathname.length);
+      // Ya en /en/ o /ca/ (p. ej. el 404 de la raíz): no redirigir, o entra en bucle.
+      if (/^(en|ca)\//.test(pagina)) return;
       location.replace(new URL(idioma + '/' + pagina, raiz).href + location.hash);
     })();
   </script>
+  {% endif %}
 {% endblock %}
