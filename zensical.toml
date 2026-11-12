@@ -81,3 +81,4 @@ pymdownx.emoji = {}
 pymdownx.tabbed = { alternate_style = true }
 pymdownx.tasklist = { custom_checkbox = true }
 admonition = {}
+footnotes = {}
